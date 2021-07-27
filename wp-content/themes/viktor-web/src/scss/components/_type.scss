@@ -1,0 +1,43 @@
+h1, .h1,
+h2, .h2 {
+    line-height: $headings-line-height;
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+}
+
+h1, .h1 {
+    font-size: $h1-font-size;
+}
+
+h2, .h2 {
+    font-size: $h2-font-size;
+}
+
+.title {
+    + * {
+        margin-top: rem(24px);
+
+        @include respond-above(md) {
+            margin-top: rem(30px);
+        }
+    }
+
+    .title + & {
+        margin-top: rem(8px);
+
+        @include respond-above(md) {
+            margin-top: rem(12px);
+        }
+    }
+}
+
+.text {
+    .text + &,
+    .media + & {
+        margin-top: rem(20px);
+
+        @include respond-above(md) {
+            margin-top: rem(24px);
+        }
+    }
+}

@@ -1,0 +1,90 @@
+// This code block is taken directly from Bootstrap 4.5.3's Grid component (_grid.scss).
+.container,
+.container-fluid {
+  @include make-container();
+}
+
+@each $breakpoint, $container-max-width in $container-max-widths {
+  .container-#{$breakpoint} {
+    @extend .container-fluid;
+  }
+
+  @include media-breakpoint-up($breakpoint, $grid-breakpoints) {
+    %responsive-container-#{$breakpoint} {
+      max-width: $container-max-width;
+    }
+
+    $extend-breakpoint: true;
+
+    @each $name, $width in $grid-breakpoints {
+      @if ($extend-breakpoint) {
+        .container#{breakpoint-infix($name, $grid-breakpoints)} {
+          @extend %responsive-container-#{$breakpoint};
+        }
+
+        @if ($breakpoint == $name) {
+          $extend-breakpoint: false;
+        }
+      }
+    }
+  }
+}
+
+.site-header {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: rem(56px);
+    background-color: $white;
+    box-shadow: 0 0 rem(5px) 0 rgba(0, 0, 0, 0.25);
+
+    @include respond-above(sm) {
+        bottom: rem(8px);
+        left: 50%;
+        width: rem(480px);
+        height: rem(62px);
+        border-radius: rem(6px);
+        box-shadow: 0 0 rem(6px) rem(1px) rgba(0, 0, 0, 0.25);
+        transform: translateX(-50%);
+    }
+
+    @include respond-above(md) {
+        width: rem(540px);
+    }
+
+    @include respond-above(xl) {
+        width: rem(640px);
+    }
+}
+
+.site-main {
+    height: calc(100vh - #{rem(56px)}); // 100vh - .site-header height
+    padding-top: rem(20px);
+    padding-bottom: rem(20px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    @include respond-above(sm) {
+        height: calc(100vh - #{rem(62px)} - #{rem(8px)}); // 100vh - .site-header height - .site-header bottom
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: $off-white-light;
+
+        &-track {
+            background-color: $off-white-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        }
+
+        &-thumb {
+            background-color: $gray-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+    }
+}

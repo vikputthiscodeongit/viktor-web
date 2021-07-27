@@ -1,0 +1,23 @@
+@mixin respond-below($name, $breakpoints: $grid-breakpoints) {
+    @include media-breakpoint-down($name, $breakpoints) {
+        @content;
+    }
+}
+
+@mixin respond-above($name, $breakpoints: $grid-breakpoints) {
+    @include media-breakpoint-up($name, $breakpoints) {
+        @content;
+    }
+}
+
+@mixin respond-between($lower, $upper, $breakpoints: $grid-breakpoints) {
+    @include media-breakpoint-between($lower, $upper, $breakpoints) {
+        @content;
+    }
+}
+
+@mixin respond-only($name, $breakpoints: $grid-breakpoints) {
+    @include media-breakpoint-only($name, $breakpoints: $grid-breakpoints) {
+        @content;
+    }
+}

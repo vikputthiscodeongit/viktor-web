@@ -81,7 +81,7 @@ Thumbs.db
 *.zip
 
 # ignore theme distributables
-wp-content/themes/viktor-personal/dist/
+wp-content/themes/viktor-web/dist/
 
 # -------------------------
 # BEGIN Whitelisted Files
@@ -108,4 +108,4 @@ wp-content/themes/viktor-personal/dist/
 
 # track these mu-plugins, plugins, and themes
 # add your own entries here
-!wp-content/themes/viktor-personal/
+!wp-content/themes/viktor-web/

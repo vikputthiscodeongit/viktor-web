@@ -1,0 +1,55 @@
+html {
+    height: fill-available;
+}
+
+body {
+    min-width: $body-min-width;
+    margin: 0 auto;
+    text-size-adjust: 100%;
+}
+
+section {
+    min-height: var(--vh);
+
+    .no-js & {
+        min-height: 100vh;
+    }
+
+    // DEVELOPMENT
+    &:nth-child(odd) {
+        background-color: $gray-light;
+    }
+    //
+}
+
+ol,
+ul {
+    &[class] {
+        margin-bottom: 0;
+        padding-left: 0;
+
+        li {
+            list-style: none;
+        }
+    }
+}
+
+p {
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+a {
+    transition: $transition-base;
+    transition-property: text-decoration-color, color, outline;
+
+    &:focus {
+        outline: rem(2px) solid currentColor;
+        outline-offset: rem(2px);
+
+        .using-mouse & {
+            outline: none;
+        }
+    }
+}
