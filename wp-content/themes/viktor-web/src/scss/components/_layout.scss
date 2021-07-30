@@ -1,33 +1,56 @@
-// This code block is taken directly from Bootstrap 4.5.3's Grid component (_grid.scss).
-.container,
-.container-fluid {
-  @include make-container();
+.container {
+    min-height: var(--vh);
+    margin-left: auto;
+    margin-right: auto;
+    padding: rem(24px);
+
+    .no-js & {
+        min-height: 100vh;
+    }
+
+    #home > & {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        max-width: rem(1440px);
+
+        @include respond-above(xs) {
+            padding-left: 10vw;
+            padding-right: 10vw;
+        }
+
+        @include respond-above(sm) {
+            padding-left: 15vw;
+            padding-right: 15vw;
+        }
+
+        @include respond-above(xxl) {
+            padding-left: rem(216px);
+            padding-right: rem(216px);
+        }
+    }
 }
 
-@each $breakpoint, $container-max-width in $container-max-widths {
-  .container-#{$breakpoint} {
-    @extend .container-fluid;
-  }
-
-  @include media-breakpoint-up($breakpoint, $grid-breakpoints) {
-    %responsive-container-#{$breakpoint} {
-      max-width: $container-max-width;
+.home {
+    &-viktor {
+        grid-column: 1 / span 3;
+        grid-row: 1 / span 2;
+        align-self: center;
     }
 
-    $extend-breakpoint: true;
-
-    @each $name, $width in $grid-breakpoints {
-      @if ($extend-breakpoint) {
-        .container#{breakpoint-infix($name, $grid-breakpoints)} {
-          @extend %responsive-container-#{$breakpoint};
-        }
-
-        @if ($breakpoint == $name) {
-          $extend-breakpoint: false;
-        }
-      }
+    &-nav {
+        grid-column: 2 / span 2;
+        grid-row: 3;
+        justify-self: flex-end;
+        align-self: flex-end;
     }
-  }
+}
+
+.viktor-about {
+    position: relative;
+    top: 1em;
+    left: 1.75em;
+    width: calc(100% - 1.75em);
 }
 
 .site-header {

@@ -1,7 +1,7 @@
 import debounce from "lodash/debounce";
 
-import TypeIt from "typeit";
 // import Noty from "noty";
+import TypeIt from "typeit";
 
 import stylesheet from "../scss/style.scss";
 
@@ -175,13 +175,16 @@ import stylesheet from "../scss/style.scss";
     typeItAbout.init = function() {
         console.log("In typeItAbout.init().");
 
-        if (!typeItAbout.el)
+        if (!typeItAbout.el) {
+            console.log("Returning from function - TypeIt element not found!");
+
             return;
+        }
 
         typeItAbout.type();
     };
 
-    typeItAbout.el = document.querySelector(".home-about--typeit");
+    typeItAbout.el = document.querySelector(".viktor-about--typeit");
 
     typeItAbout.type = function() {
         new TypeIt(typeItAbout.el, {
@@ -190,22 +193,32 @@ import stylesheet from "../scss/style.scss";
             loop: true
         })
             // 1
-            .type("Homo sapiens", {delay: 2000})
-            .delete(null, {delay: 1100})
+            .type("Homo sapiens", {delay: 1450})
+            .delete(null, {delay: 900})
             // 2
-            .type("Webdevlo", {delay: 500})
-            .move(-2, {speed: 150, delay: 500})
-            .type("e", {delay: 500})
-            .move(2, {speed: 100, delay: 500})
-            .type("per", {delay: 2250})
+            .type("Autoliefhebber", {delay: 1800})
             .delete(null, {delay: 1000})
             // 3
-            .type("Autoliefhebber", {delay: 2000})
-            .delete(null, {delay: 1000})
-            // 4
-            .type("Hobbu-", {delay: 1000})
+            .type("Hobbu-", {delay: 500})
             .delete(2, {delay: 550})
-            .type("yfotograaf", {delay: 2400})
+            .type("yfotograaf", {delay: 2000})
+            .delete(null, {delay: 900})
+            // 4
+            .type("Webdevlo", {delay: 500})
+            .move(-2, {speed: 150, delay: 350})
+            .type("e", {delay: 500})
+            .move(2, {speed: 100, delay: 400})
+            .type("per", {delay: 1850})
+            .delete(null, {delay: 1000})
+            // 5
+            .type("Part", {delay: 650})
+            .type("-", {delay: 500})
+            .type("tue", {delay: 550})
+            .delete(2, {delay: 450})
+            .type("ime", {delay: 550})
+            .type(" ", {delay: 400})
+            .type("superman", {delay: 1800})
+            .delete(null, {delay: 850})
             .go();
     };
 
