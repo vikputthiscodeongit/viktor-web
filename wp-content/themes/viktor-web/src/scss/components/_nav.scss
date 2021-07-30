@@ -1,9 +1,30 @@
 .home-nav {
     text-align: right;
-}
+    font-size: rem(18px);
 
-.nav {
+    @include respond-above(lg) {
+        font-size: rem(21px);
+    }
+
+    @include respond-above(xxl) {
+        font-size: rem(24px);
+    }
+
     &__item {
-        &s {}
+        margin-bottom: 1em;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__link {
+        text-decoration: currentColor solid underline;
+        color: $black;
+
+        &:hover {
+            text-decoration-color: transparent;
+            color: $black;
+        }
     }
 }

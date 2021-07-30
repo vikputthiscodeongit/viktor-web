@@ -178,7 +178,7 @@ import stylesheet from "../scss/style.scss";
         typeItAbout.type();
     };
 
-    typeItAbout.el = document.querySelector(".viktor-about--typeit");
+    typeItAbout.el = document.querySelector(".viktor-about--typeit > span");
 
     typeItAbout.type = function() {
         new TypeIt(typeItAbout.el, {

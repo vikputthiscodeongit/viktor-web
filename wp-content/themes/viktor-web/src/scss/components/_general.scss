@@ -1,20 +1,26 @@
-html {
-    height: fill-available;
-}
-
 body {
-    min-width: $body-min-width;
-    margin: 0 auto;
-    text-size-adjust: 100%;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: $off-white-light;
+
+        &-track {
+            background-color: $off-white-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        }
+
+        &-thumb {
+            background-color: $gray-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+    }
 }
 
 section {
-    min-height: var(--vh);
-
-    .no-js & {
-        min-height: 100vh;
-    }
-
     // DEVELOPMENT
     &:nth-child(odd) {
         background-color: $gray-light;

@@ -1,0 +1,31 @@
+.blob {
+    position: absolute;
+    opacity: 0.333333;
+    width: rem(400px);
+
+    @include respond-above(lg) {
+        width: rem(500px);
+    }
+
+    @include respond-above(xxl, xxl) {
+        width: rem(640px);
+    }
+
+    &--left {
+        bottom: rem(-120px);
+        left: rem(-190px);
+
+        @include respond-above(xxl, xxl) {
+            left: rem(-288px);
+        }
+    }
+
+    &--right {
+        top: rem(-120px);
+        right: rem(-180px);
+
+        @include respond-above(xxl, xxl) {
+            top: rem(-144px);
+        }
+    }
+}

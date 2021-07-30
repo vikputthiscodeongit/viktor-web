@@ -1,15 +1,45 @@
-// Mixins
-// Aspect ratio
-$ratio-width:  3;
-$ratio-height: 2;
-
-
-// Others
 // Body
-$body-min-width: 320px;
+$body-min-width: rem(320px);
+
+
+// Grid breakpoints
+$grid-breakpoints: (
+    xxs: 0,
+    xs: 28em, // 448
+    sm: 36em, // 576
+    md: 48em, // 768
+    lg: 62em, // 992
+    xl: 80em, // 1280
+    xxl: 90em // 1440
+);
+
+$grid-height-breakpoints: (
+    md: 40em, // 640
+    lg: 45em, // 720
+    xl: 50em, // 800
+    xxl: 56em // 896
+);
+
+
+// Grid containers
+$container-max-widths: (
+    xxs: rem(360px),
+    xs: rem(400px),
+    sm: rem(540px),
+    md: rem(720px),
+    lg: rem(960px),
+    xl: rem(1200px),
+    xxl: rem(1366px)
+);
 
 
 // Inputs
 $input-max-width: rem(640px);
 $input-xl-max-width: rem(800px);
 $input-xxl-max-width: rem(880px);
+
+
+// Variable export to JavaScript
+:export {
+    mdBreakpoint: map-get($grid-breakpoints, md);
+}

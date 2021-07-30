@@ -1,37 +1,3 @@
-.viktor-name {
-    h1 {
-        font-size: rem(40px);
-
-        @include respond-above(lg) {
-            font-size: rem(48px);
-        }
-
-        @include respond-above(xxl) {
-            font-size: rem(56px);
-        }
-
-        span {
-            display: block;
-
-            &:nth-child(2) {
-                margin-left: 0.75em;
-            }
-        }
-    }
-}
-
-.viktor-about {
-    font-size: rem(24px);
-
-    @include respond-above(lg) {
-        font-size: rem(28px);
-    }
-
-    @include respond-above(xxl) {
-        font-size: rem(32px);
-    }
-}
-
 h1, .h1,
 h2, .h2 {
     line-height: $headings-line-height;
