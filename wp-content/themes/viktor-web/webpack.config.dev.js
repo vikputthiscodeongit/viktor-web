@@ -18,6 +18,10 @@ module.exports = {
         filename: "./js/bundle-[name].js"
     },
 
+    stats: {
+        children: true
+    },
+
     mode: "development",
 
     devtool: "eval",
