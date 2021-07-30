@@ -124,12 +124,6 @@ import stylesheet from "../scss/style.scss";
     main.init = function() {
         console.log("In main.init().");
 
-        // if (!body.classList.contains("cover-fullvh")) {
-        //     console.log("Exiting function - <body> should NOT cover the entire viewport!");
-
-        //     return;
-        // }
-
         // if (!cssLoaded()) {
         //     const timeout = 1000;
 
@@ -154,7 +148,7 @@ import stylesheet from "../scss/style.scss";
 
         let vh = html.clientHeight;
 
-        const vhMin = 568,
+        const vhMin = 480,
               vhMax = 1080;
 
         if (vh < vhMin) {
