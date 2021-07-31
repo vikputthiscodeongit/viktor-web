@@ -164,25 +164,12 @@
 
 
     //
-    // Add async/defer attribute to custom scripts - https://stackoverflow.com/a/40553706, somewhat modified.
+    // Add async/defer attribute to custom scripts - https://stackoverflow.com/a/40553706, heavily modified.
     if (!is_admin()) {
-        function add_async_defer_attribute($tag, $handle) {
-            if (
-                strpos($handle, "async") ||
-                strpos($handle, "defer")
-            ) {
-                if (strpos($handle, "async")) {
-                    return str_replace("<script ", "<script async ", $tag);
-                }
-                if (strpos($handle, "defer")) {
-                    return str_replace("<script ", "<script defer ", $tag);
-                }
-            } else {
-                return $tag;
+        function add_script_attributes($tag, $handle) {
+            if (strpos($handle, "async")) {
+                $tag = str_replace("<script ", "<script async ", $tag);
             }
-        }
-        add_filter("script_loader_tag", "add_async_defer_attribute", 10, 2);
-    }
 
 
     //
@@ -263,10 +250,15 @@
                 $tag->name = "captcha_resp";
 
                 $result->invalidate($tag, __("There was an error in your maths.", "contact-form-7-maths-captcha"));
+            if (strpos($handle, "defer")) {
+                $tag = str_replace("<script ", "<script defer ", $tag);
             }
         }
 
         return $result;
+            return $tag;
+        }
+        add_filter("script_loader_tag", "add_script_attributes", 10, 2);
     }
     add_filter("wpcf7_validate", "wpcf7mc_validator", 99, 2);
 
