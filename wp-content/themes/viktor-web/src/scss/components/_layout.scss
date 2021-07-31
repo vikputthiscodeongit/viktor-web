@@ -33,6 +33,21 @@ section {
     margin-right: auto;
     padding: rem(24px);
 
+    @include respond-above(xs) {
+        padding-left: 10vw;
+        padding-right: 10vw;
+    }
+
+    @include respond-above(sm) {
+        padding-left: 15vw;
+        padding-right: 15vw;
+    }
+
+    @include respond-above(xxl) {
+        padding-left: rem(216px);
+        padding-right: rem(216px);
+    }
+
     .no-js & {
         min-height: 100vh;
     }
@@ -43,25 +58,10 @@ section {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
 
-        @include respond-above(xs) {
-            padding-left: 10vw;
-            padding-right: 10vw;
-        }
-
-        @include respond-above(sm) {
-            padding-left: 15vw;
-            padding-right: 15vw;
-        }
-
         @include respond-below(md) {
             min-height: auto;
             max-height: rem(800px);
             height: var(--vh);
-        }
-
-        @include respond-above(xxl) {
-            padding-left: rem(216px);
-            padding-right: rem(216px);
         }
     }
 }
