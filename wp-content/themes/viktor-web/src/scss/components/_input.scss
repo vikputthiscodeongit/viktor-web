@@ -1,5 +1,11 @@
 .wpcf7 {
     &-form {
+        .wpcf7-response-output {
+            .js & {
+                display: none;
+            }
+        }
+
         label + br {
             display: none;
         }
@@ -7,24 +13,36 @@
 
     &-not-valid-tip {
         margin-top: rem(8px);
+
+        .js & {
+            display: none;
+        }
     }
 
     &-mc-field-star {
-        @extend label;
         align-self: flex-start;
         margin-left: rem(6px);
+        font-family: $headings-font-family;
+        font-weight: $headings-font-weight;
     }
 
-    .wpcf7-submit + .ajax-loader {
-        margin-left: rem(8px);
+    .ajax-loader {
+        vertical-align: middle;
+        margin-left: rem(12px);
+        margin-right: 0;
     }
 }
 
 .form {
+    max-width: rem(640px);
     margin-top: rem(30px);
 
     @include respond-above(md) {
         margin-top: rem(40px);
+    }
+
+    @include respond-above(xxl) {
+        max-width: rem(720px);
     }
 
     &__group {
@@ -39,27 +57,9 @@
             margin-top: 0;
         }
     }
-
-    &__ajax-loader {
-        font-size: rem(24px);
-
-        .form__group.field--inline & {
-            flex-shrink: 0;
-        }
-    }
 }
 
 .field {
-    max-width: $input-max-width;
-
-    @include respond-above(xl) {
-        max-width: $input-xl-max-width;
-    }
-
-    @include respond-above(xxl) {
-        max-width: $input-xxl-max-width;
-    }
-
     &--ifl {
         position: relative;
     }
@@ -104,7 +104,7 @@ label {
             border-top-left-radius: rem(4px);
             border-top-right-radius: rem(4px);
 
-            @media (prefers-contrast: high) {
+            @media (prefers-contrast: more) {
                 background-color: $white;
             }
         }
@@ -116,8 +116,8 @@ label {
     }
 }
 
-// The following input types should preferably not be targeted, but are with the current selector: button, checkbox, color, file, hidden, image, radio, range, reset & submit.
-input,
+input[type="email"],
+input[type="text"],
 textarea {
     width: 100%;
     padding: rem(12px);
@@ -128,7 +128,7 @@ textarea {
     border-radius: rem(4px);
     transition: border-color $transition-base;
 
-    @media (prefers-contrast: high) {
+    @media (prefers-contrast: more) {
         background-color: $white;
         border-color: $black;
     }
@@ -177,11 +177,6 @@ textarea {
 }
 
 input {
-    &[type="checkbox"],
-    &[type="radio"] {
-        width: auto;
-    }
-
     //
     // Reset default :invalid styles.
     // General (IE, maybe more)
@@ -200,7 +195,7 @@ input {
     &:-internal-autofill-selected {
         box-shadow: 0 0 0 1000px $off-white-dark inset; // Equalling <input> height should suffice?
 
-        @media (prefers-contrast: high) {
+        @media (prefers-contrast: more) {
             box-shadow: 0 0 0 1000px $white inset;
         }
     }
@@ -212,7 +207,6 @@ input {
     }
 
     .field--inline & {
-        &[type="number"],
         &[inputmode="numeric"] {
             width: rem(64px);
         }
@@ -226,7 +220,7 @@ textarea {
 .btn {
     display: inline-flex;
     align-items: center;
-    width: 100%;
+    width: auto;
     padding: $btn-padding-y $btn-padding-x;
     text-decoration: none;
     font: $btn-font-weight $btn-font-size/$btn-line-height $btn-font-family;
@@ -236,10 +230,6 @@ textarea {
     border-radius: $btn-border-radius;
     transition: $btn-transition;
     transition-property: background-color, box-shadow;
-
-    @include respond-above(xs) {
-        width: auto;
-    }
 
     &:hover {
         &:not(:disabled) {
@@ -254,14 +244,6 @@ textarea {
     &:focus {
         box-shadow: 0 0 rem(8px) rem(2px) rgba(0, 0, 0, 0.2);
         outline: none;
-    }
-
-    &__spinner {
-        margin-left: rem(8px);
-
-        .btn:not(.is-submitting) & {
-            display: none;
-        }
     }
 }
 

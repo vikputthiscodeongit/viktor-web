@@ -171,120 +171,16 @@
                 $tag = str_replace("<script ", "<script async ", $tag);
             }
 
-
-    //
-    // WPCF7 - Mathematical CAPTCHA
-    // Start the initializer
-    function wpcf7mc_add_shortcode() {
-        wpcf7_add_form_tag("wpcf7mc", "wpcf7mc_init", true);
-    }
-    add_action("wpcf7_init", "wpcf7mc_add_shortcode");
-
-    // Initializer
-    function wpcf7mc_init($tag) {
-        $tag = new WPCF7_FormTag($tag);
-
-        $digit1 = mt_rand(1, 10);
-        $digit2 = mt_rand(1, 10);
-
-        $sum = $digit1 + $digit2;
-
-        $output = '
-        <div class="field field--inline">
-            <label for="wpcf7-mc-answer" class="form__label">' . $digit1 . ' + ' . $digit2 . ' =</label>
-            <input type="text" name="wpcf7-mc-answer" class="wpcf7-validates-as-required form__input" id="wpcf7-mc-answer" inputmode="numeric" pattern="[0-9]*" aria-required="true">
-            <span class="wpcf7-mc-field-star">*</span>
-        </div>
-
-        <div class="field field--inline wpcf7-mc-hf">
-            <label for="wpcf7-mc-d1" class="form__label">First number of the sum</label>
-            <input type="text" name="wpcf7-mc-d1" class="wpcf7-validates-as-required form__input" id="wpcf7-mc-d1" inputmode="numeric">
-            <span class="wpcf7-mc-field-star">*</span>
-        </div>
-
-        <div class="field field--inline wpcf7-mc-hf">
-            <label for="wpcf7-mc-d2" class="form__label">Second number of the sum</label>
-            <input type="text" name="wpcf7-mc-d2" class="wpcf7-validates-as-required form__input" id="wpcf7-mc-d2" inputmode="numeric">
-            <span class="wpcf7-mc-field-star">*</span>
-        </div>
-
-        <div class="field field--inline wpcf7-mc-hf">
-            <label for="city" class="form__label">Leave this field empty</label>
-            <input type="text" name="city" class="form__input" id="city">
-        </div>
-        ';
-
-        return $output;
-    }
-
-    // Validator
-    function wpcf7mc_validator($result, $tag) {
-        // Search the tags to see if wpcf7mc is being used before initializing validation.
-        $key = array_search("wpcf7mc", array_column($tag, "type"));
-
-        if (!empty($key)) {
-            $tag = new WPCF7_FormTag($tag);
-            $tag->name = "captcha";
-
-            $answer = $_POST["wpcf7-mc-answer"];
-            $digit1 = $_POST["wpcf7-mc-d1"];
-            $digit2 = $_POST["wpcf7-mc-d2"];
-            $honeypot = $_POST["city"];
-
-            if (!empty($honeypot)) {
-                $tag->name = "captcha_hp";
-
-                $result->invalidate($tag, wpcf7_get_message("spam"));
-            } elseif (empty($answer)) {
-                $tag->name = "captcha_resp";
-
-                $result->invalidate($tag, __("You didn't do any maths.", "contact-form-7-maths-captcha"));
-            } elseif (
-                !$digit1 || !$digit2 ||
-                $digit1 + $digit2 !== $answer
-            ) {
-                // If this condition evaluates to true, the most obvious reason would be because a wrong answer is given.
-                // It however will also be true if either the form gets sent within the first 3 seconds after page load,
-                // or if a spam bot (/ human who is actively trying to break my site) fills in a value in the digit 1 and/or digit 2 field
-                // and proceeds to submit the form. In these cases the validation message as it is would be wrong.
-                $tag->name = "captcha_resp";
-
-                $result->invalidate($tag, __("There was an error in your maths.", "contact-form-7-maths-captcha"));
             if (strpos($handle, "defer")) {
                 $tag = str_replace("<script ", "<script defer ", $tag);
             }
-        }
 
-        return $result;
             return $tag;
         }
         add_filter("script_loader_tag", "add_script_attributes", 10, 2);
     }
-    add_filter("wpcf7_validate", "wpcf7mc_validator", 99, 2);
 
-    // Tag generator
-    function wpcf7mc_add_tag_generator() {
-        $tag_generator = WPCF7_TagGenerator::get_instance();
 
-        // TODO: Check arguments
-        $tag_generator->add("wpcf7mc", __("maths challenge", "contact-form-7-maths-captcha"), "wpcf7mc_tag_generator", array("nameless" => 1));
-    }
-    add_action("wpcf7_admin_init", "wpcf7mc_add_tag_generator", 55);
-
-    function wpcf7mc_tag_generator($contact_form, $args = '') {
-        $args = wp_parse_args($args, array()); ?>
-        <div class="control-box">
-            <p>
-                A lightweight mathematics based CAPTCHA that's not too difficult to solve.
-            </p>
-        </div>
-
-        <div class="insert-box">
-            <input type="text" name="wpcf7mc" class="tag code" readonly="readonly" onfocus="this.select()">
-
-            <div class="submitbox">
-                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr(__('Insert tag', 'contact-form-7-maths-captcha')); ?>">
-            </div>
-        </div>
-    <?php
-    }
+    //
+    // WPCF7 - Mathematical CAPTCHA
+    include "includes/wpcf7-maths-captcha.php";

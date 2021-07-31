@@ -33,12 +33,6 @@ $container-max-widths: (
 );
 
 
-// Inputs
-$input-max-width: rem(640px);
-$input-xl-max-width: rem(800px);
-$input-xxl-max-width: rem(880px);
-
-
 // Variable export to JavaScript
 :export {
     mdBreakpoint: map-get($grid-breakpoints, md);

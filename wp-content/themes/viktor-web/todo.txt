@@ -1,0 +1,4 @@
+WPCF7:
+ * CAPTCHA submit werkend maken
+ * <input> border matchen met state
+ * <input> validation messages in een .alert stoppen

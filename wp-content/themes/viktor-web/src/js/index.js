@@ -170,7 +170,7 @@ import stylesheet from "../scss/style.scss";
         console.log("In typeItAbout.init().");
 
         if (!typeItAbout.el) {
-            console.log("Returning from function - TypeIt element not found!");
+            console.log("Exiting function - TypeIt element not found!");
 
             return;
         }
@@ -224,7 +224,7 @@ import stylesheet from "../scss/style.scss";
         console.log("In wpcf7.init().");
 
         if (wpcf7.els.length === 0) {
-            console.log("Exiting function - no WPCF7 elements found on this page!");
+            console.log("Exiting function - no WPCF7 elements found!");
 
             return;
         }
@@ -240,21 +240,21 @@ import stylesheet from "../scss/style.scss";
             });
 
             const wpcf7Form        = wpcf7El.querySelector(".wpcf7-form"),
-                  submitButton     = wpcf7Form.querySelector("[type='submit']"),
-                  submitButtonText = submitButton.querySelector(".btn__text");
+                  submitButton     = wpcf7Form.querySelector("[type='submit']");
+                //   submitButtonText = submitButton.querySelector(".btn__text");
 
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
-                if (!submitButton.hasAttribute("data-string-send")) {
-                    submitButton.setAttribute(
-                        "data-string-send",
-                        submitButtonText.textContent
-                    );
-                }
+                // if (!submitButton.hasAttribute("data-string-send")) {
+                //     submitButton.setAttribute(
+                //         "data-string-send",
+                //         submitButtonText.textContent
+                //     );
+                // }
                 submitButton.setAttribute("disabled", true);
                 submitButton.classList.add("is-submitting");
 
-                submitButtonText.textContent =
-                    submitButton.getAttribute("data-string-sending");
+                // submitButtonText.textContent =
+                //     submitButton.getAttribute("data-string-sending");
             });
 
             wpcf7El.addEventListener("wpcf7submit", function(e) {
@@ -277,8 +277,8 @@ import stylesheet from "../scss/style.scss";
                 submitButton.removeAttribute("disabled");
                 submitButton.classList.remove("is-submitting");
 
-                submitButtonText.textContent =
-                    submitButton.getAttribute("data-string-send");
+                // submitButtonText.textContent =
+                //     submitButton.getAttribute("data-string-send");
             });
 
             // Its <input>s
@@ -308,24 +308,31 @@ import stylesheet from "../scss/style.scss";
     wpcf7.captcha = function(wpcf7El) {
         console.log("In wpcf7.captcha().");
 
-        const wpcf7Form    = wpcf7El.querySelector(".wpcf7-form"),
-              problem      = wpcf7Form.querySelector("label[for='wpcf7-mc-answer']"),
-              hiddenFields = wpcf7Form.querySelectorAll(".wpcf7-mc-hf"),
-              digitInputs  = wpcf7Form.querySelectorAll(
-                  "input[name^='wpcf7-mc-d'], input[name='city']"
-              );
+        const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
 
-        hiddenFields.forEach(function(field) {
+        const problem = wpcf7Form.querySelector("label[for='wpcf7-mc-answer']");
+
+        if (!problem) {
+            console.log("Exiting function - no WPCF7 form with maths captcha found!");
+
+            return;
+        }
+
+        const hiddenFields = wpcf7Form.querySelectorAll(".wpcf7-mc-hf"),
+              digitInputs  = wpcf7Form.querySelectorAll("input[name^='wpcf7-mc-d']");
+
+        hiddenFields.forEach((field) => {
             field.style.display = "none";
         });
 
         const digits = problem.textContent.match(/[0-9]+/g);
 
-        digitInputs.forEach(function(input, i) {
+        digitInputs.forEach((input, i) => {
             const targetDigit = digits[i];
 
-            // 3 seconds timeout because spambots fill in forms real fast and have most likely already left the page by the time the value gets inserted in the DOM.
-            setTimeout(function() {
+            // Spambots fill in forms real fast. Add a 3 second timeout because they've most likely
+            // already left the page by the time the value gets inserted in the field.
+            setTimeout(() => {
                 if (!input.value) {
                     input.value = targetDigit;
                 }
@@ -336,8 +343,9 @@ import stylesheet from "../scss/style.scss";
     wpcf7.formTransformer = function(wpcf7El) {
         console.log("In wpcf7.formTransformer().");
 
-        const wpcf7Form = wpcf7El.querySelector(".wpcf7-form"),
-              fields    = wpcf7Form.querySelectorAll(".field");
+        const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
+
+        const fields = wpcf7Form.querySelectorAll(".field");
 
         fields.forEach(function(field) {
             const br = field.querySelector("br");
@@ -351,35 +359,10 @@ import stylesheet from "../scss/style.scss";
             if (controlWrap) {
                 const input = controlWrap.querySelector(".wpcf7-form-control");
 
-                controlWrap.parentNode.insertBefore(input, controlWrap);
-                controlWrap.parentNode.removeChild(controlWrap);
-
                 input.tagName === "TEXTAREA" ?
                     input.removeAttribute("cols") :
                     input.removeAttribute("size");
             }
-
-            const ajaxLoader = field.querySelector(".ajax-loader");
-
-            if (ajaxLoader) {
-                ajaxLoader.parentNode.removeChild(ajaxLoader);
-
-                const spinner = document.createElement("span");
-                spinner.className += ("btn__spinner spinner spinner--light");
-
-                const submitButton = wpcf7Form.querySelector("[type='submit']");
-
-                submitButton.appendChild(spinner);
-            }
-        });
-
-        const responses = [
-            wpcf7El.querySelector(".screen-reader-response"),
-            wpcf7Form.querySelector(".wpcf7-response-output")
-        ];
-
-        responses.forEach(function(response) {
-            response.parentElement.removeChild(response);
         });
     };
 
