@@ -69,6 +69,10 @@
 
 <section class="site-section" id="contact">
     <div class="container">
+        <div class="section-title">
+            <h1>Contact</h1>
+        </div>
+
         <?php echo do_shortcode('[contact-form-7 id="5" title="Contact form 1" html_class="form form--contact"]'); ?>
     </div>
 </section>
