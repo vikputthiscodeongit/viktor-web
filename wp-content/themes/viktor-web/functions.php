@@ -1,7 +1,7 @@
 <?php
     //
     // Define constants
-    define("THEME_DIR", get_template_directory_uri());
+    define("THEME_DIR_URI", get_template_directory_uri());
     define("THEME_DIR_PATH", get_template_directory());
     define("SITE_URL", get_site_url());
 
@@ -158,8 +158,8 @@
         $bundle_version  = date("Ymd_His", filemtime(plugin_dir_path(__FILE__) . "/dist/js/bundle-main.js"));
 
         wp_enqueue_style("fonts", "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Recursive:wght@400;600&display=swap", false, null);
-        wp_enqueue_style("style", THEME_DIR . "/dist/css/style.css", false, $style_version);
-        wp_enqueue_script("bundle#defer", THEME_DIR . "/dist/js/bundle-main.js", false, $bundle_version);
+        wp_enqueue_style("style", THEME_DIR_URI . "/dist/css/style.css", false, $style_version);
+        wp_enqueue_script("bundle#defer", THEME_DIR_URI . "/dist/js/bundle-main.js", false, $bundle_version);
     }
     add_action("wp_enqueue_scripts", "add_styles_scripts");
 
