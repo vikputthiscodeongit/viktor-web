@@ -13,11 +13,11 @@ import stylesheet from "../scss/style.scss";
     // }
 
     // Get a CSS element property value
-    function cssValue(el, prop) {
-        const elStyles = window.getComputedStyle(el);
+    // function cssValue(el, prop) {
+    //     const elStyles = window.getComputedStyle(el);
 
-        return elStyles.getPropertyValue(prop);
-    }
+    //     return elStyles.getPropertyValue(prop);
+    // }
 
     // Convert CSS unit to a number
     // function cssUnitToNo(unit) {
@@ -74,6 +74,8 @@ import stylesheet from "../scss/style.scss";
 
         inputDeviceDetector();
 
+        debugMode.init();
+
         main.init();
 
         typeItAbout.init();
@@ -100,8 +102,13 @@ import stylesheet from "../scss/style.scss";
     let debugMode = {};
 
     debugMode.init = function() {
-        if (!debugMode.isSet)
+        console.log("In debugMode.init().");
+
+        if (!debugMode.isSet) {
+            console.log("Exiting function - site is not in development mode!");
+
             return;
+        }
 
         debugMode.setIndicator();
     };
@@ -257,6 +264,7 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7El.addEventListener("wpcf7submit", function(e) {
                 // const formStatus = e.detail.status;
+                // console.log(formStatus);
 
                 // const alertType       = formStatus !== "mail_sent" ?
                 //                             "warning" : "success",
@@ -321,10 +329,9 @@ import stylesheet from "../scss/style.scss";
 
             if (controlWrap) {
                 const input = controlWrap.querySelector(".wpcf7-form-control");
+                const attr  = input.tagName === "TEXTAREA" ? "cols" : "size"
 
-                input.tagName === "TEXTAREA" ?
-                    input.removeAttribute("cols") :
-                    input.removeAttribute("size");
+                input.removeAttribute(attr);
             }
         });
     };
