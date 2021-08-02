@@ -1,6 +1,9 @@
 .wpcf7 {
     &-form {
         .wpcf7-response-output {
+            margin: 2em 0 0;
+            padding: 0.25em 0.75em;
+
             .js & {
                 display: none;
             }
@@ -12,7 +15,7 @@
     }
 
     &-not-valid-tip {
-        margin-top: rem(8px);
+        margin-top: 0.5em;
 
         .js & {
             display: none;

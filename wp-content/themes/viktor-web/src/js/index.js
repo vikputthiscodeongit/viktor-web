@@ -7,10 +7,6 @@ import stylesheet from "../scss/style.scss";
 
 (function() {
     // Helpers
-    // Check if stylesheet has been loaded
-    // function cssLoaded() {
-    //     return cssValue(body, "display") === "flex";
-    // }
 
     // Get a CSS element property value
     // function cssValue(el, prop) {
@@ -28,6 +24,11 @@ import stylesheet from "../scss/style.scss";
     //     }
 
     //     return Number(unit.slice(0, sliceEnd));
+    // }
+
+    // Check if stylesheet has been loaded
+    // function cssLoaded() {
+    //     return cssValue(body, "display") === "flex";
     // }
 
     // Check if viewport is above given breakpoint
@@ -141,17 +142,17 @@ import stylesheet from "../scss/style.scss";
         //     return;
         // }
 
-        main.heightFixer();
+        main.setVhProp();
 
         window.addEventListener("resize", debounce(function() {
-            main.heightFixer();
+            main.setVhProp();
         }, 25));
     };
 
     main.el = document.querySelector("main");
 
-    main.heightFixer = function() {
-        console.log("In main.heightFixer().");
+    main.setVhProp = function() {
+        console.log("In main.setVhProp().");
 
         let vh = html.clientHeight;
 
@@ -230,22 +231,17 @@ import stylesheet from "../scss/style.scss";
     wpcf7.init = function() {
         console.log("In wpcf7.init().");
 
-        if (wpcf7.els.length === 0) {
-            console.log("Exiting function - no WPCF7 elements found!");
-
-            return;
-        }
-
         wpcf7.els.forEach((wpcf7El) => {
-            // The form itself
-            wpcf7.formTransformer(wpcf7El);
+            const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
+
+
+            wpcf7.cleanHtml(wpcf7Form);
 
             wpcf7El.addEventListener("wpcf7invalid", function(e) {
                 wpcf7.invalidInputScroller(e);
             });
 
-            const wpcf7Form        = wpcf7El.querySelector(".wpcf7-form"),
-                  submitButton     = wpcf7Form.querySelector("[type='submit']");
+            const submitButton = wpcf7Form.querySelector("[type='submit']");
                 //   submitButtonText = submitButton.querySelector(".btn__text");
 
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
@@ -288,7 +284,7 @@ import stylesheet from "../scss/style.scss";
             });
 
             // Its <input>s
-            const inputs = wpcf7Form.querySelectorAll(".form__input");
+            const inputs = wpcf7Form.querySelectorAll(".wpcf7-form-control");
 
             inputs.forEach((input) => {
                 if (
@@ -311,14 +307,14 @@ import stylesheet from "../scss/style.scss";
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
 
-    wpcf7.formTransformer = function(wpcf7El) {
-        console.log("In wpcf7.formTransformer().");
 
-        const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
+
+    wpcf7.cleanHtml = function(wpcf7Form) {
+        console.log("In wpcf7.cleanHtml().");
 
         const fields = wpcf7Form.querySelectorAll(".field");
 
-        fields.forEach(function(field) {
+        fields.forEach((field) => {
             const br = field.querySelector("br");
 
             if (br) {
@@ -329,7 +325,7 @@ import stylesheet from "../scss/style.scss";
 
             if (controlWrap) {
                 const input = controlWrap.querySelector(".wpcf7-form-control");
-                const attr  = input.tagName === "TEXTAREA" ? "cols" : "size"
+                const attr  = input.tagName === "TEXTAREA" ? "cols" : "size";
 
                 input.removeAttribute(attr);
             }
