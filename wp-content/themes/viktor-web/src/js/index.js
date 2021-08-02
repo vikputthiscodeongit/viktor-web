@@ -7,6 +7,28 @@ import stylesheet from "../scss/style.scss";
 
 (function() {
     // Helpers
+    // Convert camelCase to kebab-case
+    function camelToKebab(string) {
+        return string.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+    }
+
+    // Get a random integer
+    function randIntUnder(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    // Create a DOM element
+    function createEl(tag, attrs) {
+        const el = document.createElement(tag);
+
+        for (const key in attrs) {
+            const prop = camelToKebab(key);
+
+            el.setAttribute(prop, attrs[key]);
+        }
+
+        return el;
+    }
 
     // Get a CSS element property value
     // function cssValue(el, prop) {
@@ -234,8 +256,11 @@ import stylesheet from "../scss/style.scss";
         wpcf7.els.forEach((wpcf7El) => {
             const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
 
+            wpcf7.captcha.init(wpcf7Form);
 
             wpcf7.cleanHtml(wpcf7Form);
+
+            wpcf7.enableForm(wpcf7Form);
 
             wpcf7El.addEventListener("wpcf7invalid", function(e) {
                 wpcf7.invalidInputScroller(e);
@@ -286,7 +311,13 @@ import stylesheet from "../scss/style.scss";
             // Its <input>s
             const inputs = wpcf7Form.querySelectorAll(".wpcf7-form-control");
 
+            //
+            // TODO: split deze functie af
+            //
             inputs.forEach((input) => {
+                //
+                // TODO: check element properties (minlength, maxlength, pattern)
+                //
                 if (
                     input.classList.contains("wpcf7-validates-as-required") &&
                     // input.value isn't necessarily always empty on form initialization,
@@ -307,7 +338,74 @@ import stylesheet from "../scss/style.scss";
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
 
+    wpcf7.captcha = {
+        uid: null,
 
+        problem: null,
+
+        init: function(wpcf7Form) {
+            console.log("In wpcf7.makeCaptcha().");
+
+            wpcf7.captcha.makeEl(wpcf7Form);
+        },
+
+        makeEl: function(wpcf7Form) {
+            console.log("In wpcf7.makeCaptchaEl().");
+
+            const formSubmitButton = wpcf7Form.querySelector(".wpcf7-submit");
+
+            if (!formSubmitButton) {
+                console.log("Exiting function - no WPCF7 submit button found!");
+
+                return;
+            }
+
+            wpcf7.captcha.uid = randIntUnder(1000);
+
+            const fieldEl = createEl("div", { class: "field field--inline" });
+            const labelEl = createEl("label", { for: `captcha-${wpcf7.captcha.uid}` });
+            const inputEl = createEl("input", {
+                type: "text",
+                name: `captcha-${wpcf7.captcha.uid}`,
+                id: `captcha-${wpcf7.captcha.uid}`,
+                inputmode: "numeric",
+                pattern: "[0-9]*",
+                ariaRequired: "true"
+            });
+
+            fieldEl.append(labelEl, inputEl);
+
+            const submitWrapper = formSubmitButton.parentElement;
+
+            submitWrapper.parentElement.insertBefore(fieldEl, submitWrapper);
+
+            wpcf7.captcha.makeProblem(wpcf7Form);
+        },
+
+        makeProblem: function(wpcf7Form) {
+            console.log("In wpcf7.makeCaptchaProblem().");
+
+            const labelEl = wpcf7Form.querySelector(`label[for='captcha-${wpcf7.captcha.uid}']`);
+
+            if (!labelEl) {
+                console.log("Exiting function - no CAPTCHA <label> found!");
+
+                return;
+            }
+
+            const digit1 = randIntUnder(10),
+                  digit2 = randIntUnder(10),
+                  solution = digit1 + digit2;
+
+            wpcf7.captcha.problem = [digit1, digit2, solution];
+
+            labelEl.textContent = `${digit1} + ${digit2} =`;
+        },
+
+        validate: function(input) {
+            // Code
+        }
+    };
 
     wpcf7.cleanHtml = function(wpcf7Form) {
         console.log("In wpcf7.cleanHtml().");
@@ -329,6 +427,16 @@ import stylesheet from "../scss/style.scss";
 
                 input.removeAttribute(attr);
             }
+        });
+    };
+
+    wpcf7.enableForm = function(wpcf7Form) {
+        console.log("In wpcf7.enableForm().");
+
+        const disabledFieldsets = wpcf7Form.querySelectorAll("fieldset[disabled]");
+
+        disabledFieldsets.forEach((fieldset) => {
+            fieldset.removeAttribute("disabled");
         });
     };
 
