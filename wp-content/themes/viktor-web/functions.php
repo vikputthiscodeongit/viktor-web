@@ -174,8 +174,3 @@
         }
         add_filter("script_loader_tag", "add_script_attributes", 10, 2);
     }
-
-
-    //
-    // WPCF7 - Mathematical CAPTCHA
-    include "includes/wpcf7-maths-captcha.php";

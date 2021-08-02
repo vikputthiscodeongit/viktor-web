@@ -231,8 +231,6 @@ import stylesheet from "../scss/style.scss";
 
         wpcf7.els.forEach((wpcf7El) => {
             // The form itself
-            wpcf7.captcha(wpcf7El);
-
             wpcf7.formTransformer(wpcf7El);
 
             wpcf7El.addEventListener("wpcf7invalid", function(e) {
@@ -304,41 +302,6 @@ import stylesheet from "../scss/style.scss";
     };
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
-
-    wpcf7.captcha = function(wpcf7El) {
-        console.log("In wpcf7.captcha().");
-
-        const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
-
-        const problem = wpcf7Form.querySelector("label[for='wpcf7-mc-answer']");
-
-        if (!problem) {
-            console.log("Exiting function - no WPCF7 form with maths captcha found!");
-
-            return;
-        }
-
-        const hiddenFields = wpcf7Form.querySelectorAll(".wpcf7-mc-hf"),
-              digitInputs  = wpcf7Form.querySelectorAll("input[name^='wpcf7-mc-d']");
-
-        hiddenFields.forEach((field) => {
-            field.style.display = "none";
-        });
-
-        const digits = problem.textContent.match(/[0-9]+/g);
-
-        digitInputs.forEach((input, i) => {
-            const targetDigit = digits[i];
-
-            // Spambots fill in forms real fast. Add a 3 second timeout because they've most likely
-            // already left the page by the time the value gets inserted in the field.
-            setTimeout(() => {
-                if (!input.value) {
-                    input.value = targetDigit;
-                }
-            }, 3000);
-        });
-    };
 
     wpcf7.formTransformer = function(wpcf7El) {
         console.log("In wpcf7.formTransformer().");
