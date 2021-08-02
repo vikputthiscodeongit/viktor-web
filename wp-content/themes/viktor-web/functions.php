@@ -7,11 +7,6 @@
 
 
     //
-    // Custom navigation walker
-    // include "includes/walker-nav-menu-viktor-2020.php";
-
-
-    //
     // Update WordPress's is_email() to comply with the RFC 5322 specification.
     function is_valid_email($is_email, $email, $context) {
         // Use a RegEx instead of FILTER_VALIDATE_EMAIL because FILTER_VALIDATE_EMAIL
