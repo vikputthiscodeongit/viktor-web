@@ -38,17 +38,16 @@
         max-width: rem(720px);
     }
 
-    &__group {
-        margin-top: rem(30px);
+fieldset {
+    margin-bottom: rem(30px);
 
-        @include respond-above(md) {
-            margin-top: rem(40px);
-        }
+    @include respond-above(md) {
+        margin-bottom: rem(40px);
+    }
 
-        &:first-child,
-        &.first-of-class {
-            margin-top: 0;
-        }
+    &:last-child,
+    &:last-of-type {
+        margin-bottom: 0;
     }
 }
 
@@ -62,23 +61,28 @@
         align-items: center;
     }
 
-    .form__group & {
-        margin-top: rem(20px);
+    fieldset & {
+        margin-bottom: rem(20px);
 
         @include respond-above(md) {
-            margin-top: rem(30px);
+            margin-bottom: rem(30px);
         }
 
-        &:first-child {
-            margin-top: 0;
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 }
 
 label {
     display: block;
+    margin-bottom: rem(8px);
     font-family: $headings-font-family;
     font-weight: $headings-font-weight;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 
     .field--ifl & {
         .js & {
