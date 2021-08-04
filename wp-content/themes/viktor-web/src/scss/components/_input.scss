@@ -81,8 +81,14 @@ fieldset {
     }
 
     &--inline {
-        display: flex;
+        display: grid;
+        grid-column-gap: rem(8px);
+        justify-content: flex-start;
         align-items: center;
+
+        > * {
+            grid-row: 1;
+        }
     }
 
     fieldset & {
@@ -132,7 +138,7 @@ label {
     }
 
     .field--inline & {
-        flex-shrink: 0;
+        grid-column: 1;
         margin-bottom: 0;
     }
 }
@@ -174,10 +180,6 @@ textarea {
         }
     }
 
-    .field--inline label + & {
-        margin-left: rem(8px);
-    }
-
     //
     // Input placeholder styling
     &::-webkit-input-placeholder {
@@ -185,10 +187,6 @@ textarea {
     }
 
     &::-moz-placeholder {
-        color: $gray;
-    }
-
-    &:-ms-input-placeholder {
         color: $gray;
     }
 
@@ -228,6 +226,8 @@ input {
     }
 
     .field--inline & {
+        grid-column: 2;
+
         &[inputmode="numeric"] {
             width: rem(64px);
         }

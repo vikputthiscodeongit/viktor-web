@@ -347,7 +347,7 @@ import stylesheet from "../scss/style.scss";
         uid: null,
 
         els: {
-            fieldset: null,
+            wrapper: null,
             field: null,
             label: null,
             input: null
@@ -397,7 +397,6 @@ import stylesheet from "../scss/style.scss";
                         type: "text",
                         name: `input-maths-captcha-${wpcf7.captcha.uid}`,
                         inputmode: "numeric",
-                        pattern: "[0-9]*",
                         ariaRequired: "true"
                     }
                 }
@@ -414,7 +413,7 @@ import stylesheet from "../scss/style.scss";
             console.log("In wpcf7.captcha.makeEls().");
 
             for (const [role, el] of Object.entries(wpcf7.captcha.els)) {
-                if (role === "fieldset")
+                if (role === "wrapper")
                     continue;
 
                 if (el) {
@@ -448,7 +447,7 @@ import stylesheet from "../scss/style.scss";
                 }
             });
 
-            wpcf7.captcha.els.fieldset = wpcf7.captcha.els.field.parentElement;
+            wpcf7.captcha.els.wrapper = wpcf7.captcha.els.field.parentElement;
 
             wpcf7.captcha.observeEl(wpcf7Form, fieldset);
 
@@ -458,12 +457,27 @@ import stylesheet from "../scss/style.scss";
         makeProblem: function(wpcf7Form, i) {
             console.log("In wpcf7.captcha.makeProblem().");
 
+            console.log(i);
+
             if (typeof i === "undefined") {
                 i = 0;
+            }
+
+            console.log(i);
+
+            if (i === 0) {
+                console.log("i is 0!");
 
                 // Show spinner
                 //  > position: absolute over over problem
                 //  > aria-label="Loading..."
+
+                // const spinnerEl = createEl("span", {
+                //     id: `spinner-maths-captcha-${wpcf7.captcha.uid}`,
+                //     class: "spinner"
+                // });
+
+                // wpcf7.captcha.els.field.append(spinnerEl);
             }
 
             const labelEl = wpcf7Form.querySelector(`#label-maths-captcha-${wpcf7.captcha.uid}`);
@@ -503,7 +517,7 @@ import stylesheet from "../scss/style.scss";
             const moCallback = function(mutationRecords) {
                 const record = mutationRecords[0];
 
-                const targetIsCaptcha = record.target === wpcf7.captcha.els.fieldset,
+                const targetIsCaptcha = record.target === wpcf7.captcha.els.wrapper,
                       targetIsField   = record.target === wpcf7.captcha.els.field,
                       targetIsLabel   = record.target === wpcf7.captcha.els.label,
                       targetIsInput   = record.target === wpcf7.captcha.els.input;
