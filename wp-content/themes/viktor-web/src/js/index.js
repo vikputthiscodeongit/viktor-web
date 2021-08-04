@@ -22,9 +22,10 @@ import stylesheet from "../scss/style.scss";
         const el = document.createElement(tag);
 
         for (const key in attrs) {
-            const prop = camelToKebab(key);
+            const prop = camelToKebab(key),
+                  val  = attrs[key];
 
-            el.setAttribute(prop, attrs[key]);
+            el.setAttribute(prop, val);
         }
 
         return el;
@@ -355,12 +356,6 @@ import stylesheet from "../scss/style.scss";
         init: function(wpcf7Form) {
             console.log("In wpcf7.captcha.init().");
 
-            wpcf7.captcha.makeEls(wpcf7Form);
-        },
-
-        makeEls: function(wpcf7Form) {
-            console.log("In wpcf7.captcha.makeEls().");
-
             const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
 
             if (!submitButton) {
@@ -369,82 +364,120 @@ import stylesheet from "../scss/style.scss";
                 return;
             }
 
-            if (wpcf7.captcha.problem === null) {
-                wpcf7.captcha.uid = randIntUnder(1000);
+            wpcf7.captcha.makeUid();
+
+            wpcf7.captcha.makeEls(wpcf7Form);
+        },
+
+        els: function() {
+            const elArray = [
+                {
+                    selector: `.field--captcha-${wpcf7.captcha.uid}`,
+                    el: "div",
+                    attrs: {
+                        class: `field field--inline field--captcha-${wpcf7.captcha.uid}`
+                    }
+                },
+                {
+                    selector: `#label-captcha-${wpcf7.captcha.uid}`,
+                    el: "label",
+                    attrs: {
+                        id: `label-captcha-${wpcf7.captcha.uid}`,
+                        for: `input-captcha-${wpcf7.captcha.uid}`
+                    }
+                },
+                {
+                    selector: `#input-captcha-${wpcf7.captcha.uid}`,
+                    el: "input",
+                    attrs: {
+                        id: `input-captcha-${wpcf7.captcha.uid}`,
+                        type: "text",
+                        name: `input-captcha-${wpcf7.captcha.uid}`,
+                        inputmode: "numeric",
+                        pattern: "[0-9]*",
+                        ariaRequired: "true"
+                    }
+                }
+            ];
+
+            return elArray;
+        },
+
+        makeUid: function() {
+            wpcf7.captcha.uid = randIntUnder(1000);
+        },
+
+        makeEls: function(wpcf7Form) {
+            console.log("In wpcf7.captcha.makeEls().");
+
+            if (!wpcf7.captcha.uid || !wpcf7.captcha.problem || !wpcf7.captcha.problemMakerId) {
+                wpcf7.captcha.makeUid();
             }
 
-            // Field
-            let fieldEl = document.querySelector(`.field--captcha-${wpcf7.captcha.uid}`);
-
-            if (fieldEl) {
-                fieldEl.remove();
-            }
-
-            fieldEl = createEl("div", {
-                class: `field field--inline field--captcha-${wpcf7.captcha.uid}`
-            });
-
-            // Label
-            let labelEl = document.querySelector(`#label-captcha-${wpcf7.captcha.uid}`);
-
-            if (labelEl) {
-                labelEl.remove();
-            }
-
-            labelEl = createEl("label", {
-                for: `input-captcha-${wpcf7.captcha.uid}`,
-                id: `label-captcha-${wpcf7.captcha.uid}`
-            });
-
-            // Input
-            let inputEl = document.querySelector(`#input-captcha-${wpcf7.captcha.uid}`);
-
-            if (inputEl) {
-                inputEl.remove();
-            }
-
-            inputEl = createEl("input", {
-                type: "text",
-                name: `input-captcha-${wpcf7.captcha.uid}`,
-                id: `input-captcha-${wpcf7.captcha.uid}`,
-                inputmode: "numeric",
-                pattern: "[0-9]*",
-                ariaRequired: "true"
-            });
-
-            // Merge
-            fieldEl.append(labelEl, inputEl);
-
-            // Append to DOM
-            const submitWrapper = submitButton.parentElement,
+            const elArray = wpcf7.captcha.els();
+            const submitButton  = wpcf7Form.querySelector(".wpcf7-submit"),
+                  submitWrapper = submitButton.parentElement,
                   fieldset      = submitWrapper.parentElement;
+            let fieldEl;
 
-            fieldset.insertBefore(fieldEl, submitWrapper);
+            elArray.forEach((elObj, i) => {
+                let el = document.querySelector(elObj.selector);
+
+                if (el) {
+                    el.remove();
+                }
+
+                el = createEl(elObj.el, elObj.attrs);
+
+                if (elObj.el === "div") {
+                    fieldEl = el;
+
+                    fieldset.insertBefore(el, submitWrapper);
+                } else {
+                    fieldEl.append(el);
+                }
+            });
 
             wpcf7.captcha.observeEl(wpcf7Form, fieldset);
 
             wpcf7.captcha.makeProblem(wpcf7Form);
         },
 
-        makeProblem: function(wpcf7Form) {
+        makeProblem: function(wpcf7Form, i) {
             console.log("In wpcf7.captcha.makeProblem().");
+
+            if (typeof i === "undefined") {
+                //
+                // TODO: maak global
+                //
+                var i = 0;
+            }
+
+            console.log(i);
 
             const labelEl = wpcf7Form.querySelector(`#label-captcha-${wpcf7.captcha.uid}`);
 
             const digit1 = randIntUnder(10),
-                  digit2 = randIntUnder(10),
-                  solution = digit1 + digit2;
+                  digit2 = randIntUnder(10);
 
-            wpcf7.captcha.problem = [digit1, digit2, solution];
+            wpcf7.captcha.problem = [digit1, digit2];
 
             labelEl.textContent = `${digit1} + ${digit2} =`;
 
             // validateAnswer
 
-            const timeout = debugMode.isSet ? 2500 : 15000;
+            let timeout
+
+            if (i < 30) {
+                timeout = 100;
+            } else {
+                timeout = debugMode.isSet ? 2500 : 15000;
+            }
+
+            i++;
 
             wpcf7.captcha.problemMakerId = setTimeout(() => {
-                wpcf7.captcha.makeProblem(wpcf7Form)
+                wpcf7.captcha.makeProblem(wpcf7Form, i);
             }, timeout);
         },
 
@@ -454,7 +487,7 @@ import stylesheet from "../scss/style.scss";
             const moCallback = function(mutationRecords) {
                 const record = mutationRecords[0];
 
-                if (record.target.id === `label-captcha-${wpcf7.captcha.uid}`) {
+                if (record.target.nodeName === "LABEL") {
                     console.log("CAPTCHA <label> has been mutated.");
 
                     return;
@@ -463,15 +496,7 @@ import stylesheet from "../scss/style.scss";
                 if (record.addedNodes.length > 0 || record.removedNodes.length > 0) {
                     console.log("CAPTCHA has been tampered with!");
 
-                    const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
-
-                    wpcf7.disableSubmitButton(submitButton);
-
-                    clearTimeout(wpcf7.captcha.problemMakerId);
-
-                    mo.disconnect();
-
-                    wpcf7.captcha.makeEls(wpcf7Form);
+                    wpcf7.captcha.regenerate(wpcf7Form, mo);
                 }
             };
 
@@ -486,27 +511,29 @@ import stylesheet from "../scss/style.scss";
             mo.observe(el, moOptions);
         },
 
+        regenerate: function(wpcf7Form, captchaMo) {
+            const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
+
+            wpcf7.disableSubmitButton(submitButton);
+
+            clearTimeout(wpcf7.captcha.problemMakerId);
+
+            captchaMo.disconnect();
+
+            wpcf7.captcha.makeEls(wpcf7Form);
+        },
+
         validateAnswer: function(input) {
             console.log("In wpcf7.captcha.validateAnswer().");
 
             // submit button wordt enabled als de captcha correct is ingevuld
 
-            // indien <label> of <input> verwijderd wordt
-            //  1. disable submit
-            //    > het kan zo zijn dat er een correcte invoer was voordat de boel verwijderd werd en de submit daarom enabled is. in dit geval zou de captcha de volgende keer niet kunnen regenerate
-            //  2. regenerate
-
             // on submit
             //  * check of element daadwerkelijk bestaat
-            //    > Indien niet, behandel het als scenario "indien <label> of <input> verwijderd"
-            //  * validate nogmaals het antwoord
+            //    > Indien niet, behandel het als scenario "<label> of <input> verwijderd"
 
             // on input
             //  * validate het antwoord
-
-            // on regenerate
-            //  * regenerate
-            //  * indien er een antwoord is: validate het antwoord
         }
     };
 
