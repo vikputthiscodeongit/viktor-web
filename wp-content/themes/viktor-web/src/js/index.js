@@ -254,7 +254,7 @@ import stylesheet from "../scss/style.scss";
         wpcf7.els.forEach((wpcf7El) => {
             const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
 
-            wpcf7.captcha.init(wpcf7Form);
+            wpcf7.mc.init(wpcf7Form);
 
             wpcf7.form.cleanHtml(wpcf7Form);
 
@@ -343,9 +343,9 @@ import stylesheet from "../scss/style.scss";
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
 
-    wpcf7.captcha = {
+    wpcf7.mc = {
         init: function(wpcf7Form) {
-            console.log("In wpcf7.captcha.init().");
+            console.log("In wpcf7.mc.init().");
 
             const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
 
@@ -355,7 +355,7 @@ import stylesheet from "../scss/style.scss";
                 return;
             }
 
-            wpcf7.captcha.els.generate(wpcf7Form);
+            wpcf7.mc.els.generate(wpcf7Form);
         },
 
         id: null,
@@ -375,26 +375,26 @@ import stylesheet from "../scss/style.scss";
                         el: "div",
                         role: "field",
                         attrs: {
-                            id: `field-maths-captcha-${wpcf7.captcha.id}`,
-                            class: `field field--inline`,
-                            dataMcGenerating: ""
+                            id: "wpcf7mc-field",
+                            class: "field field--inline",
+                            dataWpcf7mcGenerating: ""
                         }
                     },
                     {
                         el: "label",
                         role: "label",
                         attrs: {
-                            id: `label-maths-captcha-${wpcf7.captcha.id}`,
-                            for: `input-maths-captcha-${wpcf7.captcha.id}`
+                            id: "wpcf7mc-label",
+                            for: "wpcf7mc-input"
                         }
                     },
                     {
                         el: "input",
                         role: "input",
                         attrs: {
-                            id: `input-maths-captcha-${wpcf7.captcha.id}`,
+                            id: "wpcf7mc-input",
                             type: "text",
-                            name: `input-maths-captcha-${wpcf7.captcha.id}`,
+                            name: "wpcf7mc-input",
                             inputmode: "numeric",
                             ariaRequired: "true"
                         }
@@ -403,7 +403,7 @@ import stylesheet from "../scss/style.scss";
                         el: "span",
                         role: "loader",
                         attrs: {
-                            id: `loader-maths-captcha-${wpcf7.captcha.id}`,
+                            id: "wpcf7mc-loader",
                             class: "spinner",
                             ariaBusy: "true",
                             ariaLive: "polite"
@@ -415,13 +415,13 @@ import stylesheet from "../scss/style.scss";
             },
 
             generate: function(wpcf7Form) {
-                console.log("In wpcf7.captcha.els.generate().");
+                console.log("In wpcf7.mc.els.generate().");
 
-                wpcf7.captcha.els.remove();
+                wpcf7.mc.els.remove();
 
-                wpcf7.captcha.id = randIntUnder(1000);
+                wpcf7.mc.id = randIntUnder(1000);
 
-                const elObjArr = wpcf7.captcha.els.objArr();
+                const elObjArr = wpcf7.mc.els.objArr();
 
                 const submitButton  = wpcf7Form.querySelector(".wpcf7-submit"),
                       submitWrapper = submitButton.parentElement,
@@ -430,30 +430,30 @@ import stylesheet from "../scss/style.scss";
                 elObjArr.forEach((elObj) => {
                     const el = createEl(elObj.el, elObj.attrs);
 
-                    wpcf7.captcha.els.nodes[elObj.role] = el;
+                    wpcf7.mc.els.nodes[elObj.role] = el;
 
                     if (elObj.role === "field") {
                         fieldset.insertBefore(el, submitWrapper);
                     } else {
                         if (elObj.role === "input") {
                             el.addEventListener("input", () => {
-                                wpcf7.captcha.validate(wpcf7Form);
+                                wpcf7.mc.validate(wpcf7Form);
                             });
                         }
 
-                        wpcf7.captcha.els.nodes.field.append(el);
+                        wpcf7.mc.els.nodes.field.append(el);
                     }
                 });
 
-                wpcf7.captcha.els.nodes.wrapper = wpcf7.captcha.els.nodes.field.parentElement;
+                wpcf7.mc.els.nodes.wrapper = wpcf7.mc.els.nodes.field.parentElement;
 
-                wpcf7.captcha.els.observe(wpcf7Form, fieldset);
+                wpcf7.mc.els.observe(wpcf7Form, fieldset);
 
-                wpcf7.captcha.problem.generate(wpcf7Form);
+                wpcf7.mc.problem.generate(wpcf7Form);
             },
 
             remove: function() {
-                for (const [role, el] of Object.entries(wpcf7.captcha.els.nodes)) {
+                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
                     if (role === "wrapper")
                         continue;
 
@@ -464,7 +464,7 @@ import stylesheet from "../scss/style.scss";
             },
 
             observe: function(wpcf7Form, wrapperEl) {
-                console.log("In wpcf7.captcha.els.observe().");
+                console.log("In wpcf7.mc.els.observe().");
 
                 const moCallback = function(mutationRecords) {
                     console.log(mutationRecords);
@@ -473,13 +473,13 @@ import stylesheet from "../scss/style.scss";
                         const target = record.target,
                               type   = record.type;
 
-                        const fieldEl  = wpcf7.captcha.els.nodes.field,
-                              loaderEl = wpcf7.captcha.els.nodes.loader;
+                        const fieldEl  = wpcf7.mc.els.nodes.field,
+                              loaderEl = wpcf7.mc.els.nodes.loader;
 
-                        const targetIsWrapper = target === wpcf7.captcha.els.nodes.wrapper,
+                        const targetIsWrapper = target === wpcf7.mc.els.nodes.wrapper,
                               targetIsField   = target === fieldEl,
-                              targetIsLabel   = target === wpcf7.captcha.els.nodes.label,
-                              targetIsInput   = target === wpcf7.captcha.els.nodes.input,
+                              targetIsLabel   = target === wpcf7.mc.els.nodes.label,
+                              targetIsInput   = target === wpcf7.mc.els.nodes.input,
                               targetIsLoader  = target === loaderEl;
                         const targetIsCaptchaEl = targetIsField || targetIsLabel || targetIsInput || targetIsLoader;
 
@@ -491,14 +491,14 @@ import stylesheet from "../scss/style.scss";
 
                         if (
                             targetIsWrapper && nodesAreDeleted && record.removedNodes[0] === fieldEl ||
-                            targetIsCaptchaEl && typeIsAttributes && record.attributeName !== "data-mc-generating" ||
+                            targetIsCaptchaEl && typeIsAttributes && record.attributeName !== "data-wpcf7mc-generating" ||
                             targetIsField && typeIsChildList && nodesAreAdded ||
                             targetIsField && typeIsChildList && nodesAreDeleted && record.removedNodes[0] !== loaderEl ||
                             targetIsLabel && !typeIsChildList
                         ) {
                             console.log("CAPTCHA has been tampered with!");
 
-                            wpcf7.captcha.regenerate(wpcf7Form, mo);
+                            wpcf7.mc.regenerate(wpcf7Form, mo);
                         } else if (targetIsLabel) {
                             console.log("CAPTCHA <label>'s content has been mutated.");
 
@@ -525,7 +525,7 @@ import stylesheet from "../scss/style.scss";
             digits: null,
 
             generate: function(wpcf7Form, i) {
-                console.log("In wpcf7.captcha.problem.generate().");
+                console.log("In wpcf7.mc.problem.generate().");
 
                 if (typeof i === "undefined") {
                     i = 0;
@@ -534,13 +534,13 @@ import stylesheet from "../scss/style.scss";
                 const digit1 = randIntUnder(10),
                       digit2 = randIntUnder(10);
 
-                wpcf7.captcha.problem.digits = [digit1, digit2];
+                wpcf7.mc.problem.digits = [digit1, digit2];
 
-                const labelEl = wpcf7Form.querySelector(`#label-maths-captcha-${wpcf7.captcha.id}`);
+                const labelEl = wpcf7Form.querySelector("#wpcf7mc-label");
 
                 labelEl.textContent = `${digit1} + ${digit2} =`;
 
-                wpcf7.captcha.validate(wpcf7Form);
+                wpcf7.mc.validate(wpcf7Form);
 
                 const iterationCutoff = 23;
                 let timeout;
@@ -549,9 +549,9 @@ import stylesheet from "../scss/style.scss";
                     timeout = 125;
                 } else {
                     if (i === iterationCutoff) {
-                        wpcf7.captcha.els.nodes.field.removeAttribute("data-mc-generating");
+                        wpcf7.mc.els.nodes.field.removeAttribute("data-wpcf7mc-generating");
 
-                        wpcf7.captcha.els.nodes.loader.remove();
+                        wpcf7.mc.els.nodes.loader.remove();
                     }
 
                     timeout = debugMode.isSet ? 2500 : 15000;
@@ -559,8 +559,8 @@ import stylesheet from "../scss/style.scss";
 
                 i++;
 
-                wpcf7.captcha.problem.id = setTimeout(() => {
-                    wpcf7.captcha.problem.generate(wpcf7Form, i);
+                wpcf7.mc.problem.id = setTimeout(() => {
+                    wpcf7.mc.problem.generate(wpcf7Form, i);
                 }, timeout);
             }
         },
@@ -570,18 +570,18 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.submit.button.disable(submitButton);
 
-            clearTimeout(wpcf7.captcha.problem.id);
+            clearTimeout(wpcf7.mc.problem.id);
 
             captchaMo.disconnect();
 
-            wpcf7.captcha.els.generate(wpcf7Form);
+            wpcf7.mc.els.generate(wpcf7Form);
         },
 
         validate: function(wpcf7Form) {
-            console.log("In wpcf7.captcha.validate().");
+            console.log("In wpcf7.mc.validate().");
 
-            const userInput = Number(wpcf7.captcha.els.nodes.input.value);
-            const answer = wpcf7.captcha.problem.digits[0] + wpcf7.captcha.problem.digits[1];
+            const userInput = Number(wpcf7.mc.els.nodes.input.value);
+            const answer = wpcf7.mc.problem.digits[0] + wpcf7.mc.problem.digits[1];
 
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
@@ -606,12 +606,6 @@ import stylesheet from "../scss/style.scss";
             const fields = wpcf7Form.querySelectorAll(".field");
 
             fields.forEach((field) => {
-                const br = field.querySelector("br");
-
-                if (br) {
-                    br.parentNode.removeChild(br);
-                }
-
                 const controlWrap = field.querySelector(".wpcf7-form-control-wrap");
 
                 if (controlWrap) {
@@ -632,7 +626,7 @@ import stylesheet from "../scss/style.scss";
                 fieldset.removeAttribute("disabled");
             });
 
-            if (wpcf7.captcha.id === null) {
+            if (wpcf7.mc.id === null) {
                 const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
 
                 wpcf7.submit.button.enable(submitButton);

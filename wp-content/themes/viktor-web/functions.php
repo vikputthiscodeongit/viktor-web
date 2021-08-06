@@ -174,3 +174,13 @@
         }
         add_filter("script_loader_tag", "add_script_attributes", 10, 2);
     }
+
+
+    //
+    // Contact Form 7
+    // Disable automatic insertion of <p> & <br> elements.
+    add_filter("wpcf7_autop_or_not", "__return_false");
+
+
+    // Maths CAPTCHA
+    include_once(THEME_DIR_PATH . "/includes/wpcf7mc.php");
