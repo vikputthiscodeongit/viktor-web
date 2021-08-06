@@ -6,6 +6,7 @@ WPCF7:
  * Variabelen die een element bevatten, moeten eindigen op "el"
  * Maak submit button in JavaScript (indien niet aanwezig)
  * Laat submit button ten alle tijden enabled, op submit voer je namelijk eerst een CAPTCHA validation uit. Indien fail > return false (laat form submit niet toe).
+ * observer is echt heel lelek.
  * CAPTCHA submit werkend maken
  * <input> border matchen met state
  * <input> validation messages in een .alert stoppen
