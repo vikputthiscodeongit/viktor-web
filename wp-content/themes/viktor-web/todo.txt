@@ -1,4 +1,11 @@
 WPCF7:
+ * Sommige variabelen zitten nu in de opslag
+   > loop functies na
+ * "fieldset" kan op sommige plekken beter "wrapper" worden?
+   > Dingen die ik creëer wrapper, bij selecteren uit gaan van fieldset? Lijkt logisch, immers gaat enableForm ook uit van een form met fieldset als field wrapper.
+ * Variabelen die een element bevatten, moeten eindigen op "el"
+ * Maak submit button in JavaScript (indien niet aanwezig)
+ * Laat submit button ten alle tijden enabled, op submit voer je namelijk eerst een CAPTCHA validation uit. Indien fail > return false (laat form submit niet toe).
  * CAPTCHA submit werkend maken
  * <input> border matchen met state
  * <input> validation messages in een .alert stoppen
