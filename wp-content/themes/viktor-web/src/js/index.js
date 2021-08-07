@@ -344,18 +344,10 @@ import stylesheet from "../scss/style.scss";
     wpcf7.els = document.querySelectorAll(".wpcf7");
 
     wpcf7.mc = {
-        init: function(wpcf7Form) {
+        init: function(wpcf7FormEl) {
             console.log("In wpcf7.mc.init().");
 
-            const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
-
-            if (!submitButton) {
-                console.log("Exiting function - no WPCF7 submit button found!");
-
-                return;
-            }
-
-            wpcf7.mc.els.generate(wpcf7Form);
+            wpcf7.mc.generate(wpcf7FormEl);
         },
 
         id: null,
@@ -376,8 +368,7 @@ import stylesheet from "../scss/style.scss";
                         role: "field",
                         attrs: {
                             id: "wpcf7mc-field",
-                            class: "field field--inline",
-                            dataWpcf7mcGenerating: ""
+                            class: "field field--inline"
                         }
                     },
                     {
@@ -414,18 +405,13 @@ import stylesheet from "../scss/style.scss";
                 return array;
             },
 
-            generate: function(wpcf7Form) {
+            generate: function(wpcf7FormEl) {
                 console.log("In wpcf7.mc.els.generate().");
-
-                wpcf7.mc.els.remove();
-
-                wpcf7.mc.id = randIntUnder(1000);
 
                 const elObjArr = wpcf7.mc.els.objArr();
 
-                const submitButton  = wpcf7Form.querySelector(".wpcf7-submit"),
-                      submitWrapper = submitButton.parentElement,
-                      fieldset      = submitWrapper.parentElement;
+                const sbFieldsetEl = wpcf7.submit.els.nodes.fieldset,
+                      sbFieldEl    = wpcf7.submit.els.nodes.field;
 
                 elObjArr.forEach((elObj) => {
                     const el = createEl(elObj.el, elObj.attrs);
@@ -433,26 +419,28 @@ import stylesheet from "../scss/style.scss";
                     wpcf7.mc.els.nodes[elObj.role] = el;
 
                     if (elObj.role === "field") {
-                        fieldset.insertBefore(el, submitWrapper);
+                        sbFieldsetEl.insertBefore(el, sbFieldEl);
                     } else {
+                        wpcf7.mc.els.nodes.field.append(el);
+
                         if (elObj.role === "input") {
                             el.addEventListener("input", () => {
-                                wpcf7.mc.validate(wpcf7Form);
+                                wpcf7.mc.validate();
                             });
                         }
-
-                        wpcf7.mc.els.nodes.field.append(el);
                     }
                 });
 
-                wpcf7.mc.els.nodes.wrapper = wpcf7.mc.els.nodes.field.parentElement;
-
-                wpcf7.mc.els.observe(wpcf7Form, fieldset);
-
-                wpcf7.mc.problem.generate(wpcf7Form);
+                //
+                // TODO: Als je deze minder vreselijk kan maken, dan mag hij erin blijven.
+                // Anders verwijderen, en parameters van functies die bij wpcf7.mc.generate() worden gecalled cleanen.
+                //
+                wpcf7.mc.els.observe(wpcf7FormEl, sbFieldsetEl);
             },
 
             remove: function() {
+                console.log("In wpcf7.mc.els.remove().");
+
                 for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
                     if (role === "wrapper")
                         continue;
@@ -463,7 +451,7 @@ import stylesheet from "../scss/style.scss";
                 }
             },
 
-            observe: function(wpcf7Form, wrapperEl) {
+            observe: function(wpcf7FormEl, wrapperEl) {
                 console.log("In wpcf7.mc.els.observe().");
 
                 const moCallback = function(mutationRecords) {
@@ -476,7 +464,7 @@ import stylesheet from "../scss/style.scss";
                         const fieldEl  = wpcf7.mc.els.nodes.field,
                               loaderEl = wpcf7.mc.els.nodes.loader;
 
-                        const targetIsWrapper = target === wpcf7.mc.els.nodes.wrapper,
+                        const targetIsWrapper = target === wpcf7.submit.els.nodes.fieldset,
                               targetIsField   = target === fieldEl,
                               targetIsLabel   = target === wpcf7.mc.els.nodes.label,
                               targetIsInput   = target === wpcf7.mc.els.nodes.input,
@@ -498,7 +486,7 @@ import stylesheet from "../scss/style.scss";
                         ) {
                             console.log("CAPTCHA has been tampered with!");
 
-                            wpcf7.mc.regenerate(wpcf7Form, mo);
+                            wpcf7.mc.regenerate(wpcf7FormEl, mo);
                         } else if (targetIsLabel) {
                             console.log("CAPTCHA <label>'s content has been mutated.");
 
@@ -524,31 +512,44 @@ import stylesheet from "../scss/style.scss";
 
             digits: null,
 
-            generate: function(wpcf7Form, i) {
+            generate: function() {
                 console.log("In wpcf7.mc.problem.generate().");
-
-                if (typeof i === "undefined") {
-                    i = 0;
-                }
 
                 const digit1 = randIntUnder(10),
                       digit2 = randIntUnder(10);
 
                 wpcf7.mc.problem.digits = [digit1, digit2];
+            },
 
-                const labelEl = wpcf7Form.querySelector("#wpcf7mc-label");
+            insert: function(wpcf7FormEl, i) {
+                console.log("In wpcf7.mc.problem.insert().");
+
+                if (i === 0) {
+                    wpcf7.mc.els.nodes.field.setAttribute("data-wpcf7mc-generating", "");
+                }
+
+                const labelEl = wpcf7.mc.els.nodes.label;
+
+                const digit1 = wpcf7.mc.problem.digits[0],
+                      digit2 = wpcf7.mc.problem.digits[1];
 
                 labelEl.textContent = `${digit1} + ${digit2} =`;
 
-                wpcf7.mc.validate(wpcf7Form);
+                wpcf7.mc.validate();
 
-                const iterationCutoff = 23;
+                wpcf7.mc.problem.scheduleNext(wpcf7FormEl, i);
+            },
+
+            scheduleNext: function(wpcf7FormEl, i) {
+                console.log("In wpcf7.mc.problem.scheduleNext().");
+
+                const problemCutoff = 23;
                 let timeout;
 
-                if (i < iterationCutoff) {
+                if (i < problemCutoff) {
                     timeout = 125;
                 } else {
-                    if (i === iterationCutoff) {
+                    if (i === problemCutoff) {
                         wpcf7.mc.els.nodes.field.removeAttribute("data-wpcf7mc-generating");
 
                         wpcf7.mc.els.nodes.loader.remove();
@@ -560,24 +561,44 @@ import stylesheet from "../scss/style.scss";
                 i++;
 
                 wpcf7.mc.problem.id = setTimeout(() => {
-                    wpcf7.mc.problem.generate(wpcf7Form, i);
+                    wpcf7.mc.generate(wpcf7FormEl, i);
                 }, timeout);
             }
         },
 
-        regenerate: function(wpcf7Form, captchaMo) {
-            const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
+        generate: function(wpcf7FormEl, i) {
+            console.log("In wpcf7.mc.generate().");
 
-            wpcf7.submit.button.disable(submitButton);
+            if (typeof i === "undefined") {
+                i = 0;
+            }
+
+            console.log(i);
+
+            wpcf7.mc.problem.generate();
+
+            if (i === 0) {
+                wpcf7.mc.els.remove();
+
+                wpcf7.submit.els.assignVars(wpcf7FormEl);
+
+                wpcf7.mc.els.generate(wpcf7FormEl);
+            }
+
+            wpcf7.mc.problem.insert(wpcf7FormEl, i);
+        },
+
+        regenerate: function(wpcf7Form, captchaMo) {
+            console.log("In wpcf7.mc.regenerate().");
 
             clearTimeout(wpcf7.mc.problem.id);
 
             captchaMo.disconnect();
 
-            wpcf7.mc.els.generate(wpcf7Form);
+            wpcf7.mc.generate(wpcf7Form);
         },
 
-        validate: function(wpcf7Form) {
+        validate: function() {
             console.log("In wpcf7.mc.validate().");
 
             const userInput = Number(wpcf7.mc.els.nodes.input.value);
@@ -586,22 +607,13 @@ import stylesheet from "../scss/style.scss";
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
 
-            const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
-
-            if (answerValid) {
-                wpcf7.submit.button.enable(submitButton);
-            } else {
-                wpcf7.submit.button.disable(submitButton);
-            }
+            return answerValid;
         }
     };
 
     wpcf7.form = {
         cleanHtml: function(wpcf7Form) {
             console.log("In wpcf7.form.cleanHtml().");
-
-            // Disable form send via PHP.
-            wpcf7Form.removeAttribute("action");
 
             const fields = wpcf7Form.querySelectorAll(".field");
 
@@ -625,12 +637,6 @@ import stylesheet from "../scss/style.scss";
             disabledFieldsets.forEach((fieldset) => {
                 fieldset.removeAttribute("disabled");
             });
-
-            if (wpcf7.mc.id === null) {
-                const submitButton = wpcf7Form.querySelector(".wpcf7-submit");
-
-                wpcf7.submit.button.enable(submitButton);
-            }
         }
     };
 
@@ -694,100 +700,29 @@ import stylesheet from "../scss/style.scss";
                 button: null
             },
 
-            objArr: function() {
-                const array = [
-                    {
-                        el: "fieldset",
-                        role: "fieldset",
-                        attrs: {
-                            dataJsGenerated: ""
-                        }
-                    },
-                    {
-                        el: "div",
-                        role: "field",
-                        attrs: {
-                            class: "field",
-                            dataJsGenerated: ""
-                        }
-                    },
-                    {
-                        el: "input",
-                        role: "button",
-                        attrs: {
-                            type: "submit",
-                            class: "wpcf7-form-control wpcf7-submit btn btn--submit",
-                            value: "Send",
-                            dataJsGenerated: ""
-                        }
-                    }
-                ];
+            assignVars: function(wpcf7FormEl) {
+                console.log("In wpcf7.submit.els.assignVars().");
 
-                return array;
-            },
+                const buttonEl = wpcf7FormEl.querySelector(".wpcf7-submit");
 
-            generate: function(wpcf7Form) {
-                console.log("In wpcf7.submit.els.generate().");
+                if (!buttonEl) {
+                    console.log("Exiting function - no submit button found within this form!");
 
-                const buttonEl = wpcf7Form.querySelector(".wpcf7-submit");
-
-                if (buttonEl) {
-                    console.log("A submit button already exists. Only setting some variables!");
-
-                    wpcf7.submit.nodes.button   = buttonEl;
-                    wpcf7.submit.nodes.field    = buttonEl.parentElement;
-                    wpcf7.submit.nodes.fieldset = wpcf7.submit.nodes.field.parentElement;
-                } else {
-                    console.log("No submit button exists. Creating one now!");
-
-                    const elObjArr = wpcf7.submit.els.objArr();
-
-                    const lastFieldset = wpcf7Form.querySelector("fieldset:last-of-type");
-
-                    elObjArr.forEach((elObj) => {
-                        const el = createEl(elObj.el, elObj.attrs);
-
-                        wpcf7.submit.els.nodes[elObj.role] = el;
-
-                        if (elObj.role === "fieldset") {
-                            wpcf7Form.insertBefore(el, lastFieldset.nextSibling);
-                        }
-
-                        if (elObj.role === "field") {
-                            lastFieldset.append(el);
-                        }
-
-                        if (elObj.role === "button") {
-                            lastFieldset.firstElementChild.append(el);
-                        }
-                    });
-                }
-            }
-        },
-
-        button: {
-            disable: function(button) {
-                console.log("In wpcf7.submit.button.disable()");
-
-                if (!button.hasAttribute("disabled")) {
-                    button.setAttribute("disabled", "");
+                    return;
                 }
 
-                if (button.getAttribute("type") === "submit") {
-                    button.setAttribute("type", "button");
-                }
-            },
+                const fieldEl    = buttonEl.parentElement,
+                      fieldsetEl = fieldEl.parentElement;
 
-            enable: function(button) {
-                console.log("In wpcf7.submit.button.enable()");
+                if (fieldsetEl.tagName !== "FIELDSET") {
+                    console.log("Exiting function - submit button's field must be wrapped in a <fieldset>.");
 
-                if (button.getAttribute("type") !== "submit") {
-                    button.setAttribute("type", "submit");
+                    return;
                 }
 
-                if (button.hasAttribute("disabled")) {
-                    button.removeAttribute("disabled");
-                }
+                wpcf7.submit.els.nodes.button   = buttonEl;
+                wpcf7.submit.els.nodes.field    = fieldEl;
+                wpcf7.submit.els.nodes.fieldset = fieldsetEl;
             }
         }
     };
