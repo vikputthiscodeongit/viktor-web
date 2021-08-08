@@ -354,7 +354,6 @@ import stylesheet from "../scss/style.scss";
 
         els: {
             nodes: {
-                wrapper: null,
                 field: null,
                 label: null,
                 input: null,
@@ -408,6 +407,10 @@ import stylesheet from "../scss/style.scss";
             generate: function(wpcf7FormEl) {
                 console.log("In wpcf7.mc.els.generate().");
 
+                wpcf7.mc.els.remove();
+
+                wpcf7.submit.els.assignVars(wpcf7FormEl);
+
                 const elObjArr = wpcf7.mc.els.objArr();
 
                 const sbFieldsetEl = wpcf7.submit.els.nodes.fieldset,
@@ -431,11 +434,8 @@ import stylesheet from "../scss/style.scss";
                     }
                 });
 
-                //
-                // TODO: Als je deze minder vreselijk kan maken, dan mag hij erin blijven.
-                // Anders verwijderen, en parameters van functies die bij wpcf7.mc.generate() worden gecalled cleanen.
-                //
-                wpcf7.mc.els.observe(wpcf7FormEl, sbFieldsetEl);
+                wpcf7.mc.els.observe.fieldset.do(wpcf7FormEl);
+                wpcf7.mc.els.observe.field.do(wpcf7FormEl);
             },
 
             remove: function() {
@@ -451,59 +451,85 @@ import stylesheet from "../scss/style.scss";
                 }
             },
 
-            observe: function(wpcf7FormEl, wrapperEl) {
-                console.log("In wpcf7.mc.els.observe().");
+            observe: {
+                fieldset: {
+                    id: null,
 
-                const moCallback = function(mutationRecords) {
-                    console.log(mutationRecords);
+                    do: function(wpcf7FormEl) {
+                        console.log("In wpcf7.mc.els.observe.fieldset.do().");
 
-                    mutationRecords.forEach((record) => {
-                        const target = record.target,
-                              type   = record.type;
+                        const fieldsetEl = wpcf7.submit.els.nodes.fieldset,
+                              fieldEl    = wpcf7.mc.els.nodes.field;
+
+                        const callback = function(mutationRecords) {
+                            mutationRecords.forEach((record) => {
+                                const nodesAreDeleted = record.removedNodes.length > 0;
+
+                                if (nodesAreDeleted && record.removedNodes[0] === fieldEl) {
+                                    console.log("CAPTCHA .field has been removed!");
+
+                                    wpcf7.mc.regenerate(wpcf7FormEl);
+                                }
+                            });
+                        };
+
+                        const options = {
+                            childList: true,
+                            attributes: true
+                        };
+
+                        wpcf7.mc.els.observe.fieldset.id = new MutationObserver(callback);
+
+                        wpcf7.mc.els.observe.fieldset.id.observe(fieldsetEl, options);
+                    }
+                },
+
+                field: {
+                    id: null,
+
+                    do: function(wpcf7FormEl) {
+                        console.log("In wpcf7.mc.els.observe.field.do().");
 
                         const fieldEl  = wpcf7.mc.els.nodes.field,
+                              labelEl  = wpcf7.mc.els.nodes.label,
                               loaderEl = wpcf7.mc.els.nodes.loader;
 
-                        const targetIsWrapper = target === wpcf7.submit.els.nodes.fieldset,
-                              targetIsField   = target === fieldEl,
-                              targetIsLabel   = target === wpcf7.mc.els.nodes.label,
-                              targetIsInput   = target === wpcf7.mc.els.nodes.input,
-                              targetIsLoader  = target === loaderEl;
-                        const targetIsCaptchaEl = targetIsField || targetIsLabel || targetIsInput || targetIsLoader;
+                        const callback = function(mutationRecords) {
+                            mutationRecords.forEach((record) => {
+                                const typeIsAttributes = record.type === "attributes",
+                                      typeIsChildList  = record.type === "childList";
 
-                        const typeIsAttributes = type === "attributes",
-                              typeIsChildList  = type === "childList";
+                                const nodesAreDeleted = record.removedNodes.length > 0;
 
-                        const nodesAreAdded   = record.addedNodes.length > 0,
-                              nodesAreDeleted = record.removedNodes.length > 0;
+                                if (typeIsChildList && record.target === labelEl) {
+                                    console.log("CAPTCHA <label>'s content has been mutated.");
 
-                        if (
-                            targetIsWrapper && nodesAreDeleted && record.removedNodes[0] === fieldEl ||
-                            targetIsCaptchaEl && typeIsAttributes && record.attributeName !== "data-wpcf7mc-generating" ||
-                            targetIsField && typeIsChildList && nodesAreAdded ||
-                            targetIsField && typeIsChildList && nodesAreDeleted && record.removedNodes[0] !== loaderEl ||
-                            targetIsLabel && !typeIsChildList
-                        ) {
-                            console.log("CAPTCHA has been tampered with!");
+                                    return;
+                                } else if (typeIsAttributes && record.attributeName === "data-wpcf7mc-generating") {
+                                    console.log("CAPTCHA loading state has changed.");
 
-                            wpcf7.mc.regenerate(wpcf7FormEl, mo);
-                        } else if (targetIsLabel) {
-                            console.log("CAPTCHA <label>'s content has been mutated.");
+                                    return;
+                                } else if (typeIsChildList && nodesAreDeleted && record.removedNodes[0] === loaderEl) {
+                                    console.log("CAPTCHA loader element was removed.");
 
-                            return;
-                        }
-                    });
-                };
+                                    return;
+                                }
 
-                const mo = new MutationObserver(moCallback);
+                                wpcf7.mc.regenerate(wpcf7FormEl);
+                            });
+                        };
 
-                const moOptions = {
-                    subtree: true,
-                    childList: true,
-                    attributes: true
-                };
+                        const options = {
+                            subtree: true,
+                            childList: true,
+                            attributes: true
+                        };
 
-                mo.observe(wrapperEl, moOptions);
+                        wpcf7.mc.els.observe.field.id = new MutationObserver(callback);
+
+                        wpcf7.mc.els.observe.field.id.observe(fieldEl, options);
+                    }
+                }
             }
         },
 
@@ -578,22 +604,19 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.problem.generate();
 
             if (i === 0) {
-                wpcf7.mc.els.remove();
-
-                wpcf7.submit.els.assignVars(wpcf7FormEl);
-
                 wpcf7.mc.els.generate(wpcf7FormEl);
             }
 
             wpcf7.mc.problem.insert(wpcf7FormEl, i);
         },
 
-        regenerate: function(wpcf7Form, captchaMo) {
+        regenerate: function(wpcf7Form) {
             console.log("In wpcf7.mc.regenerate().");
 
             clearTimeout(wpcf7.mc.problem.id);
 
-            captchaMo.disconnect();
+            wpcf7.mc.els.observe.fieldset.id.disconnect();
+            wpcf7.mc.els.observe.field.id.disconnect();
 
             wpcf7.mc.generate(wpcf7Form);
         },
@@ -724,6 +747,10 @@ import stylesheet from "../scss/style.scss";
                 wpcf7.submit.els.nodes.field    = fieldEl;
                 wpcf7.submit.els.nodes.fieldset = fieldsetEl;
             }
+        },
+
+        do: function() {
+            // Code
         }
     };
 }());
