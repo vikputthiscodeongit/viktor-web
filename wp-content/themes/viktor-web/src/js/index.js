@@ -352,11 +352,6 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.generate(wpcf7FormEl);
 
             wpcf7FormEl.addEventListener("submit", function(e) {
-                console.log("Form submit event called!");
-                console.log(e);
-
-                e.stopImmediatePropagation();
-
                 wpcf7.submit.do(e);
             }, true);
         },
@@ -367,6 +362,7 @@ import stylesheet from "../scss/style.scss";
             nodes: {
                 field: null,
                 label: null,
+                inputWrapper: null,
                 input: null,
                 loader: null
             },
@@ -390,12 +386,20 @@ import stylesheet from "../scss/style.scss";
                         }
                     },
                     {
+                        el: "span",
+                        role: "inputWrapper",
+                        attrs: {
+                            class: "wpcf7-form-control-wrap maths_captcha"
+                        }
+                    },
+                    {
                         el: "input",
                         role: "input",
                         attrs: {
                             id: "wpcf7mc-input",
                             type: "text",
                             name: "wpcf7mc-input",
+                            class: "wpcf7-form-control",
                             inputmode: "numeric",
                             ariaRequired: "true"
                         }
@@ -435,18 +439,20 @@ import stylesheet from "../scss/style.scss";
                     if (elObj.role === "field") {
                         sbFieldsetEl.insertBefore(el, sbFieldEl);
                     } else {
-                        wpcf7.mc.els.nodes.field.append(el);
-
                         if (elObj.role === "input") {
+                            wpcf7.mc.els.nodes.inputWrapper.append(el);
+
                             el.addEventListener("input", () => {
                                 wpcf7.mc.validate();
                             });
+                        } else {
+                            wpcf7.mc.els.nodes.field.append(el);
                         }
                     }
                 });
 
                 wpcf7.mc.els.observe.fieldset.do(wpcf7FormEl);
-                wpcf7.mc.els.observe.field.do(wpcf7FormEl);
+                // wpcf7.mc.els.observe.field.do(wpcf7FormEl);
             },
 
             remove: function() {
@@ -627,7 +633,7 @@ import stylesheet from "../scss/style.scss";
             clearTimeout(wpcf7.mc.problem.id);
 
             wpcf7.mc.els.observe.fieldset.id.disconnect();
-            wpcf7.mc.els.observe.field.id.disconnect();
+            // wpcf7.mc.els.observe.field.id.disconnect();
 
             wpcf7.mc.generate(wpcf7FormEl);
         },
@@ -759,11 +765,16 @@ import stylesheet from "../scss/style.scss";
         },
 
         do: function(e) {
+            console.log("In wpcf7.submit.do().");
+            console.log(e);
+
             if (wpcf7.mc.id === null) {
                 console.log("wpcf7mc has not been initialized.");
 
                 return;
             }
+
+            e.stopImmediatePropagation();
 
             e.preventDefault();
 
