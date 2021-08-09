@@ -29,7 +29,7 @@
             $tag = new WPCF7_FormTag($tag);
             $tag->name = "maths_captcha";
 
-            $has_input = isset($_POST["wpcf7mc-input"]);
+            $has_input = isset($_POST["wpcf7mc-input"]) ? trim($_POST["wpcf7mc-input"]) : "";
 
             if (!$has_input) {
                 $tag->name = "maths_captcha";

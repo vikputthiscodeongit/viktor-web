@@ -181,6 +181,57 @@
     // Disable automatic insertion of <p> & <br> elements.
     add_filter("wpcf7_autop_or_not", "__return_false");
 
+    // Disable loading of JavaScript bundle by default.
+    // add_filter("wpcf7_load_js", "__return_false");
+
+    // Load front-end assets - function taken from Contact Form 7 5.4.2's source.
+    // Load bundle-main.js before loading the plugin's JavaScript assets.
+    // When the submit event fires, wpcf7.submit.do() (my function) calls
+    // stopImmediatePropagation() to prevent wpcf7.submit() (the plugin's function) from running.
+    // This can only be done if bundle-main.js is loaded before wpcf7's JavaScript bundle,
+    // else the JavaScript event handlers would be added in the right order.
+    // function add_wpcf7_scripts() {
+    //     $assets = array();
+    //     $asset_file = wpcf7_plugin_path( 'includes/js/index.asset.php' );
+
+    //     if ( file_exists( $asset_file ) ) {
+    //         $assets = include( $asset_file );
+    //     }
+
+    //     $assets = wp_parse_args( $assets, array(
+    //         'src' => wpcf7_plugin_url( 'includes/js/index.js' ),
+    //         'dependencies' => array(
+    //             'wp-polyfill',
+    //         ),
+    //         'version' => WPCF7_VERSION,
+    //         'in_footer' => false,
+    //     ) );
+
+    //     wp_register_script(
+    //         'contact-form-7#defer',
+    //         $assets['src'],
+    //         $assets['dependencies'],
+    //         $assets['version'],
+    //         $assets['in_footer']
+    //     );
+
+    //     wp_enqueue_script( 'contact-form-7#defer' );
+
+    //     $wpcf7 = array(
+    //         'api' => array(
+    //             'root' => esc_url_raw( get_rest_url() ),
+    //             'namespace' => 'contact-form-7/v1',
+    //         ),
+    //     );
+
+    //     if ( defined( 'WP_CACHE' ) and WP_CACHE ) {
+    //         $wpcf7['cached'] = 1;
+    //     }
+
+    //     wp_localize_script( 'contact-form-7#defer', 'wpcf7', $wpcf7 );
+    // }
+    // add_action( 'wp_enqueue_scripts', 'add_wpcf7_scripts' );
+    //
 
     // Maths CAPTCHA
     include_once(THEME_DIR_PATH . "/includes/wpcf7mc.php");

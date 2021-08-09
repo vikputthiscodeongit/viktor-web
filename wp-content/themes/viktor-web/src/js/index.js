@@ -252,13 +252,13 @@ import stylesheet from "../scss/style.scss";
         console.log("In wpcf7.init().");
 
         wpcf7.els.forEach((wpcf7El) => {
-            const wpcf7Form = wpcf7El.querySelector(".wpcf7-form");
+            const wpcf7FormEl = wpcf7El.querySelector(".wpcf7-form");
 
-            wpcf7.mc.init(wpcf7Form);
+            wpcf7.mc.init(wpcf7FormEl);
 
-            wpcf7.form.cleanHtml(wpcf7Form);
+            wpcf7.form.cleanHtml(wpcf7FormEl);
 
-            wpcf7.form.enable(wpcf7Form);
+            wpcf7.form.enable(wpcf7FormEl);
 
             wpcf7El.addEventListener("wpcf7invalid", function(e) {
                 //
@@ -271,7 +271,7 @@ import stylesheet from "../scss/style.scss";
                 // wpcf7.input.scrollToInvalid(e);
             });
 
-            const submitButton = wpcf7Form.querySelector("[type='submit']");
+            const submitButton = wpcf7FormEl.querySelector("[type='submit']");
                 //   submitButtonText = submitButton.querySelector(".btn__text");
 
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
@@ -314,7 +314,7 @@ import stylesheet from "../scss/style.scss";
             });
 
             // Its <input>s
-            const inputs = wpcf7Form.querySelectorAll(".wpcf7-form-control");
+            const inputs = wpcf7FormEl.querySelectorAll(".wpcf7-form-control");
 
             //
             // TODO: split deze functie af
@@ -347,7 +347,18 @@ import stylesheet from "../scss/style.scss";
         init: function(wpcf7FormEl) {
             console.log("In wpcf7.mc.init().");
 
+            wpcf7.mc.id = randIntUnder(1000);
+
             wpcf7.mc.generate(wpcf7FormEl);
+
+            wpcf7FormEl.addEventListener("submit", function(e) {
+                console.log("Form submit event called!");
+                console.log(e);
+
+                e.stopImmediatePropagation();
+
+                wpcf7.submit.do(e);
+            }, true);
         },
 
         id: null,
@@ -569,11 +580,11 @@ import stylesheet from "../scss/style.scss";
             scheduleNext: function(wpcf7FormEl, i) {
                 console.log("In wpcf7.mc.problem.scheduleNext().");
 
-                const problemCutoff = 23;
+                const problemCutoff = 2;
                 let timeout;
 
                 if (i < problemCutoff) {
-                    timeout = 125;
+                    timeout = 500;
                 } else {
                     if (i === problemCutoff) {
                         wpcf7.mc.els.nodes.field.removeAttribute("data-wpcf7mc-generating");
@@ -581,7 +592,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = debugMode.isSet ? 2500 : 15000;
+                    timeout = debugMode.isSet ? 5000 : 15000;
                 }
 
                 i++;
@@ -610,7 +621,7 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.problem.insert(wpcf7FormEl, i);
         },
 
-        regenerate: function(wpcf7Form) {
+        regenerate: function(wpcf7FormEl) {
             console.log("In wpcf7.mc.regenerate().");
 
             clearTimeout(wpcf7.mc.problem.id);
@@ -618,7 +629,7 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.els.observe.fieldset.id.disconnect();
             wpcf7.mc.els.observe.field.id.disconnect();
 
-            wpcf7.mc.generate(wpcf7Form);
+            wpcf7.mc.generate(wpcf7FormEl);
         },
 
         validate: function() {
@@ -629,16 +640,14 @@ import stylesheet from "../scss/style.scss";
 
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
-
-            return answerValid;
         }
     };
 
     wpcf7.form = {
-        cleanHtml: function(wpcf7Form) {
+        cleanHtml: function(wpcf7FormEl) {
             console.log("In wpcf7.form.cleanHtml().");
 
-            const fields = wpcf7Form.querySelectorAll(".field");
+            const fields = wpcf7FormEl.querySelectorAll(".field");
 
             fields.forEach((field) => {
                 const controlWrap = field.querySelector(".wpcf7-form-control-wrap");
@@ -652,10 +661,10 @@ import stylesheet from "../scss/style.scss";
             });
         },
 
-        enable: function(wpcf7Form) {
+        enable: function(wpcf7FormEl) {
             console.log("In wpcf7.form.enable().");
 
-            const disabledFieldsets = wpcf7Form.querySelectorAll("fieldset[disabled]");
+            const disabledFieldsets = wpcf7FormEl.querySelectorAll("fieldset[disabled]");
 
             disabledFieldsets.forEach((fieldset) => {
                 fieldset.removeAttribute("disabled");
@@ -749,8 +758,18 @@ import stylesheet from "../scss/style.scss";
             }
         },
 
-        do: function() {
-            // Code
+        do: function(e) {
+            if (wpcf7.mc.id === null) {
+                console.log("wpcf7mc has not been initialized.");
+
+                return;
+            }
+
+            e.preventDefault();
+
+            window.wpcf7.submit(e.target);
+
+            return;
         }
     };
 }());

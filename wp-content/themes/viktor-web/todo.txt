@@ -5,3 +5,4 @@ WPCF7:
    > Validate if number + number = userAnswer
  * <input>: match state with border color
  * <input>: .alert for validation messages
+ * Clean element assignments, i.e. the assignment of wpcf7.xxx.els.nodes.xxx to a constant
