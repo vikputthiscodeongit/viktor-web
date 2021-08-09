@@ -52,11 +52,11 @@
         </div>
 
         <div class="blob blob--left">
-            <img src="<?php echo THEME_DIR_URI; ?>/dist/images/static/blobs/blob-1.svg')" alt="">
+            <img src="<?php echo THEME_DIR_URI; ?>/dist/images/static/blobs/blob-1.svg" alt="">
         </div>
 
         <div class="blob blob--right">
-            <img src="<?php echo THEME_DIR_URI; ?>/dist/images/static/blobs/blob-2.svg')" alt="">
+            <img src="<?php echo THEME_DIR_URI; ?>/dist/images/static/blobs/blob-2.svg" alt="">
         </div>
     </div>
 </section>
