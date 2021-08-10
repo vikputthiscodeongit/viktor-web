@@ -79,14 +79,14 @@
 
         if (!empty($key)) {
             $tag = new WPCF7_FormTag($tag);
-            $tag->name = "maths_captcha";
+            $tag->name = "wpcf7mc_answer";
 
             $user_answer = isset($_POST["wpcf7mc-input"]) ? trim($_POST["wpcf7mc-input"]) : "";
 
             if (!$user_answer) {
-                $tag->name = "maths_captcha";
+                $tag->name = "wpcf7mc_answer";
 
-                $result->invalidate($tag, __("Your answer to the maths CAPTCHA is incorrect.", "contact-form-7-maths-captcha"));
+                $result->invalidate($tag, __("Your answer to the maths problem was incorrect.", "contact-form-7-maths-captcha"));
             }
         }
 

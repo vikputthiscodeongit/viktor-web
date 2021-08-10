@@ -1,8 +1,17 @@
 WPCF7:
- * CAPTCHA submit
- * Back end valiation for CAPTCHA
-   > Insert numbers in input of type hidden on submit
-   > Validate if number + number = userAnswer
  * <input>: match state with border color
  * <input>: .alert for validation messages
  * Clean element assignments, i.e. the assignment of wpcf7.xxx.els.nodes.xxx to a constant
+
+
+Fresh load
+ > Geen extra classes
+
+On focus enter
+ > Blauwe border
+ > Groen indien correct
+
+On focus exit
+ Indien er een input is geweest (kan dit gecheckt worden?)
+  > Voeg .has-entered toe
+  > Rood indien incorrect

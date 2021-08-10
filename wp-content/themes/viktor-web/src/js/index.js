@@ -347,6 +347,12 @@ import stylesheet from "../scss/style.scss";
         init: function(wpcf7FormEl) {
             console.log("In wpcf7.mc.init().");
 
+            if (!wpcf7FormEl.classList.contains("has-wpcf7mc")) {
+                console.log("Exiting function - wpcf7mc has not been added to this form!");
+
+                return;
+            }
+
             wpcf7.mc.id = randIntUnder(1000);
 
             wpcf7.mc.generate(wpcf7FormEl);
@@ -389,7 +395,7 @@ import stylesheet from "../scss/style.scss";
                         el: "span",
                         role: "inputWrapper",
                         attrs: {
-                            class: "wpcf7-form-control-wrap maths_captcha"
+                            class: "wpcf7-form-control-wrap wpcf7mc_answer"
                         }
                     },
                     {
@@ -428,15 +434,15 @@ import stylesheet from "../scss/style.scss";
 
                 const elObjArr = wpcf7.mc.els.objArr();
 
-                const sbFieldsetEl = wpcf7.submit.els.nodes.fieldset,
-                      sbFieldEl    = wpcf7.submit.els.nodes.field;
-
                 elObjArr.forEach((elObj) => {
                     const el = createEl(elObj.el, elObj.attrs);
 
                     wpcf7.mc.els.nodes[elObj.role] = el;
 
                     if (elObj.role === "field") {
+                        const sbFieldsetEl = wpcf7.submit.els.nodes.fieldset,
+                              sbFieldEl    = wpcf7.submit.els.nodes.field;
+
                         sbFieldsetEl.insertBefore(el, sbFieldEl);
                     } else {
                         if (elObj.role === "input") {
@@ -451,8 +457,7 @@ import stylesheet from "../scss/style.scss";
                     }
                 });
 
-                wpcf7.mc.els.observe.fieldset.do(wpcf7FormEl);
-                // wpcf7.mc.els.observe.field.do(wpcf7FormEl);
+                wpcf7.mc.els.observe.do(wpcf7FormEl);
             },
 
             remove: function() {
@@ -469,83 +474,39 @@ import stylesheet from "../scss/style.scss";
             },
 
             observe: {
-                fieldset: {
-                    id: null,
+                id: null,
 
-                    do: function(wpcf7FormEl) {
-                        console.log("In wpcf7.mc.els.observe.fieldset.do().");
+                do: function(wpcf7FormEl) {
+                    console.log("In wpcf7.mc.els.observe.do().");
 
-                        const fieldsetEl = wpcf7.submit.els.nodes.fieldset,
-                              fieldEl    = wpcf7.mc.els.nodes.field;
+                    const fieldsetEl     = wpcf7.submit.els.nodes.fieldset,
+                          fieldEl        = wpcf7.mc.els.nodes.field,
+                          inputWrapperEl = wpcf7.mc.els.nodes.inputWrapper,
+                          inputEl        = wpcf7.mc.els.nodes.input;
 
-                        const callback = function(mutationRecords) {
-                            mutationRecords.forEach((record) => {
-                                const nodesAreDeleted = record.removedNodes.length > 0;
-
-                                if (nodesAreDeleted && record.removedNodes[0] === fieldEl) {
-                                    console.log("CAPTCHA .field has been removed!");
-
-                                    wpcf7.mc.regenerate(wpcf7FormEl);
-                                }
-                            });
-                        };
-
-                        const options = {
-                            childList: true,
-                            attributes: true
-                        };
-
-                        wpcf7.mc.els.observe.fieldset.id = new MutationObserver(callback);
-
-                        wpcf7.mc.els.observe.fieldset.id.observe(fieldsetEl, options);
-                    }
-                },
-
-                field: {
-                    id: null,
-
-                    do: function(wpcf7FormEl) {
-                        console.log("In wpcf7.mc.els.observe.field.do().");
-
-                        const fieldEl  = wpcf7.mc.els.nodes.field,
-                              labelEl  = wpcf7.mc.els.nodes.label,
-                              loaderEl = wpcf7.mc.els.nodes.loader;
-
-                        const callback = function(mutationRecords) {
-                            mutationRecords.forEach((record) => {
-                                const typeIsAttributes = record.type === "attributes",
-                                      typeIsChildList  = record.type === "childList";
-
-                                const nodesAreDeleted = record.removedNodes.length > 0;
-
-                                if (typeIsChildList && record.target === labelEl) {
-                                    console.log("CAPTCHA <label>'s content has been mutated.");
-
-                                    return;
-                                } else if (typeIsAttributes && record.attributeName === "data-wpcf7mc-generating") {
-                                    console.log("CAPTCHA loading state has changed.");
-
-                                    return;
-                                } else if (typeIsChildList && nodesAreDeleted && record.removedNodes[0] === loaderEl) {
-                                    console.log("CAPTCHA loader element was removed.");
-
-                                    return;
-                                }
+                    const callback = function(mutationRecords) {
+                        mutationRecords.forEach((record) => {
+                            if (
+                                record.removedNodes.length > 0 &&
+                                (record.removedNodes[0] === fieldEl ||
+                                 record.removedNodes[0] === inputWrapperEl ||
+                                 record.removedNodes[0] === inputEl)
+                            ) {
+                                console.log("CAPTCHA .field or <input> has been removed!");
 
                                 wpcf7.mc.regenerate(wpcf7FormEl);
-                            });
-                        };
+                            }
+                        });
+                    };
 
-                        const options = {
-                            subtree: true,
-                            childList: true,
-                            attributes: true
-                        };
+                    const options = {
+                        subtree: true,
+                        childList: true
+                    };
 
-                        wpcf7.mc.els.observe.field.id = new MutationObserver(callback);
+                    wpcf7.mc.els.observe.id = new MutationObserver(callback);
 
-                        wpcf7.mc.els.observe.field.id.observe(fieldEl, options);
-                    }
+                    wpcf7.mc.els.observe.id.observe(fieldsetEl, options);
                 }
             }
         },
@@ -571,12 +532,10 @@ import stylesheet from "../scss/style.scss";
                     wpcf7.mc.els.nodes.field.setAttribute("data-wpcf7mc-generating", "");
                 }
 
-                const labelEl = wpcf7.mc.els.nodes.label;
-
                 const digit1 = wpcf7.mc.problem.digits[0],
                       digit2 = wpcf7.mc.problem.digits[1];
 
-                labelEl.textContent = `${digit1} + ${digit2} =`;
+                wpcf7.mc.els.nodes.label.textContent = `${digit1} + ${digit2} =`;
 
                 wpcf7.mc.validate();
 
@@ -586,11 +545,11 @@ import stylesheet from "../scss/style.scss";
             scheduleNext: function(wpcf7FormEl, i) {
                 console.log("In wpcf7.mc.problem.scheduleNext().");
 
-                const problemCutoff = 2;
+                const problemCutoff = 17;
                 let timeout;
 
                 if (i < problemCutoff) {
-                    timeout = 500;
+                    timeout = 167;
                 } else {
                     if (i === problemCutoff) {
                         wpcf7.mc.els.nodes.field.removeAttribute("data-wpcf7mc-generating");
@@ -598,7 +557,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = debugMode.isSet ? 5000 : 15000;
+                    timeout = debugMode.isSet ? 3000 : 15000;
                 }
 
                 i++;
@@ -632,8 +591,7 @@ import stylesheet from "../scss/style.scss";
 
             clearTimeout(wpcf7.mc.problem.id);
 
-            wpcf7.mc.els.observe.fieldset.id.disconnect();
-            // wpcf7.mc.els.observe.field.id.disconnect();
+            wpcf7.mc.els.observe.id.disconnect();
 
             wpcf7.mc.generate(wpcf7FormEl);
         },
@@ -646,6 +604,14 @@ import stylesheet from "../scss/style.scss";
 
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
+
+            if (answerValid) {
+                wpcf7.input.setState.valid(wpcf7.mc.els.nodes.input);
+            } else {
+                wpcf7.input.setState.invalid(wpcf7.mc.els.nodes.input);
+            }
+
+            return answerValid;
         }
     };
 
@@ -680,22 +646,22 @@ import stylesheet from "../scss/style.scss";
 
     wpcf7.input = {
         setState: {
-            invalid: function(input) {
+            invalid: function(inputEl) {
                 console.log("In wpcf7.input.setState.invalid().");
 
-                input.parentElement.classList.remove("is-valid");
+                inputEl.parentElement.classList.remove("is-valid");
 
-                input.setAttribute("aria-invalid", true);
-                input.parentElement.classList.add("is-invalid");
+                inputEl.setAttribute("aria-invalid", true);
+                inputEl.parentElement.classList.add("is-invalid");
             },
 
-            valid: function(input) {
+            valid: function(inputEl) {
                 console.log("In wpcf7.input.setState.valid().");
 
-                input.setAttribute("aria-invalid", false);
-                input.parentElement.classList.remove("is-invalid");
+                inputEl.setAttribute("aria-invalid", false);
+                inputEl.parentElement.classList.remove("is-invalid");
 
-                input.parentElement.classList.add("is-valid");
+                inputEl.parentElement.classList.add("is-valid");
             }
         },
 
@@ -714,18 +680,29 @@ import stylesheet from "../scss/style.scss";
             }
         },
 
-        validate: function(input) {
+        validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
 
-            const type = input.getAttribute("type");
+            const typeAttr = inputEl.getAttribute("type");
+
+            if (typeAttr === "email" && !isValidEmail(inputEl.value)) {
+                wpcf7.input.setState.invalid(inputEl);
+
+                return;
+            }
+
+            const minAttr = inputEl.getAttribute("minlength"),
+                  maxAttr = inputEl.getAttribute("maxlength");
+            const min = Number(minAttr),
+                  max = Number(maxAttr);
 
             if (
-                (type === "email" && isValidEmail(input.value)) ||
-                (type !== "email" && input.value !== "")
+                minAttr !== null && inputEl.value.length < min ||
+                maxAttr !== null && inputEl.value.length > max
             ) {
-                wpcf7.input.setState.valid(input);
+                wpcf7.input.setState.invalid(inputEl);
             } else {
-                wpcf7.input.setState.invalid(input);
+                wpcf7.input.setState.valid(inputEl);
             }
         }
     };
@@ -774,13 +751,16 @@ import stylesheet from "../scss/style.scss";
                 return;
             }
 
+            e.preventDefault();
             e.stopImmediatePropagation();
 
-            e.preventDefault();
+            if (!wpcf7.mc.validate()) {
+                console.log("Preventing form submission - answer is invalid!");
+
+                return;
+            }
 
             window.wpcf7.submit(e.target);
-
-            return;
         }
     };
 }());
