@@ -256,6 +256,8 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.mc.init(wpcf7FormEl);
 
+            wpcf7.input.init(wpcf7FormEl);
+
             wpcf7.form.cleanHtml(wpcf7FormEl);
 
             wpcf7.form.enable(wpcf7FormEl);
@@ -313,31 +315,31 @@ import stylesheet from "../scss/style.scss";
                 //     submitButton.getAttribute("data-string-send");
             });
 
-            // Its <input>s
-            const inputs = wpcf7FormEl.querySelectorAll(".wpcf7-form-control");
+            // // Its <input>s
+            // const inputs = wpcf7FormEl.querySelectorAll(".wpcf7-form-control");
 
-            //
-            // TODO: split deze functie af
-            //
-            inputs.forEach((input) => {
-                //
-                // TODO: check element properties (minlength, maxlength, pattern)
-                //
-                if (
-                    input.classList.contains("wpcf7-validates-as-required") &&
-                    // input.value isn't necessarily always empty on form initialization,
-                    // Firefox for example retains <input> values when a page is refreshed.
-                    input.value === ""
-                ) {
-                    wpcf7.input.setState.invalid(input);
-                }
+            // //
+            // // TODO: split deze functie af
+            // //
+            // inputs.forEach((input) => {
+            //     //
+            //     // TODO: check element properties (minlength, maxlength, pattern)
+            //     //
+            //     if (
+            //         input.classList.contains("wpcf7-validates-as-required") &&
+            //         // input.value isn't necessarily always empty on form initialization,
+            //         // Firefox for example retains <input> values when a page is refreshed.
+            //         input.value === ""
+            //     ) {
+            //         wpcf7.input.setState.invalid(input);
+            //     }
 
-                input.addEventListener("input", function() {
-                    // Noty.closeAll();
+            //     input.addEventListener("input", function() {
+            //         // Noty.closeAll();
 
-                    wpcf7.input.validate(input);
-                });
-            });
+            //         wpcf7.input.validate(input);
+            //     });
+            // });
         });
     };
 
@@ -645,23 +647,51 @@ import stylesheet from "../scss/style.scss";
     };
 
     wpcf7.input = {
+        init: function(wpcf7FormEl) {
+            const inputEls = wpcf7FormEl.querySelectorAll("[type='email'], [type='text'], textarea");
+
+            inputEls.forEach((inputEl) => {
+                wpcf7.input.validate(inputEl);
+
+                inputEl.addEventListener("input", function() {
+                    wpcf7.input.setState.entered(inputEl);
+                }, { once: true });
+
+                inputEl.addEventListener("input", function() {
+                    wpcf7.input.validate(inputEl);
+                });
+            });
+        },
+
         setState: {
+            entered: function(inputEl) {
+                console.log("In wpcf7.input.setState.entered().");
+
+                if (!inputEl.classList.contains("has-entered")) {
+                    inputEl.classList.add("has-entered");
+                }
+            },
+
             invalid: function(inputEl) {
                 console.log("In wpcf7.input.setState.invalid().");
 
-                inputEl.parentElement.classList.remove("is-valid");
+                const fieldEl = inputEl.closest(".field");
+
+                fieldEl.classList.remove("is-valid");
 
                 inputEl.setAttribute("aria-invalid", true);
-                inputEl.parentElement.classList.add("is-invalid");
+                fieldEl.classList.add("is-invalid");
             },
 
             valid: function(inputEl) {
                 console.log("In wpcf7.input.setState.valid().");
 
-                inputEl.setAttribute("aria-invalid", false);
-                inputEl.parentElement.classList.remove("is-invalid");
+                const fieldEl = inputEl.closest(".field");
 
-                inputEl.parentElement.classList.add("is-valid");
+                inputEl.setAttribute("aria-invalid", false);
+                fieldEl.classList.remove("is-invalid");
+
+                fieldEl.classList.add("is-valid");
             }
         },
 
@@ -682,6 +712,12 @@ import stylesheet from "../scss/style.scss";
 
         validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
+
+            if (inputEl.id === "wpcf7mc-input") {
+                console.log("Exiting function - this <input> belongs to the maths CAPTCHA, so I'm not running the regular validation function.");
+
+                return;
+            }
 
             const typeAttr = inputEl.getAttribute("type");
 
@@ -726,6 +762,7 @@ import stylesheet from "../scss/style.scss";
                     return;
                 }
 
+                // Werk met .closest?
                 const fieldEl    = buttonEl.parentElement,
                       fieldsetEl = fieldEl.parentElement;
 
