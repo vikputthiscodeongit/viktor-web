@@ -4,18 +4,18 @@
             margin: 2em 0 0;
             padding: 0.25em 0.75em;
 
-            // .js & {
-            //     display: none;
-            // }
+            .js & {
+                display: none;
+            }
         }
     }
 
     &-not-valid-tip {
         margin-top: 0.5em;
 
-        // .js & {
-        //     display: none;
-        // }
+        .js & {
+            display: none;
+        }
     }
 
     .ajax-loader {
@@ -139,14 +139,23 @@ textarea {
     &:focus {
         border-color: $blue;
         outline: none;
+    }
 
-        .field.is-valid & {
+    &[aria-invalid="false"] {
+        &:focus {
             border-color: $success;
         }
     }
 
-    .form.invalid .field.is-invalid & {
-        border-color: $warning;
+    &[aria-invalid="true"] {
+        // TODO: Improve this ridiculously terrible selector
+        .form.invalid &.wpcf7-validates-as-required,
+        .form.invalid &:not(.wpcf7-validates-as-required):not(:empty),
+        &[data-had-input="true"]:not(:focus),
+        &[data-input-was-valid="true"] {
+            border-color: $warning;
+        }
+        //
     }
 
     .field--ifl & {
