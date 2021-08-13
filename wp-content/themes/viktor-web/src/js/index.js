@@ -480,6 +480,9 @@ import stylesheet from "../scss/style.scss";
                 console.log("In wpcf7.mc.els.remove().");
 
                 for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
+                    //
+                    // Moet dit hier blijven? Maak globale wpcf7 helper, bouw skip in?
+                    //
                     if (role === "wrapper")
                         continue;
 
@@ -689,11 +692,19 @@ import stylesheet from "../scss/style.scss";
             invalid: function(inputEl) {
                 console.log("In wpcf7.input.setState.invalid().");
 
+                // const field = inputEl.closest(".field");
+
+                // field.classList.replace("is-valid", "is-invalid");
+
                 inputEl.setAttribute("aria-invalid", true);
             },
 
             valid: function(inputEl) {
                 console.log("In wpcf7.input.setState.valid().");
+
+                // const field = inputEl.closest(".field");
+
+                // field.classList.replace("is-invalid", "is-valid");
 
                 inputEl.setAttribute("aria-invalid", false);
 
@@ -753,6 +764,72 @@ import stylesheet from "../scss/style.scss";
             }
         }
     };
+
+    wpcf7.alert = {
+        els: {
+            nodes: {
+                alert: null,
+                message: null
+            },
+
+            objArr: function() {
+                [
+                    {
+                        el: "div",
+                        role: "alert",
+                        attrs: {
+                            class: "alert"
+                        }
+                    },
+                    {
+                        el: "p",
+                        role: "message",
+                        atts: {
+                            class: "alert__message"
+                        }
+                    },
+                ];
+
+                return array;
+            },
+
+            generate: function(wpcf7FormEl) {
+                console.log("In wpcf7.alert.els.generate().");
+
+                wpcf7.alert.els.remove();
+
+                const elObjArr = wpcf7.alert.els.objArr();
+
+                elObjArr.forEach((elObj) => {
+                    const el = createEl(elObj.el, elObj.attrs);
+
+                    wpcf7.alert.els.nodes[elObj.role] = el;
+
+                    if (elObj.role === "alert") {
+                        wpcf7FormEl.insertBefore(el, wpcf7FormEl.firstElementChild);
+                    } else {
+                        wpcf7.alert.els.nodes.alert.append(el);
+                    }
+                });
+            },
+
+            remove: function() {
+                console.log("In wpcf7.alert.els.remove().");
+
+                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
+                    if (el) {
+                        el.remove();
+                    }
+                }
+            }
+        },
+
+        // Show
+
+        // Hide
+
+        // Get & insert / generate message (input = string/array)
+    },
 
     wpcf7.submit = {
         els: {

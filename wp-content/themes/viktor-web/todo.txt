@@ -3,6 +3,9 @@ WPCF7:
  * <input>: .alert for validation messages
  * Merge validation functions?
 
+<input>
+ * Accessibility: <label> click should focus input
+
 Borders
  Standaard: geen
  Focus: blauw
