@@ -24,8 +24,8 @@
         <?php wp_head(); ?>
 
         <!-- Site information -->
-        <meta name="description" content="">
-        <meta name="keywords" content="">
+        <meta name="keywords" content="Viktor Chin, Viktor Chin-Kon-Sung, picsmadebyvik">
+        <meta name="description" content="Viktor Chin, a man who's very keen on motorized vehicles, music, photography, nature and many other things. By the way, I also build websites.">
 
         <!-- Favicon -->
         <link rel="apple-touch-icon" sizes="180x180" href="<?php echo THEME_DIR_URI; ?>/dist/favicon/apple-touch-icon.png">
