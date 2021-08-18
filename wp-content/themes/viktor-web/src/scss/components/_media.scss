@@ -1,34 +1,4 @@
-figure {
-    margin-bottom: 0;
-}
-
 img {
     max-width: 100%;
     height: auto;
-}
-
-.media {
-    .title + & {
-        margin-top: rem(24px);
-
-        @include respond-above(md) {
-            margin-top: rem(30px);
-        }
-    }
-
-    .text + & {
-        margin-top: rem(16px);
-
-        @include respond-above(md) {
-            margin-top: rem(20px);
-        }
-    }
-
-    .media + & {
-        margin-top: rem(30px);
-
-        @include respond-above(md) {
-            margin-top: rem(40px);
-        }
-    }
 }

@@ -20,14 +20,6 @@ body {
     }
 }
 
-section {
-    // DEVELOPMENT
-    &:nth-child(odd) {
-        background-color: $gray-light;
-    }
-    //
-}
-
 ol,
 ul {
     &[class] {

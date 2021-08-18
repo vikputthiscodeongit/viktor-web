@@ -148,7 +148,9 @@ textarea {
     }
 
     &[aria-invalid="true"] {
+        //
         // TODO: Improve these ridiculously terrible selectors
+        //
         .form.invalid &.wpcf7-validates-as-required,
         .form.invalid &:not(.wpcf7-validates-as-required):not(:empty),
         &[data-had-input="true"]:not(:focus),

@@ -17,13 +17,6 @@
     transform: translateZ(0);
     animation: spin 1s infinite linear;
 
-    &--light {
-        border-top: 0.166667em solid rgba(255, 255, 255, 0.75);
-        border-right: 0.166667em solid rgba(255, 255, 255, 0.75);
-        border-bottom: 0.166667em solid rgba(255, 255, 255, 0.75);
-        border-left: 0.166667em solid rgba(255, 255, 255, 0.3);
-    }
-
     &::after {
         content: "";
     }

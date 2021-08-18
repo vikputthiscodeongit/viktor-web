@@ -36,23 +36,15 @@ import stylesheet from "../scss/style.scss";
         return elStyles.getPropertyValue(prop);
     }
 
-    // Convert CSS unit to a number
-    // function cssUnitToNo(unit) {
-    //     let sliceEnd = -2;
     // https://github.com/scrapjs/css-get-unit
     // Package is very small, so I won't load it as an external dependency.
     function cssGetUnit(value) {
         const len = value.length;
 
-    //     if (unit.indexOf("rem") > -1) {
-    //         sliceEnd = -3;
-    //     }
         if (!value || !len) {
             return null;
         }
 
-    //     return Number(unit.slice(0, sliceEnd));
-    // }
         let i = len;
 
         while (i--) {

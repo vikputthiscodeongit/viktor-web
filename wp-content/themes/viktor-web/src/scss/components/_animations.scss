@@ -1,11 +1,28 @@
-// animate.css, somewhat tweaked.
 .animated {
     animation-duration: 0.5s;
     animation-fill-mode: both;
 
-    // @media print, all and (prefers-reduced-motion: reduce) {
-    //     animation-delay: 0s !important;
-    // }
+    @media print, (prefers-reduced-motion: reduce) {
+        .animated {
+            animation-duration: 1ms !important;
+            transition-duration: 1ms !important;
+            animation-iteration-count: 1 !important;
+        }
+
+        .animated[class*='Out'] {
+            opacity: 0;
+        }
+    }
+}
+
+.fade {
+    &In {
+        animation-name: fadeIn;
+    }
+
+    &Out {
+        animation-name: fadeOut;
+    }
 }
 
 @keyframes fadeIn {
@@ -28,99 +45,6 @@
     }
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 100%, 0);
-        animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translate3d(0, -100%, 0);
-        animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translate3d(100%, 0, 0);
-        animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes fadeOutUp {
-    from {
-        opacity: 1;
-        animation-timing-function: cubic-bezier(0.55, 0.06, 0.68, 0.19);
-    }
-
-    to {
-        opacity: 0;
-        transform: translate3d(0, -100%, 0);
-    }
-}
-
-@keyframes fadeOutDown {
-    from {
-        animation-timing-function: cubic-bezier(0.55, 0.06, 0.68, 0.19);
-    }
-
-    to {
-        opacity: 0;
-        transform: translate3d(0, 100%, 0);
-    }
-}
-
-.fade {
-    &In {
-        animation-name: fadeIn;
-
-        &Up {
-            animation-name: fadeInUp;
-        }
-
-        &Down {
-            animation-name: fadeInDown;
-        }
-
-        &Right {
-            animation-name: fadeInRight;
-        }
-    }
-
-    &Out {
-        animation-name: fadeOut;
-
-        &Up {
-            animation-name: fadeOutUp;
-        }
-
-        &Down {
-            animation-name: fadeOutDown;
-        }
-    }
-}
-
-// spin, used by .spinner.
 @keyframes spin {
     from {
         transform: rotate(0deg);
