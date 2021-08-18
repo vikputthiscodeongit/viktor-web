@@ -21,30 +21,66 @@ import stylesheet from "../scss/style.scss";
     function createEl(tag, attrs) {
         const el = document.createElement(tag);
 
-        for (const [key, val] of Object.entries(attrs)) {
-            el.setAttribute(camelToKebab(key), val);
+        if (attrs) {
+            for (const [key, val] of Object.entries(attrs)) {
+                el.setAttribute(camelToKebab(key), val);
+            }
         }
 
         return el;
     }
 
     // Get a CSS element property value
-    // function cssValue(el, prop) {
-    //     const elStyles = window.getComputedStyle(el);
+    function cssValue(el, prop) {
+        const elStyles = window.getComputedStyle(el);
 
-    //     return elStyles.getPropertyValue(prop);
-    // }
+        return elStyles.getPropertyValue(prop);
+    }
 
     // Convert CSS unit to a number
     // function cssUnitToNo(unit) {
     //     let sliceEnd = -2;
+    // https://github.com/scrapjs/css-get-unit
+    // Package is very small, so I won't load it as an external dependency.
+    function cssGetUnit(value) {
+        const len = value.length;
 
     //     if (unit.indexOf("rem") > -1) {
     //         sliceEnd = -3;
     //     }
+        if (!value || !len) {
+            return null;
+        }
 
     //     return Number(unit.slice(0, sliceEnd));
     // }
+        let i = len;
+
+        while (i--) {
+            if (!isNaN(value[i])) {
+                return value.slice(i + 1, len) || null;
+            }
+        }
+
+        return null;
+    }
+
+    // https://github.com/semibran/css-duration
+    // Package is very small, so I won't load it as an external dependency.
+    function cssTimeToMs(time) {
+        let number = parseFloat(time);
+
+        switch (cssGetUnit(time)) {
+            case null:
+            case "ms": return number;
+            case "s": return number * 1000;
+            case "m": return number * 60000;
+            case "h": return number * 3600000;
+            case "d": return number * 86400000;
+            case "w": return number * 604800000;
+            default: return null;
+        }
+    }
 
     // Check if stylesheet has been loaded
     // function cssLoaded() {
@@ -256,6 +292,8 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.mc.init(wpcf7FormEl);
 
+            wpcf7.alert.init(wpcf7FormEl);
+
             wpcf7.input.init(wpcf7FormEl);
 
             wpcf7.form.cleanHtml(wpcf7FormEl);
@@ -325,7 +363,7 @@ import stylesheet from "../scss/style.scss";
             });
 
             wpcf7El.addEventListener("wpcf7submit", function(e) {
-                wpcf7.submit.finish(wpcf7FormEl);
+                wpcf7.submit.finish(wpcf7FormEl, e);
             });
 
 
@@ -766,6 +804,14 @@ import stylesheet from "../scss/style.scss";
     };
 
     wpcf7.alert = {
+        init: function(wpcf7FormEl) {
+            wpcf7.alert.id = randIntUnder(1000);
+
+            wpcf7.alert.els.generate(wpcf7FormEl);
+        },
+
+        id: null,
+
         els: {
             nodes: {
                 alert: null,
@@ -773,7 +819,7 @@ import stylesheet from "../scss/style.scss";
             },
 
             objArr: function() {
-                [
+                const array = [
                     {
                         el: "div",
                         role: "alert",
@@ -784,7 +830,7 @@ import stylesheet from "../scss/style.scss";
                     {
                         el: "p",
                         role: "message",
-                        atts: {
+                        attrs: {
                             class: "alert__message"
                         }
                     },
@@ -806,7 +852,9 @@ import stylesheet from "../scss/style.scss";
                     wpcf7.alert.els.nodes[elObj.role] = el;
 
                     if (elObj.role === "alert") {
-                        wpcf7FormEl.insertBefore(el, wpcf7FormEl.firstElementChild);
+                        const container = wpcf7FormEl.closest(".container");
+
+                        container.insertBefore(el, container.firstElementChild);
                     } else {
                         wpcf7.alert.els.nodes.alert.append(el);
                     }
@@ -824,11 +872,117 @@ import stylesheet from "../scss/style.scss";
             }
         },
 
-        // Show
+        message: {
+            id: null,
 
-        // Hide
+            get: function(msgType) {
+                console.log("In wpcf7.alert.message.get().");
 
-        // Get & insert / generate message (input = string/array)
+                let type, message;
+
+                if (msgType === "mc") {
+                    type = "warning";
+                    message = "Your answer to the maths problem was incorrect.";
+                }
+
+                if (msgType.type === "wpcf7submit") {
+                    const response = msgType.detail.apiResponse;
+
+                    const status = response.status;
+
+                    switch(status) {
+                        case "mail_sent":
+                            type = "success";
+
+                            break;
+                        default:
+                            type = "warning";
+
+                            break;
+                    }
+
+                    message = response.message;
+                }
+
+                return [type, message];
+            },
+
+            show: function(msgType) {
+                console.log("In wpcf7.alert.message.show().");
+
+                if (wpcf7.alert.message.id) {
+                    clearTimeout(wpcf7.alert.message.id);
+
+                    const typeRegex = /(alert--[A-Za-z]+)/g;
+
+                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
+                        wpcf7.alert.els.nodes.alert.className =
+                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
+                    }
+                }
+
+                const msgProps = wpcf7.alert.message.get(msgType);
+
+                if (msgProps[0]) {
+                    wpcf7.alert.els.nodes.alert.classList.add(`alert--${msgProps[0]}`);
+                }
+
+                wpcf7.alert.els.nodes.message.textContent = msgProps[1];
+
+                wpcf7.alert.els.nodes.alert.classList.add("is-shown");
+
+                if (motionAllowed()) {
+                    wpcf7.alert.els.nodes.alert.classList.add("animated", "fadeIn");
+
+                    const timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
+
+                    setTimeout(() => {
+                        wpcf7.alert.els.nodes.alert.classList.remove("animated", "fadeIn");
+                    }, timeout);
+                }
+
+                wpcf7.alert.message.id = setTimeout(() => {
+                    wpcf7.alert.message.hide();
+                }, 3500);
+            },
+
+            hide: function() {
+                console.log("In wpcf7.alert.message.hide().");
+
+                clearTimeout(wpcf7.alert.message.id);
+
+                const animated = motionAllowed();
+
+                let classes     = ["is-shown"],
+                    animClasses = [],
+                    timeout     = 0;
+
+                if (animated) {
+                    animClasses.push("animated", "fadeOut");
+
+                    wpcf7.alert.els.nodes.alert.classList.add(...animClasses);
+
+                    timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
+                }
+
+                setTimeout(() => {
+                    wpcf7.alert.els.nodes.alert.classList.remove(...classes);
+
+                    const typeRegex = /(alert--[A-Za-z]+)/g;
+
+                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
+                        wpcf7.alert.els.nodes.alert.className =
+                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
+                    }
+
+                    if (animated) {
+                        wpcf7.alert.els.nodes.alert.classList.remove(...animClasses);
+                    }
+
+                    wpcf7.alert.els.nodes.message.textContent = "";
+                }, timeout);
+            }
+        }
     },
 
     wpcf7.submit = {
@@ -876,14 +1030,20 @@ import stylesheet from "../scss/style.scss";
             if (wpcf7.mc.id !== null && !wpcf7.mc.validate()) {
                 console.log("Preventing form submission - answer is invalid!");
 
+                wpcf7.alert.message.show("mc");
+
                 return;
             }
 
             window.wpcf7.submit(e.target);
         },
 
-        finish: function(wpcf7FormEl) {
+        finish: function(wpcf7FormEl, e) {
             console.log("In wpcf7.submit.finish().");
+
+            if (wpcf7.alert.id !== null) {
+                wpcf7.alert.message.show(e);
+            }
 
             const inputEls = wpcf7FormEl.querySelectorAll("[type='email'], [type='text'], textarea");
 
