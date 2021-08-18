@@ -1,5 +1,11 @@
 <?php get_header(); ?>
 
-index.php
+<section>
+    <div class="container">
+        <div class="section-title">
+            <h1>index.php</h1>
+        </div>
+    </div>
+</section>
 
 <?php get_footer(); ?>
