@@ -30,8 +30,10 @@ WPCF7
 
 
 <input>
+  * Design / accessibility: Change label color (to turquoise?)
   * Accessibility: <label> click should focus input
   * Inline Bootstrap variables in SASS partial (?)
 
 
 favicon / PWA stuff
+.svg content-type header is incorrect according to webhint
