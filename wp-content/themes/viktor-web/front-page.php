@@ -21,19 +21,15 @@
                     </div>
 
                     <div>
-                        <span>Autoliefhebber</span>
+                        <span>Web developer</span>
                     </div>
 
                     <div>
-                        <span>Hobbyfotograaf</span>
+                        <span>Photographer</span>
                     </div>
 
                     <div>
-                        <span>Webdeveloper</span>
-                    </div>
-
-                    <div>
-                        <span>Part-time superman</span>
+                        <span>Car enthusiast</span>
                     </div>
                 </div>
             </div>

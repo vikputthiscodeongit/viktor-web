@@ -253,29 +253,20 @@ import stylesheet from "../scss/style.scss";
             .type("Homo sapiens", {delay: 1450})
             .delete(null, {delay: 900})
             // 2
-            .type("Autoliefhebber", {delay: 1800})
-            .delete(null, {delay: 1000})
-            // 3
-            .type("Hobbu-", {delay: 500})
-            .delete(2, {delay: 550})
-            .type("yfotograaf", {delay: 2000})
-            .delete(null, {delay: 900})
-            // 4
-            .type("Webdevlo", {delay: 500})
+            .type("Web devlo", {delay: 500})
             .move(-2, {speed: 150, delay: 350})
             .type("e", {delay: 500})
             .move(2, {speed: 100, delay: 400})
             .type("per", {delay: 1850})
             .delete(null, {delay: 1000})
-            // 5
-            .type("Part", {delay: 650})
-            .type("-", {delay: 500})
-            .type("tue", {delay: 550})
-            .delete(2, {delay: 450})
-            .type("ime", {delay: 550})
-            .type(" ", {delay: 400})
-            .type("superman", {delay: 1800})
-            .delete(null, {delay: 850})
+            // 3
+            .type("Photogfr", {delay: 400})
+            .delete(2, {delay: 350})
+            .type("rapher", {delay: 2000})
+            .delete(null, {delay: 900})
+            // 4
+            .type("Car enthusiast", {delay: 1800})
+            .delete(null, {delay: 1000})
             .go();
     };
 
