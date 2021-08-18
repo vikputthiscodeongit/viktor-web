@@ -1,0 +1,53 @@
+body {
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: $off-white-light;
+
+        &-track {
+            background-color: $off-white-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        }
+
+        &-thumb {
+            background-color: $gray-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+    }
+}
+
+ol,
+ul {
+    &[class] {
+        margin-bottom: 0;
+        padding-left: 0;
+
+        li {
+            list-style: none;
+        }
+    }
+}
+
+p {
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+a {
+    transition: $transition-base;
+    transition-property: text-decoration-color, color, outline;
+
+    &:focus {
+        outline: rem(2px) solid currentColor;
+        outline-offset: rem(2px);
+
+        .using-mouse & {
+            outline: none;
+        }
+    }
+}

@@ -1,0 +1,75 @@
+@function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
+    @if ($name == 0) {
+        @return $name;
+    } @else {
+        $min: map-get($breakpoints, $name);
+
+        @return if($min != 0, $min, null);
+    }
+}
+
+@function breakpoint-max($name, $breakpoints: $grid-breakpoints) {
+    @if ($name == 0) {
+        @return $name;
+    } @else {
+        $max: map-get($breakpoints, $name);
+
+        @return if($max and $max > 0, $max - 0.00125, null);
+    }
+}
+
+@mixin respond-below($breakpoint-width, $breakpoint-height: 0) {
+    $max-width: breakpoint-max($breakpoint-width);
+
+    @if $max-width == null {
+        @error "Width breakpoint '#{$breakpoint-width}' is invalid";
+    }
+
+    $max-height: breakpoint-max($breakpoint-height, $grid-height-breakpoints);
+
+    @if $max-height == null {
+        @error "Height breakpoint '#{$breakpoint-height}' is invalid";
+    }
+
+    @if $breakpoint-width and $breakpoint-height == 0 {
+        @media (max-width: $max-width) {
+            @content;
+        }
+    } @else if $breakpoint-width == 0 and $breakpoint-height {
+        @media (max-height: $max-height) {
+            @content;
+        }
+    } @else if $breakpoint-width and $breakpoint-height {
+        @media (max-width: $max-width) and (max-height: $max-height) {
+            @content;
+        }
+    }
+}
+
+@mixin respond-above($breakpoint-width, $breakpoint-height: 0) {
+    $min-width: breakpoint-min($breakpoint-width);
+
+    @if $min-width == null {
+        @error "Width breakpoint '#{$breakpoint-width}' is invalid";
+    }
+
+    $min-height: breakpoint-min($breakpoint-height, $grid-height-breakpoints);
+
+    @if $min-height == null {
+        @error "Height breakpoint '#{$breakpoint-height}' is invalid";
+    }
+
+    @if $breakpoint-width and $breakpoint-height == 0 {
+        @media (min-width: $min-width) {
+            @content;
+        }
+    } @else if $breakpoint-width == 0 and $breakpoint-height {
+        @media (min-height: $min-height) {
+            @content;
+        }
+    } @else {
+        @media (min-width: $min-width) and (min-height: $min-height) {
+            @content;
+        }
+    }
+}

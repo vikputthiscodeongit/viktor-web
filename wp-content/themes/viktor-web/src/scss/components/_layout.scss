@@ -1,0 +1,91 @@
+html {
+    height: fill-available;
+}
+
+body {
+    min-width: $body-min-width;
+    margin: 0 auto;
+}
+
+main {
+    overflow-x: hidden;
+}
+
+section {
+    min-height: var(--vh);
+
+    .no-js & {
+        min-height: 100vh;
+    }
+
+    &#home {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.container {
+    position: relative;
+    max-width: rem(1440px);
+    min-height: var(--vh);
+    margin-left: auto;
+    margin-right: auto;
+    padding: rem(24px);
+
+    @include respond-above(xs) {
+        padding-left: 10vw;
+        padding-right: 10vw;
+    }
+
+    @include respond-above(sm) {
+        padding-left: 15vw;
+        padding-right: 15vw;
+    }
+
+    @include respond-above(xxl) {
+        padding-left: rem(216px);
+        padding-right: rem(216px);
+    }
+
+    .no-js & {
+        min-height: 100vh;
+    }
+
+    #home > & {
+        flex-basis: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        @include respond-below(md) {
+            min-height: auto;
+            max-height: rem(800px);
+            height: var(--vh);
+        }
+    }
+}
+
+.viktor {
+    &-info {
+        grid-column: 1 / span 3;
+        grid-row: 1 / span 2;
+        align-self: center;
+    }
+
+    &-about {
+        position: relative;
+        top: 1em;
+        left: 1.75em;
+        width: calc(100% - 1.75em);
+    }
+}
+
+.home-nav {
+    position: relative;
+    bottom: 1em;
+    grid-column: 2 / span 2;
+    grid-row: 3;
+    justify-self: flex-end;
+    align-self: flex-end;
+}
