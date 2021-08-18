@@ -1,6 +1,5 @@
 import debounce from "lodash/debounce";
 
-// import Noty from "noty";
 import TypeIt from "typeit";
 
 import stylesheet from "../scss/style.scss";
@@ -300,63 +299,9 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.form.enable(wpcf7FormEl);
 
-            wpcf7El.addEventListener("wpcf7invalid", function(e) {
-                //
-                // TODO:
-                // Behouden of verwijderen?
-                // Indien behouden:
-                //  Veroorzaakt scrolling bug op de x-as van de website bij een erroreous form submit.
-                //  Pagina scrollt naar rechts de overflow in.
-                //
-                // wpcf7.input.scrollToInvalid(e);
-            });
-
-            // const submitButton = wpcf7FormEl.querySelector("[type='submit']");
-                //   submitButtonText = submitButton.querySelector(".btn__text");
-
-            wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
-                console.log(e);
-
-                // if (!submitButton.hasAttribute("data-string-send")) {
-                //     submitButton.setAttribute(
-                //         "data-string-send",
-                //         submitButtonText.textContent
-                //     );
-                // }
-
-                // submitButton.setAttribute("disabled", true);
-                // submitButton.classList.add("is-submitting");
-
-                // submitButtonText.textContent =
-                //     submitButton.getAttribute("data-string-sending");
-            });
-
-            wpcf7El.addEventListener("wpcf7submit", function(e) {
-                console.log(e);
-
-                // const formStatus = e.detail.status;
-                // console.log(formStatus);
-
-                // const alertType       = formStatus !== "mail_sent" ?
-                //                             "warning" : "success",
-                //       alertText       = e.detail.apiResponse.message,
-                //       alertTimeoutDur = debugMode.isSet ? false : 4000;
-
-                // new Noty({
-                //     type:    alertType,
-                //     layout:  "topCenter",
-                //     theme:   "bootstrap-v4",
-                //     text:    alertText,
-                //     timeout: alertTimeoutDur,
-                //     killer:  true
-                // }).show();
-
-                // submitButton.removeAttribute("disabled");
-                // submitButton.classList.remove("is-submitting");
-
-                // submitButtonText.textContent =
-                //     submitButton.getAttribute("data-string-send");
-            });
+            // wpcf7El.addEventListener("wpcf7invalid", function(e) {
+            //     wpcf7.input.scrollToInvalid(e);
+            // });
 
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
                 wpcf7.submit.prepare(wpcf7FormEl);
@@ -365,33 +310,6 @@ import stylesheet from "../scss/style.scss";
             wpcf7El.addEventListener("wpcf7submit", function(e) {
                 wpcf7.submit.finish(wpcf7FormEl, e);
             });
-
-
-            // // Its <input>s
-            // const inputs = wpcf7FormEl.querySelectorAll(".wpcf7-form-control");
-
-            // //
-            // // TODO: split deze functie af
-            // //
-            // inputs.forEach((input) => {
-            //     //
-            //     // TODO: check element properties (minlength, maxlength, pattern)
-            //     //
-            //     if (
-            //         input.classList.contains("wpcf7-validates-as-required") &&
-            //         // input.value isn't necessarily always empty on form initialization,
-            //         // Firefox for example retains <input> values when a page is refreshed.
-            //         input.value === ""
-            //     ) {
-            //         wpcf7.input.setState.invalid(input);
-            //     }
-
-            //     input.addEventListener("input", function() {
-            //         // Noty.closeAll();
-
-            //         wpcf7.input.validate(input);
-            //     });
-            // });
         });
     };
 
@@ -518,9 +436,6 @@ import stylesheet from "../scss/style.scss";
                 console.log("In wpcf7.mc.els.remove().");
 
                 for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
-                    //
-                    // Moet dit hier blijven? Maak globale wpcf7 helper, bouw skip in?
-                    //
                     if (role === "wrapper")
                         continue;
 
@@ -632,7 +547,7 @@ import stylesheet from "../scss/style.scss";
                 i = 0;
             }
 
-            console.log(i);
+            // console.log(i);
 
             wpcf7.mc.problem.generate();
 
@@ -730,19 +645,11 @@ import stylesheet from "../scss/style.scss";
             invalid: function(inputEl) {
                 console.log("In wpcf7.input.setState.invalid().");
 
-                // const field = inputEl.closest(".field");
-
-                // field.classList.replace("is-valid", "is-invalid");
-
                 inputEl.setAttribute("aria-invalid", true);
             },
 
             valid: function(inputEl) {
                 console.log("In wpcf7.input.setState.valid().");
-
-                // const field = inputEl.closest(".field");
-
-                // field.classList.replace("is-invalid", "is-valid");
 
                 inputEl.setAttribute("aria-invalid", false);
 
@@ -771,7 +678,6 @@ import stylesheet from "../scss/style.scss";
 
         validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
-            console.log(inputEl.value);
 
             if (inputEl.id === "wpcf7mc-input") {
                 console.log("Exiting function - this <input> belongs to the maths CAPTCHA, so I'm not running the regular validation function.");
@@ -1004,7 +910,9 @@ import stylesheet from "../scss/style.scss";
                     return;
                 }
 
-                // Werk met .closest?
+                //
+                // TODO: Use .closest() (maybe, or do the assignment in a completely different way)
+                //
                 const fieldEl    = buttonEl.parentElement,
                       fieldsetEl = fieldEl.parentElement;
 
@@ -1022,7 +930,6 @@ import stylesheet from "../scss/style.scss";
 
         do: function(e) {
             console.log("In wpcf7.submit.do().");
-            console.log(e);
 
             e.preventDefault();
             e.stopImmediatePropagation();

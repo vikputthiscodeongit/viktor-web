@@ -155,19 +155,6 @@ textarea {
         &[data-input-was-valid="true"] {
             border-color: $warning;
         }
-
-        // .form.invalid &.wpcf7-validates-as-required,
-        // .form.invalid &:not(.wpcf7-validates-as-required):not(:empty) {
-        //     &::after {
-        //         content: url("../../images/compiled/icons/exclamation-circle.svg");
-        //         position: absolute;
-        //         top: 50%;
-        //         left: rem(16px);
-        //         z-index: 2;
-        //         transform: translateY(-50%);
-        //     }
-        // }
-        //
     }
 
     .field--ifl & {
