@@ -131,7 +131,7 @@ import stylesheet from "../scss/style.scss";
 
         inputDeviceDetector();
 
-        debugMode.init();
+        devMode.init();
 
         main.init();
 
@@ -155,30 +155,30 @@ import stylesheet from "../scss/style.scss";
     }
 
 
-    // Set development mode indicator
-    let debugMode = {};
+    // For development purposes
+    let devMode = {};
 
-    debugMode.init = function() {
-        console.log("In debugMode.init().");
+    devMode.init = function() {
+        console.log("In devMode.init().");
 
-        if (!debugMode.isSet) {
+        if (!devMode.isSet) {
             console.log("Exiting function - site is not in development mode!");
 
             return;
         }
 
-        debugMode.setIndicator();
+        devMode.setIndicator();
     };
 
-    debugMode.isSet = process.env.NODE_ENV === "production" ? false : true;
+    devMode.isSet = process.env.NODE_ENV !== "production";
 
-    debugMode.setIndicator = function() {
-        const width = "0.125rem",
-              style = "solid",
-              color = "red";
+    devMode.setIndicator = function() {
+        const el = createEl("div");
 
-        body.style.borderLeft = `${width} ${style} ${color}`;
-        body.style.borderRight = body.style.borderLeft;
+        el.style.cssText = "position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000; padding: 1rem; text-transform: uppercase; font-weight: 700; background-color: white; border: 0.125rem solid red;";
+        el.textContent = "Build: dev";
+
+        body.firstElementChild.insertBefore(el, body.firstElementChild.firstElementChild);
     };
 
 
@@ -614,7 +614,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = debugMode.isSet ? 3000 : 15000;
+                    timeout = devMode.isSet ? 3000 : 15000;
                 }
 
                 i++;
