@@ -241,23 +241,23 @@ import stylesheet from "../scss/style.scss";
             deleteSpeed: 40,
             loop: true
         })
-            // 1
+            //
             .type("Homo sapiens", {delay: 1450})
             .delete(null, {delay: 900})
-            // 2
+            //
+            .type("Car enthou", {delay: 400})
+            .delete(2, {delay: 350})
+            .type("usiast", {delay: 2000})
+            .delete(null, {delay: 900})
+            //
+            .type("Photographer", {delay: 1800})
+            .delete(null, {delay: 1000})
+            //
             .type("Web devlo", {delay: 500})
             .move(-2, {speed: 150, delay: 350})
             .type("e", {delay: 500})
             .move(2, {speed: 100, delay: 400})
             .type("per", {delay: 1850})
-            .delete(null, {delay: 1000})
-            // 3
-            .type("Photogfr", {delay: 400})
-            .delete(2, {delay: 350})
-            .type("rapher", {delay: 2000})
-            .delete(null, {delay: 900})
-            // 4
-            .type("Car enthusiast", {delay: 1800})
             .delete(null, {delay: 1000})
             .go();
     };
