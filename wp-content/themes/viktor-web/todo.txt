@@ -1,14 +1,14 @@
 Issue types
 * Bug:          2
 * Check:        1
-* Improvement: 14
+* Improvement: 15
 
 Issue departments
 * Accessibility: 5
 * Code quality:  6
 * Design:        2
 * General:       3
-* Performance:   2
+* Performance:   3
 * Security:      2
 * UX:            4
 
@@ -21,6 +21,8 @@ General
   * IMPROVEMENT / Code quality / JS: Move some methods between objects
 
   * IMPROVEMENT / General: favicon / PWA stuff
+
+  * IMPROVEMENT / Performance: SVG Content-Type header is incorrect according to webhint
 
 
 Alert
