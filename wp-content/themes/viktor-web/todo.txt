@@ -1,37 +1,66 @@
-Check JavaScript function initialization (incl. cssLoaded())
+Issue types
+* Bug:          2
+* Check:        1
+* Improvement: 14
+
+Issue departments
+* Accessibility: 5
+* Code quality:  6
+* Design:        2
+* General:       3
+* Performance:   2
+* Security:      2
+* UX:            4
+
+
+General
+  * BUG / Design / JS - CSS: section#home height is incorrect (check on Android)
+
+  * IMPROVEMENT / General - Code quality / JS: JavaScript function initialization (incl. cssLoaded())
+
+  * IMPROVEMENT / Code quality / JS: Move some methods between objects
+
+  * IMPROVEMENT / General: favicon / PWA stuff
 
 
 Alert
-  * Accessibility: communicate state changes
+  * IMPROVEMENT / Accessibility / JS: communicate state changes to screen readers
+
+
+Input
+  * IMPROVEMENT / UX - Accessibility - Design / CSS: <label> should not be blue (instead, turquoise?)
+
+  * IMPROVEMENT / UX - Accessibility / HTML - JS: <label> click should focus input
+
+  * IMPROVEMENT / Code quality / CSS: Inline Bootstrap variables in SASS partial (?)
 
 
 WPCF7
-  Validation (general)
-    * Improve invalid <input> indicator
-      > Place cross in <input>?
-    * Merge regular <input> validation function with the CAPTCHA one
-    * Scroll to first invalid <input> after validation
+  General
+    * IMPROVEMENT / Code quality / JS: Make .els.remove() (& maybe more) a global (wpcf7) helper
+
+    * CHECK - General / JS: Does it work when there are multiple forms on page
+
+  Validation
+    * BUG / UX / JS - CSS: Non-required div.field should not have a warning border
+
+    * IMPROVEMENT / UX - Accessibility / JS - CSS: Place cross at end of <input> if invalid
+
+    * IMPROVEMENT / Accessibility / JS: Scroll to first invalid <input> after validation
       > Existing function (wpcf7.input.scrollToInvalid()) has a bug:
-        After a failed form submission, scrolls right on the x-axis into the site's overflow
+          After a failed form submission, scrolls right on the x-axis into the site's overflow
+
+    * IMPROVEMENT / Code quality / JS: Merge regular <input> validation function with the CAPTCHA one
 
   CAPTCHA
-    * Change CAPTCHA behaviour on fresh form load (to one of the following three options):
+    * IMPROVEMENT / Performance - Code quality / JS: Change CAPTCHA behaviour on fresh form load (to one of the following three options):
       a. Prevent form submission the first 3500ms after the first interaction with said form
       b. Prevent form submission the first 3500ms after DOMContentLoaded
       c. Start rapid refresh after the first interaction with the form
-    * Generate <label> & <input> in PHP?
-    * Generate ID and thus <input> name in PHP?
+
+    * IMPROVEMENT / Performance - Security / JS - PHP: Generate <label> & <input> in PHP (?)
+
+    * IMPROVEMENT / Security / JS - PHP: Generate ID & <input> name in PHP (?)
       > Generate random int
       > Insert in DOM el
       > Get int from DOM el
-
-  * Make .els.remove() a global (wpcf7) helper (& maybe more)
-  * Check if the entire thing works with multiple forms on page
-
-
-<input>
-  * Accessibility: <label> click should focus input
-  * Inline Bootstrap variables in SASS partial (?)
-
-
-favicon / PWA stuff
