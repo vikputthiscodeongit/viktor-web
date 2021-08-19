@@ -771,7 +771,7 @@ import stylesheet from "../scss/style.scss";
 
                 if (msgType === "mc") {
                     type = "warning";
-                    message = "Your answer to the maths problem was incorrect.";
+                    message = "Your answer to the maths problem is incorrect.";
                 }
 
                 if (msgType.type === "wpcf7submit") {
