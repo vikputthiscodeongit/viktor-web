@@ -228,14 +228,14 @@ textarea {
     display: inline-flex;
     align-items: center;
     width: auto;
-    padding: $btn-padding-y $btn-padding-x;
+    padding: rem(14px) rem(22px);
     text-decoration: none;
-    font: $btn-font-weight $btn-font-size/$btn-line-height $btn-font-family;
+    font: $font-weight-base $font-size-base/1 $headings-font-family;
     color: $white;
     background-color: $blue;
     border: none;
-    border-radius: $btn-border-radius;
-    transition: $btn-transition;
+    border-radius: rem(100px);
+    transition: 0.2s ease-in-out;
     transition-property: background-color, box-shadow;
 
     &:hover {

@@ -76,17 +76,3 @@ $line-height-base:            1.625;
 $headings-margin-bottom:      0;
 $headings-font-family:        $font-family-monospace;
 $headings-font-weight:        $font-weight-bold;
-
-
-// Buttons
-$btn-padding-y:               rem(14px);
-$btn-padding-x:               rem(22px);
-$btn-font-family:             $headings-font-family;
-$btn-font-size:               $font-size-base;
-$btn-line-height:             1;
-
-$btn-font-weight:             $font-weight-base;
-
-$btn-border-radius:           rem(100px);
-
-$btn-transition:              0.2s ease-in-out;
