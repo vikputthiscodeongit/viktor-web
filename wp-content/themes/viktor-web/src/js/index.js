@@ -229,6 +229,151 @@ import stylesheet from "../scss/style.scss";
     };
 
 
+    // Alert
+    let alert = {};
+
+    alert.init = function() {
+        console.log("In alert.init().");
+
+        if (alert.id) {
+            console.log("Exiting function - alert already initiated!");
+
+            return;
+        }
+
+        alert.id = randIntUnder(1000);
+
+        alert.els.generate();
+    };
+
+    alert.id = null;
+
+    alert.els = {
+        nodes: {
+            alert: null,
+            message: null
+        },
+
+        objArr: function() {
+            const array = [
+                {
+                    el: "div",
+                    role: "alert",
+                    attrs: {
+                        class: "alert"
+                    }
+                },
+                {
+                    el: "p",
+                    role: "message",
+                    attrs: {
+                        class: "alert__message"
+                    }
+                },
+            ];
+
+            return array;
+        },
+
+        generate: function() {
+            console.log("In alert.els.generate().");
+
+            removeEls(alert.els.nodes);
+
+            const elObjArr = alert.els.objArr();
+
+            elObjArr.forEach((elObj) => {
+                const el = createEl(elObj.el, elObj.attrs);
+
+                alert.els.nodes[elObj.role] = el;
+
+                if (elObj.role === "alert") {
+                    main.el.insertBefore(el, main.el.firstElementChild);
+                } else {
+                    alert.els.nodes.alert.append(el);
+                }
+            });
+        }
+    };
+
+    alert.message = {
+        id: null,
+
+        show: function(msgProps) {
+            console.log("In alert.message.show().");
+
+            if (alert.message.id) {
+                clearTimeout(alert.message.id);
+
+                const typeRegex = /(alert--[A-Za-z]+)/g;
+
+                if (alert.els.nodes.alert.className.match(typeRegex)) {
+                    alert.els.nodes.alert.className = alert.els.nodes.alert.className.replace(typeRegex, "");
+                }
+            }
+
+            if (msgProps[0]) {
+                alert.els.nodes.alert.classList.add(`alert--${msgProps[0]}`);
+            }
+
+            alert.els.nodes.message.textContent = msgProps[1];
+
+            alert.els.nodes.alert.classList.add("is-shown");
+
+            if (motionAllowed()) {
+                alert.els.nodes.alert.classList.add("animated", "fadeIn");
+
+                const timeout = cssTimeToMs(cssValue(alert.els.nodes.alert, "animation-duration"));
+
+                setTimeout(() => {
+                    alert.els.nodes.alert.classList.remove("animated", "fadeIn");
+                }, timeout);
+            }
+
+            alert.message.id = setTimeout(() => {
+                alert.message.hide();
+            }, 3500);
+        },
+
+        hide: function() {
+            console.log("In alert.message.hide().");
+
+            clearTimeout(alert.message.id);
+
+            const animated = motionAllowed();
+
+            let classes     = ["is-shown"],
+                animClasses = [],
+                timeout     = 0;
+
+            if (animated) {
+                animClasses.push("animated", "fadeOut");
+
+                alert.els.nodes.alert.classList.add(...animClasses);
+
+                timeout = cssTimeToMs(cssValue(alert.els.nodes.alert, "animation-duration"));
+            }
+
+            setTimeout(() => {
+                alert.els.nodes.alert.classList.remove(...classes);
+
+                const typeRegex = /(alert--[A-Za-z]+)/g;
+
+                if (alert.els.nodes.alert.className.match(typeRegex)) {
+                    alert.els.nodes.alert.className =
+                        alert.els.nodes.alert.className.replace(typeRegex, "");
+                }
+
+                if (animated) {
+                    alert.els.nodes.alert.classList.remove(...animClasses);
+                }
+
+                alert.els.nodes.message.textContent = "";
+            }, timeout);
+        }
+    };
+
+
     // TypeIt
     let typeItAbout = {};
 
@@ -285,7 +430,7 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.mc.init(wpcf7FormEl);
 
-            wpcf7.alert.init(wpcf7FormEl);
+            alert.init();
 
             wpcf7.input.init(wpcf7FormEl);
 
@@ -691,77 +836,7 @@ import stylesheet from "../scss/style.scss";
     };
 
     wpcf7.alert = {
-        init: function(wpcf7FormEl) {
-            wpcf7.alert.id = randIntUnder(1000);
-
-            wpcf7.alert.els.generate(wpcf7FormEl);
-        },
-
-        id: null,
-
-        els: {
-            nodes: {
-                alert: null,
-                message: null
-            },
-
-            objArr: function() {
-                const array = [
-                    {
-                        el: "div",
-                        role: "alert",
-                        attrs: {
-                            class: "alert"
-                        }
-                    },
-                    {
-                        el: "p",
-                        role: "message",
-                        attrs: {
-                            class: "alert__message"
-                        }
-                    },
-                ];
-
-                return array;
-            },
-
-            generate: function(wpcf7FormEl) {
-                console.log("In wpcf7.alert.els.generate().");
-
-                wpcf7.alert.els.remove();
-
-                const elObjArr = wpcf7.alert.els.objArr();
-
-                elObjArr.forEach((elObj) => {
-                    const el = createEl(elObj.el, elObj.attrs);
-
-                    wpcf7.alert.els.nodes[elObj.role] = el;
-
-                    if (elObj.role === "alert") {
-                        const container = wpcf7FormEl.closest(".container");
-
-                        container.insertBefore(el, container.firstElementChild);
-                    } else {
-                        wpcf7.alert.els.nodes.alert.append(el);
-                    }
-                });
-            },
-
-            remove: function() {
-                console.log("In wpcf7.alert.els.remove().");
-
-                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
-                    if (el) {
-                        el.remove();
-                    }
-                }
-            }
-        },
-
         message: {
-            id: null,
-
             get: function(msgType) {
                 console.log("In wpcf7.alert.message.get().");
 
@@ -797,80 +872,12 @@ import stylesheet from "../scss/style.scss";
             show: function(msgType) {
                 console.log("In wpcf7.alert.message.show().");
 
-                if (wpcf7.alert.message.id) {
-                    clearTimeout(wpcf7.alert.message.id);
-
-                    const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
-                        wpcf7.alert.els.nodes.alert.className =
-                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
-                    }
-                }
-
                 const msgProps = wpcf7.alert.message.get(msgType);
 
-                if (msgProps[0]) {
-                    wpcf7.alert.els.nodes.alert.classList.add(`alert--${msgProps[0]}`);
-                }
-
-                wpcf7.alert.els.nodes.message.textContent = msgProps[1];
-
-                wpcf7.alert.els.nodes.alert.classList.add("is-shown");
-
-                if (motionAllowed()) {
-                    wpcf7.alert.els.nodes.alert.classList.add("animated", "fadeIn");
-
-                    const timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
-
-                    setTimeout(() => {
-                        wpcf7.alert.els.nodes.alert.classList.remove("animated", "fadeIn");
-                    }, timeout);
-                }
-
-                wpcf7.alert.message.id = setTimeout(() => {
-                    wpcf7.alert.message.hide();
-                }, 3500);
-            },
-
-            hide: function() {
-                console.log("In wpcf7.alert.message.hide().");
-
-                clearTimeout(wpcf7.alert.message.id);
-
-                const animated = motionAllowed();
-
-                let classes     = ["is-shown"],
-                    animClasses = [],
-                    timeout     = 0;
-
-                if (animated) {
-                    animClasses.push("animated", "fadeOut");
-
-                    wpcf7.alert.els.nodes.alert.classList.add(...animClasses);
-
-                    timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
-                }
-
-                setTimeout(() => {
-                    wpcf7.alert.els.nodes.alert.classList.remove(...classes);
-
-                    const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
-                        wpcf7.alert.els.nodes.alert.className =
-                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
-                    }
-
-                    if (animated) {
-                        wpcf7.alert.els.nodes.alert.classList.remove(...animClasses);
-                    }
-
-                    wpcf7.alert.els.nodes.message.textContent = "";
-                }, timeout);
+                alert.message.show(msgProps);
             }
         }
-    },
+    };
 
     wpcf7.submit = {
         els: {
