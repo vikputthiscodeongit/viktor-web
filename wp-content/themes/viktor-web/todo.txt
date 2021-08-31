@@ -1,16 +1,26 @@
-Issue types
+Issues
+
+Types
 * Bug:          2
 * Check:        1
 * Improvement: 15
 
-Issue departments
+Departments
 * Accessibility: 5
-* Code quality:  6
-* Design:        2
+* Code quality:  4
+* Design:        4
 * General:       3
 * Performance:   3
 * Security:      2
 * UX:            4
+
+Related languages
+* HTML: 1
+* CSS:  7
+* JS:  14
+* PHP:  2
+
+
 
 
 General
@@ -34,13 +44,13 @@ Input
 
   * IMPROVEMENT / UX - Accessibility / HTML - JS: <label> click should focus input
 
-  * IMPROVEMENT / Code quality / CSS: Inline Bootstrap variables in SASS partial (?)
+  * IMPROVEMENT / Design / CSS: <textarea> should have a pretty scrollbar
+
+  * IMPROVEMENT / Design / JS - CSS: The <label> in a .field--ifl with a <textarea> should leave margin at the side for a scrollbar
 
 
 WPCF7
   General
-    * IMPROVEMENT / Code quality / JS: Make .els.remove() (& maybe more) a global (wpcf7) helper
-
     * CHECK - General / JS: Does it work when there are multiple forms on page
 
   Validation
