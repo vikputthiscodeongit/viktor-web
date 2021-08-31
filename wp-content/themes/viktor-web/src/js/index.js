@@ -207,7 +207,7 @@ import stylesheet from "../scss/style.scss";
         }, 25));
     };
 
-    main.el = document.querySelector("main");
+    main.el = body.querySelector("main");
 
     main.setVhProp = function() {
         console.log("In main.setVhProp().");
@@ -415,6 +415,7 @@ import stylesheet from "../scss/style.scss";
             .move(2, {speed: 100, delay: 400})
             .type("per", {delay: 1850})
             .delete(null, {delay: 1000})
+            //
             .go();
     };
 
@@ -428,6 +429,9 @@ import stylesheet from "../scss/style.scss";
         wpcf7.els.forEach((wpcf7El) => {
             const wpcf7FormEl = wpcf7El.querySelector(".wpcf7-form");
 
+            if (!wpcf7FormEl)
+                return;
+
             wpcf7.mc.init(wpcf7FormEl);
 
             alert.init();
@@ -438,10 +442,6 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.form.enable(wpcf7FormEl);
 
-            // wpcf7El.addEventListener("wpcf7invalid", function(e) {
-            //     wpcf7.input.scrollToInvalid(e);
-            // });
-
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
                 wpcf7.submit.prepare(wpcf7FormEl);
             });
@@ -449,6 +449,10 @@ import stylesheet from "../scss/style.scss";
             wpcf7El.addEventListener("wpcf7submit", function(e) {
                 wpcf7.submit.finish(wpcf7FormEl, e);
             });
+
+            // wpcf7El.addEventListener("wpcf7invalid", function(e) {
+            //     wpcf7.input.scrollToInvalid(e);
+            // });
         });
     };
 
@@ -584,17 +588,18 @@ import stylesheet from "../scss/style.scss";
 
                     const callback = function(mutationRecords) {
                         mutationRecords.forEach((record) => {
-                            if (
-                                record.removedNodes.length > 0 &&
-                                (record.removedNodes[0] === fieldEl ||
-                                 record.removedNodes[0] === inputWrapperEl ||
-                                 record.removedNodes[0] === inputEl)
-                            ) {
-                                console.log("CAPTCHA .field or <input> has been removed!");
-
-                                wpcf7.mc.regenerate(wpcf7FormEl);
-                            }
+                            checkRecord(record);
                         });
+                    };
+
+                    const checkRecord = function(record) {
+                        if (record.removedNodes[0] === fieldEl ||
+                            record.removedNodes[0] === inputWrapperEl ||
+                            record.removedNodes[0] === inputEl) {
+                            console.log("CAPTCHA .field or <input> has been removed!");
+
+                            wpcf7.mc.regenerate(wpcf7FormEl);
+                        }
                     };
 
                     const options = {
@@ -673,7 +678,7 @@ import stylesheet from "../scss/style.scss";
                 i = 0;
             }
 
-            // console.log(i);
+            console.log(i);
 
             wpcf7.mc.problem.generate();
 
