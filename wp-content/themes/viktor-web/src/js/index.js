@@ -29,6 +29,17 @@ import stylesheet from "../scss/style.scss";
         return el;
     }
 
+    // Remove multiple elements stored in an object from the DOM
+    function removeEls(nodesObj) {
+        console.log("In removeEls().");
+
+        for (const [role, el] of Object.entries(nodesObj)) {
+            if (el) {
+                el.remove();
+            }
+        }
+    }
+
     // Get a CSS element property value
     function cssValue(el, prop) {
         const elStyles = window.getComputedStyle(el);
@@ -383,7 +394,7 @@ import stylesheet from "../scss/style.scss";
             generate: function(wpcf7FormEl) {
                 console.log("In wpcf7.mc.els.generate().");
 
-                wpcf7.mc.els.remove();
+                removeEls(wpcf7.mc.els.nodes);
 
                 wpcf7.submit.els.assignVars(wpcf7FormEl);
 
@@ -413,19 +424,6 @@ import stylesheet from "../scss/style.scss";
                 });
 
                 wpcf7.mc.els.observe.do(wpcf7FormEl);
-            },
-
-            remove: function() {
-                console.log("In wpcf7.mc.els.remove().");
-
-                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
-                    if (role === "wrapper")
-                        continue;
-
-                    if (el) {
-                        el.remove();
-                    }
-                }
             },
 
             observe: {
