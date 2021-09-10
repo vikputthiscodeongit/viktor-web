@@ -310,31 +310,34 @@ import stylesheet from "../scss/style.scss";
         show: function(msgProps) {
             console.log("In alert.message.show().");
 
+            const alertEl   = alert.els.nodes.alert,
+                  messageEl = alert.els.nodes.message;
+
             if (alert.message.id) {
                 clearTimeout(alert.message.id);
 
                 const typeRegex = /(alert--[A-Za-z]+)/g;
 
-                if (alert.els.nodes.alert.className.match(typeRegex)) {
-                    alert.els.nodes.alert.className = alert.els.nodes.alert.className.replace(typeRegex, "");
+                if (alertEl.className.match(typeRegex)) {
+                    alertEl.className = alertEl.className.replace(typeRegex, "");
                 }
             }
 
             if (msgProps[0]) {
-                alert.els.nodes.alert.classList.add(`alert--${msgProps[0]}`);
+                alertEl.classList.add(`alert--${msgProps[0]}`);
             }
 
-            alert.els.nodes.message.textContent = msgProps[1];
+            messageEl.textContent = msgProps[1];
 
-            alert.els.nodes.alert.classList.add("is-shown");
+            alertEl.classList.add("is-shown");
 
             if (motionAllowed()) {
-                alert.els.nodes.alert.classList.add("animated", "fadeIn");
+                alertEl.classList.add("animated", "fadeIn");
 
-                const timeout = cssTimeToMs(cssValue(alert.els.nodes.alert, "animation-duration"));
+                const timeout = cssTimeToMs(cssValue(alertEl, "animation-duration"));
 
                 setTimeout(() => {
-                    alert.els.nodes.alert.classList.remove("animated", "fadeIn");
+                    alertEl.classList.remove("animated", "fadeIn");
                 }, timeout);
             }
 
@@ -348,6 +351,9 @@ import stylesheet from "../scss/style.scss";
 
             clearTimeout(alert.message.id);
 
+            const alertEl   = alert.els.nodes.alert,
+                  messageEl = alert.els.nodes.message;
+
             const animated = motionAllowed();
 
             let classes     = ["is-shown"],
@@ -357,26 +363,26 @@ import stylesheet from "../scss/style.scss";
             if (animated) {
                 animClasses.push("animated", "fadeOut");
 
-                alert.els.nodes.alert.classList.add(...animClasses);
+                alertEl.classList.add(...animClasses);
 
-                timeout = cssTimeToMs(cssValue(alert.els.nodes.alert, "animation-duration"));
+                timeout = cssTimeToMs(cssValue(alertEl, "animation-duration"));
             }
 
             setTimeout(() => {
-                alert.els.nodes.alert.classList.remove(...classes);
+                alertEl.classList.remove(...classes);
 
                 const typeRegex = /(alert--[A-Za-z]+)/g;
 
-                if (alert.els.nodes.alert.className.match(typeRegex)) {
-                    alert.els.nodes.alert.className =
-                        alert.els.nodes.alert.className.replace(typeRegex, "");
+                if (alertEl.className.match(typeRegex)) {
+                    alertEl.className =
+                        alertEl.className.replace(typeRegex, "");
                 }
 
                 if (animated) {
-                    alert.els.nodes.alert.classList.remove(...animClasses);
+                    alertEl.classList.remove(...animClasses);
                 }
 
-                alert.els.nodes.message.textContent = "";
+                messageEl.textContent = "";
             }, timeout);
         }
     };
