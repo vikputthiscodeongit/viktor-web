@@ -3,11 +3,11 @@ Issues
 Types
 * Bug:          2
 * Check:        1
-* Improvement: 14
+* Improvement: 13
 
 Departments
 * Accessibility: 5
-* Code quality:  3
+* Code quality:  2
 * Design:        4
 * General:       2
 * Performance:   3
@@ -17,7 +17,7 @@ Departments
 Related languages
 * HTML: 1
 * CSS:  7
-* JS:  13
+* JS:  12
 * PHP:  2
 
 
@@ -59,8 +59,6 @@ WPCF7
     * IMPROVEMENT / Accessibility / JS: Scroll to first invalid <input> after validation
       > Existing function (wpcf7.input.scrollToInvalid()) has a bug:
           After a failed form submission, scrolls right on the x-axis into the site's overflow
-
-    * IMPROVEMENT / Code quality / JS: Merge regular <input> validation function with the CAPTCHA one
 
   CAPTCHA
     * IMPROVEMENT / Performance - Code quality / JS: Change CAPTCHA behaviour on fresh form load (to one of the following three options):

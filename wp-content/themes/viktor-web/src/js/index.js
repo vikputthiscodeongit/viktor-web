@@ -576,10 +576,6 @@ import stylesheet from "../scss/style.scss";
                     } else {
                         if (elObj.role === "input") {
                             wpcf7.mc.els.nodes.inputWrapper.append(el);
-
-                            el.addEventListener("input", () => {
-                                wpcf7.mc.validate();
-                            });
                         } else {
                             wpcf7.mc.els.nodes.field.append(el);
                         }
@@ -654,7 +650,7 @@ import stylesheet from "../scss/style.scss";
 
                 wpcf7.mc.els.nodes.label.textContent = `${digit1} + ${digit2} =`;
 
-                wpcf7.mc.validate();
+                wpcf7.input.validate(wpcf7.mc.els.nodes.input);
 
                 wpcf7.mc.problem.scheduleNext(wpcf7FormEl, i);
             },
@@ -713,20 +709,14 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.generate(wpcf7FormEl);
         },
 
-        validate: function() {
-            console.log("In wpcf7.mc.validate().");
+        isValid: function() {
+            console.log("In wpcf7.mc.isValid().");
 
             const userInput = Number(wpcf7.mc.els.nodes.input.value);
             const answer = wpcf7.mc.problem.digits[0] + wpcf7.mc.problem.digits[1];
 
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
-
-            if (answerValid) {
-                wpcf7.input.setState.valid(wpcf7.mc.els.nodes.input);
-            } else {
-                wpcf7.input.setState.invalid(wpcf7.mc.els.nodes.input);
-            }
 
             return answerValid;
         }
@@ -824,8 +814,8 @@ import stylesheet from "../scss/style.scss";
         validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
 
-            if (inputEl.id === "wpcf7mc-input") {
-                console.log("Exiting function - this <input> belongs to the maths CAPTCHA, so I'm not running the regular validation function.");
+            if (inputEl.id === "wpcf7mc-input" && !wpcf7.mc.isValid()) {
+                wpcf7.input.setState.invalid(inputEl);
 
                 return;
             }
@@ -848,9 +838,11 @@ import stylesheet from "../scss/style.scss";
                 maxAttr !== null && inputEl.value.length > max
             ) {
                 wpcf7.input.setState.invalid(inputEl);
-            } else {
-                wpcf7.input.setState.valid(inputEl);
+
+                return;
             }
+
+            wpcf7.input.setState.valid(inputEl);
         }
     };
 
@@ -941,7 +933,7 @@ import stylesheet from "../scss/style.scss";
             e.preventDefault();
             e.stopImmediatePropagation();
 
-            if (wpcf7.mc.id !== null && !wpcf7.mc.validate()) {
+            if (wpcf7.mc.id !== null && !wpcf7.mc.isValid()) {
                 console.log("Preventing form submission - answer is invalid!");
 
                 wpcf7.alert.message.show("mc");
