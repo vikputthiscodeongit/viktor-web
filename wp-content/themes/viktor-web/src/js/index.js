@@ -30,10 +30,16 @@ import stylesheet from "../scss/style.scss";
     }
 
     // Remove multiple elements stored in an object from the DOM
-    function removeEls(nodesObj) {
+    function removeEls(elOrNodesObj) {
         console.log("In removeEls().");
 
-        for (const [role, el] of Object.entries(nodesObj)) {
+        if (elOrNodesObj instanceof Element || elOrNodesObj instanceof HTMLDocument) {
+            elOrNodesObj.remove();
+
+            return;
+        }
+
+        for (const [role, el] of Object.entries(elOrNodesObj)) {
             if (el) {
                 el.remove();
             }
