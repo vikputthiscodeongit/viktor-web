@@ -240,7 +240,7 @@ import stylesheet from "../scss/style.scss";
     // Alert
     let alert = {};
 
-    alert.init = function() {
+    alert.init = function(parentEl) {
         console.log("In alert.init().");
 
         if (alert.id) {
@@ -251,7 +251,7 @@ import stylesheet from "../scss/style.scss";
 
         alert.id = randIntUnder(1000);
 
-        alert.els.generate();
+        alert.els.generate(parentEl);
     };
 
     alert.id = null;
@@ -283,8 +283,15 @@ import stylesheet from "../scss/style.scss";
             return array;
         },
 
-        generate: function() {
+        generate: function(parentEl) {
             console.log("In alert.els.generate().");
+
+            if (!parentEl) {
+                //
+                // Do I actually want to do this?
+                //
+                parentEl = main.el;
+            }
 
             removeEls(alert.els.nodes);
 
@@ -296,7 +303,7 @@ import stylesheet from "../scss/style.scss";
                 alert.els.nodes[elObj.role] = el;
 
                 if (elObj.role === "alert") {
-                    main.el.insertBefore(el, main.el.firstElementChild);
+                    parentEl.insertBefore(el, parentEl.firstElementChild);
                 } else {
                     alert.els.nodes.alert.append(el);
                 }
