@@ -3,13 +3,13 @@ Issues
 Types
 * Bug:          2
 * Check:        1
-* Improvement: 15
+* Improvement: 14
 
 Departments
 * Accessibility: 5
-* Code quality:  4
+* Code quality:  3
 * Design:        4
-* General:       3
+* General:       2
 * Performance:   3
 * Security:      2
 * UX:            4
@@ -17,7 +17,7 @@ Departments
 Related languages
 * HTML: 1
 * CSS:  7
-* JS:  14
+* JS:  13
 * PHP:  2
 
 
@@ -25,8 +25,6 @@ Related languages
 
 General
   * BUG / Design / JS - CSS: section#home height is incorrect (check on Android)
-
-  * IMPROVEMENT / General - Code quality / JS: JavaScript function initialization (incl. cssLoaded())
 
   * IMPROVEMENT / Code quality / JS: Move some methods between objects
 

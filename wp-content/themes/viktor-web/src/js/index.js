@@ -91,9 +91,11 @@ import stylesheet from "../scss/style.scss";
     }
 
     // Check if stylesheet has been loaded
-    // function cssLoaded() {
-    //     return cssValue(body, "display") === "flex";
-    // }
+    function cssLoaded() {
+        const checkEl = body.querySelector(".check-el");
+
+        return cssValue(checkEl, "width") === "1px";
+    }
 
     // Check if viewport is above given breakpoint
     // function aboveBreakpoint(bpName) {
@@ -196,15 +198,15 @@ import stylesheet from "../scss/style.scss";
     main.init = function() {
         console.log("In main.init().");
 
-        // if (!cssLoaded()) {
-        //     const timeout = 1000;
+        if (!cssLoaded()) {
+            const timeout = 1000;
 
-        //     console.log(`CSS hasn't been loaded yet - running function in ${timeout} ms!`);
+            console.log(`CSS hasn't been loaded yet - running function in ${timeout} ms!`);
 
-        //     setTimeout(main.init, timeout);
+            setTimeout(main.init, timeout);
 
-        //     return;
-        // }
+            return;
+        }
 
         main.setVhProp();
 
