@@ -160,7 +160,7 @@
 
     //
     // Contact Form 7
-    // Disable automatic insertion of <p> & <br> elements.
+    // Disable automatic insertion of <p> & <br> elements on form generation.
     add_filter("wpcf7_autop_or_not", "__return_false");
 
     // Disable loading of JavaScript bundle by default.

@@ -1,16 +1,16 @@
 Issues
 
 Types
-* Bug:          2
+* Bug:          3
 * Check:        1
 * Improvement: 13
 
 Departments
 * Accessibility: 5
 * Code quality:  2
-* Design:        4
-* General:       2
-* Performance:   3
+* Design:        5
+* General:       3
+* Performance:   2
 * Security:      2
 * UX:            4
 
@@ -28,9 +28,9 @@ General
 
   * IMPROVEMENT / Code quality / JS: Move some methods between objects
 
-  * IMPROVEMENT / General: favicon / PWA stuff
+  * IMPROVEMENT / General: favicon sizes can be improved
 
-  * IMPROVEMENT / Performance: SVG Content-Type header is incorrect according to webhint
+  * IMPROVEMENT / General: SVG Content-Type header is incorrect according to webhint
 
 
 Alert
@@ -38,23 +38,25 @@ Alert
 
 
 Input
-  * IMPROVEMENT / UX - Accessibility - Design / CSS: <label> should not be blue (instead, turquoise?)
+  * BUG / Design / JS - CSS: .field--ifl <label>s should have a side margin for the scrollbar when used in conjunction with a <textarea>
 
-  * IMPROVEMENT / UX - Accessibility / HTML - JS: <label> click should focus input
+  * IMPROVEMENT / UX - Accessibility / HTML - JS: .field--ifl <label>s should focus input when clicked
+
+  * IMPROVEMENT / UX - Accessibility - Design / CSS: .field--ifl <label>s have insufficient contrast according to the WCAG standards
+
+  * IMPROVEMENT / Design / CSS: .field--ifl <label> color & <input type="submit"> background-color may be changed for aesthetic reasons
 
   * IMPROVEMENT / Design / CSS: <textarea> should have a pretty scrollbar
-
-  * IMPROVEMENT / Design / JS - CSS: The <label> in a .field--ifl with a <textarea> should leave margin at the side for a scrollbar
 
 
 WPCF7
   General
-    * CHECK - General / JS: Does it work when there are multiple forms on page
+    * CHECK - General / JS: Check if all the functions are properly initialized when there are multiple forms on page
 
   Validation
-    * BUG / UX / JS - CSS: Non-required div.field should not have a warning border
+    * BUG / UX / JS - CSS: A warning border is set on non-required div.field s if their input is both non-empty and shorter than the set minlength.
 
-    * IMPROVEMENT / UX - Accessibility / JS - CSS: Place cross at end of <input> if invalid
+    * IMPROVEMENT / UX - Accessibility / JS - CSS: Place cross at the end of validated <input>s with invalid input
 
     * IMPROVEMENT / Accessibility / JS: Scroll to first invalid <input> after validation
       > Existing function (wpcf7.input.scrollToInvalid()) has a bug:
@@ -64,7 +66,7 @@ WPCF7
     * IMPROVEMENT / Performance - Code quality / JS: Change CAPTCHA behaviour on fresh form load (to one of the following three options):
       a. Prevent form submission the first 3500ms after the first interaction with said form
       b. Prevent form submission the first 3500ms after DOMContentLoaded
-      c. Start rapid refresh after the first interaction with the form
+      c. Start rapid refresh only after the user has interacted with the form
 
     * IMPROVEMENT / Performance - Security / JS - PHP: Generate <label> & <input> in PHP (?)
 
