@@ -185,10 +185,15 @@ import stylesheet from "../scss/style.scss";
     devMode.setIndicator = function() {
         const el = createEl("div");
 
-        el.style.cssText = "position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000; padding: 1rem; text-transform: uppercase; font-weight: 700; background-color: white; border: 0.125rem solid red;";
+        el.style.cssText = `
+        position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000;
+        padding: 1rem;
+        text-transform: uppercase; font-weight: 700;
+        background-color: white; border: 0.125rem solid red;
+        `;
         el.textContent = "Build: dev";
 
-        body.firstElementChild.insertBefore(el, body.firstElementChild.firstElementChild);
+        body.insertBefore(el, body.firstElementChild);
     };
 
 
