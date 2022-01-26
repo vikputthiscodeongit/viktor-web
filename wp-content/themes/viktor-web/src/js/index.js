@@ -419,14 +419,6 @@ import stylesheet from "../scss/style.scss";
             loop: true
         })
             //
-            .type("Homo sapiens", {delay: 1450})
-            .delete(null, {delay: 900})
-            //
-            .type("Car enthou", {delay: 400})
-            .delete(2, {delay: 350})
-            .type("usiast", {delay: 2000})
-            .delete(null, {delay: 900})
-            //
             .type("Photographer", {delay: 1800})
             .delete(null, {delay: 1000})
             //
@@ -436,6 +428,14 @@ import stylesheet from "../scss/style.scss";
             .move(2, {speed: 100, delay: 400})
             .type("per", {delay: 1850})
             .delete(null, {delay: 1000})
+            //
+            .type("Car enthou", {delay: 400})
+            .delete(2, {delay: 350})
+            .type("usiast", {delay: 2000})
+            .delete(null, {delay: 900})
+            //
+            .type("Human", {delay: 1450})
+            .delete(null, {delay: 900})
             //
             .go();
     };
