@@ -1,100 +1,20 @@
 import debounce from "lodash/debounce";
+import motionAllowed from "@codebundlesbyvik/css-media-functions";
+import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
+import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
+import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import TypeIt from "typeit";
 
 import stylesheet from "../scss/style.scss";
 
 (function() {
     // Helpers
-    // Convert camelCase to kebab-case
-    function camelToKebab(string) {
-        return string.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
-    }
-
-    // Get a random integer
-    function randIntUnder(max) {
-        return Math.floor(Math.random() * max);
-    }
-
-    // Create a DOM element
-    function createEl(tag, attrs) {
-        const el = document.createElement(tag);
-
-        if (attrs) {
-            for (const [key, val] of Object.entries(attrs)) {
-                el.setAttribute(camelToKebab(key), val);
-            }
-        }
-
-        return el;
-    }
-
-    // Remove multiple elements stored in an object from the DOM
-    function removeEls(elOrNodesObj) {
-        console.log("In removeEls().");
-
-        if (elOrNodesObj instanceof Element || elOrNodesObj instanceof HTMLDocument) {
-            elOrNodesObj.remove();
-
-            return;
-        }
-
-        for (const [role, el] of Object.entries(elOrNodesObj)) {
-            if (el) {
-                el.remove();
-            }
-        }
-    }
-
-    // Get a CSS element property value
-    function cssValue(el, prop) {
-        const elStyles = window.getComputedStyle(el);
-
-        return elStyles.getPropertyValue(prop);
-    }
-
-    // https://github.com/scrapjs/css-get-unit
-    // Package is very small, so I won't load it as an external dependency.
-    function cssGetUnit(value) {
-        const len = value.length;
-
-        if (!value || !len) {
-            return null;
-        }
-
-        let i = len;
-
-        while (i--) {
-            if (!isNaN(value[i])) {
-                return value.slice(i + 1, len) || null;
-            }
-        }
-
-        return null;
-    }
-
-    // https://github.com/semibran/css-duration
-    // Package is very small, so I won't load it as an external dependency.
-    function cssTimeToMs(time) {
-        let number = parseFloat(time);
-
-        switch (cssGetUnit(time)) {
-            case null:
-            case "ms": return number;
-            case "s": return number * 1000;
-            case "m": return number * 60000;
-            case "h": return number * 3600000;
-            case "d": return number * 86400000;
-            case "w": return number * 604800000;
-            default: return null;
-        }
-    }
-
     // Check if stylesheet has been loaded
     function cssLoaded() {
         const checkEl = body.querySelector(".check-el");
 
-        return cssValue(checkEl, "width") === "1px";
+        return getElCssValue(checkEl, "width") === "1px";
     }
 
     // Check if viewport is above given breakpoint
@@ -114,11 +34,6 @@ import stylesheet from "../scss/style.scss";
 
     //     return window.matchMedia(`(min-width: ${bp})`).matches;
     // }
-
-    // Check if prefers-reduced-motion is set
-    function motionAllowed() {
-        return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    }
 
     // Valide an email address
     // Validation is done against the standard defined in the RFC 5322 specification.
@@ -242,164 +157,6 @@ import stylesheet from "../scss/style.scss";
     };
 
 
-    // Alert
-    let alert = {};
-
-    alert.init = function(parentEl) {
-        console.log("In alert.init().");
-
-        if (alert.id) {
-            console.log("Exiting function - alert already initiated!");
-
-            return;
-        }
-
-        alert.id = randIntUnder(1000);
-
-        alert.els.generate(parentEl);
-    };
-
-    alert.id = null;
-
-    alert.els = {
-        nodes: {
-            alert: null,
-            message: null
-        },
-
-        objArr: function() {
-            const array = [
-                {
-                    el: "div",
-                    role: "alert",
-                    attrs: {
-                        class: "alert"
-                    }
-                },
-                {
-                    el: "p",
-                    role: "message",
-                    attrs: {
-                        class: "alert__message"
-                    }
-                },
-            ];
-
-            return array;
-        },
-
-        generate: function(parentEl) {
-            console.log("In alert.els.generate().");
-
-            if (!parentEl) {
-                //
-                // Do I actually want to do this?
-                //
-                parentEl = main.el;
-            }
-
-            removeEls(alert.els.nodes);
-
-            const elObjArr = alert.els.objArr();
-
-            elObjArr.forEach((elObj) => {
-                const el = createEl(elObj.el, elObj.attrs);
-
-                alert.els.nodes[elObj.role] = el;
-
-                if (elObj.role === "alert") {
-                    parentEl.insertBefore(el, parentEl.firstElementChild);
-                } else {
-                    alert.els.nodes.alert.append(el);
-                }
-            });
-        }
-    };
-
-    alert.message = {
-        id: null,
-
-        show: function(msgProps) {
-            console.log("In alert.message.show().");
-
-            const alertEl   = alert.els.nodes.alert,
-                  messageEl = alert.els.nodes.message;
-
-            if (alert.message.id) {
-                clearTimeout(alert.message.id);
-
-                const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                if (alertEl.className.match(typeRegex)) {
-                    alertEl.className = alertEl.className.replace(typeRegex, "");
-                }
-            }
-
-            if (msgProps[0]) {
-                alertEl.classList.add(`alert--${msgProps[0]}`);
-            }
-
-            messageEl.textContent = msgProps[1];
-
-            alertEl.classList.add("is-shown");
-
-            if (motionAllowed()) {
-                alertEl.classList.add("animated", "fadeIn");
-
-                const timeout = cssTimeToMs(cssValue(alertEl, "animation-duration"));
-
-                setTimeout(() => {
-                    alertEl.classList.remove("animated", "fadeIn");
-                }, timeout);
-            }
-
-            alert.message.id = setTimeout(() => {
-                alert.message.hide();
-            }, 3500);
-        },
-
-        hide: function() {
-            console.log("In alert.message.hide().");
-
-            clearTimeout(alert.message.id);
-
-            const alertEl   = alert.els.nodes.alert,
-                  messageEl = alert.els.nodes.message;
-
-            const animated = motionAllowed();
-
-            let classes     = ["is-shown"],
-                animClasses = [],
-                timeout     = 0;
-
-            if (animated) {
-                animClasses.push("animated", "fadeOut");
-
-                alertEl.classList.add(...animClasses);
-
-                timeout = cssTimeToMs(cssValue(alertEl, "animation-duration"));
-            }
-
-            setTimeout(() => {
-                alertEl.classList.remove(...classes);
-
-                const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                if (alertEl.className.match(typeRegex)) {
-                    alertEl.className =
-                        alertEl.className.replace(typeRegex, "");
-                }
-
-                if (animated) {
-                    alertEl.classList.remove(...animClasses);
-                }
-
-                messageEl.textContent = "";
-            }, timeout);
-        }
-    };
-
-
     // TypeIt
     let typeItAbout = {};
 
@@ -458,9 +215,11 @@ import stylesheet from "../scss/style.scss";
             if (!wpcf7FormEl)
                 return;
 
-            wpcf7.mc.init(wpcf7FormEl);
+            wpcf7.simpleNotifier = new SimpleNotifier({ parentEl: wpcf7FormEl });
+            wpcf7.simpleNotifier.init();
+            console.log(wpcf7.simpleNotifier);
 
-            alert.init();
+            wpcf7.mc.init(wpcf7FormEl);
 
             wpcf7.input.init(wpcf7FormEl);
 
@@ -484,6 +243,8 @@ import stylesheet from "../scss/style.scss";
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
 
+    wpcf7.simpleNotifier = null;
+
     wpcf7.mc = {
         init: function(wpcf7FormEl) {
             console.log("In wpcf7.mc.init().");
@@ -494,7 +255,7 @@ import stylesheet from "../scss/style.scss";
                 return;
             }
 
-            wpcf7.mc.id = randIntUnder(1000);
+            wpcf7.mc.id = getRandomIntUnder(1000);
 
             wpcf7.mc.generate(wpcf7FormEl);
 
@@ -569,7 +330,11 @@ import stylesheet from "../scss/style.scss";
             generate: function(wpcf7FormEl) {
                 console.log("In wpcf7.mc.els.generate().");
 
-                removeEls(wpcf7.mc.els.nodes);
+                Object.values(wpcf7.mc.els.nodes).forEach((node) => {
+                    if (node) {
+                        node.remove();
+                    }
+                });
 
                 wpcf7.submit.els.assignVars(wpcf7FormEl);
 
@@ -644,8 +409,8 @@ import stylesheet from "../scss/style.scss";
             generate: function() {
                 console.log("In wpcf7.mc.problem.generate().");
 
-                const digit1 = randIntUnder(10),
-                      digit2 = randIntUnder(10);
+                const digit1 = getRandomIntUnder(10),
+                      digit2 = getRandomIntUnder(10);
 
                 wpcf7.mc.problem.digits = [digit1, digit2];
             },
@@ -889,15 +654,15 @@ import stylesheet from "../scss/style.scss";
                     message = response.message;
                 }
 
-                return [type, message];
+                return [message, type];
             },
 
-            show: function(msgType) {
+            show: function(e) {
                 console.log("In wpcf7.alert.message.show().");
 
-                const msgProps = wpcf7.alert.message.get(msgType);
+                const msgData = wpcf7.alert.message.get(e);
 
-                alert.message.show(msgProps);
+                wpcf7.simpleNotifier.show(...msgData);
             }
         }
     };
