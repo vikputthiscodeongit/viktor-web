@@ -1,6 +1,6 @@
 {
   "name": "viktor-web",
-  "version": "2021.8",
+  "version": "2022.2",
   "main": "/src/js/index.js",
   "scripts": {
     "dev": "webpack --mode development --config webpack.config.dev.js --watch",
