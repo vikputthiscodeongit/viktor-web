@@ -34,7 +34,7 @@
             if (!$user_answer) {
                 $tag->name = "wpcf7mc_answer";
 
-                $result->invalidate($tag, __("Your answer to the maths problem was incorrect.", "contact-form-7-maths-captcha"));
+                $result->invalidate($tag, __("Your message has not been sent because you didn't complete the required challenge.", "contact-form-7-maths-captcha"));
             }
         }
 

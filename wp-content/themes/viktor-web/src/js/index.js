@@ -1,82 +1,21 @@
 import debounce from "lodash/debounce";
+import motionAllowed from "@codebundlesbyvik/css-media-functions";
+import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
+import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
+import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import TypeIt from "typeit";
 
 import stylesheet from "../scss/style.scss";
 
 (function() {
     // Helpers
-    // Convert camelCase to kebab-case
-    function camelToKebab(string) {
-        return string.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
-    }
-
-    // Get a random integer
-    function randIntUnder(max) {
-        return Math.floor(Math.random() * max);
-    }
-
-    // Create a DOM element
-    function createEl(tag, attrs) {
-        const el = document.createElement(tag);
-
-        if (attrs) {
-            for (const [key, val] of Object.entries(attrs)) {
-                el.setAttribute(camelToKebab(key), val);
-            }
-        }
-
-        return el;
-    }
-
-    // Get a CSS element property value
-    function cssValue(el, prop) {
-        const elStyles = window.getComputedStyle(el);
-
-        return elStyles.getPropertyValue(prop);
-    }
-
-    // https://github.com/scrapjs/css-get-unit
-    // Package is very small, so I won't load it as an external dependency.
-    function cssGetUnit(value) {
-        const len = value.length;
-
-        if (!value || !len) {
-            return null;
-        }
-
-        let i = len;
-
-        while (i--) {
-            if (!isNaN(value[i])) {
-                return value.slice(i + 1, len) || null;
-            }
-        }
-
-        return null;
-    }
-
-    // https://github.com/semibran/css-duration
-    // Package is very small, so I won't load it as an external dependency.
-    function cssTimeToMs(time) {
-        let number = parseFloat(time);
-
-        switch (cssGetUnit(time)) {
-            case null:
-            case "ms": return number;
-            case "s": return number * 1000;
-            case "m": return number * 60000;
-            case "h": return number * 3600000;
-            case "d": return number * 86400000;
-            case "w": return number * 604800000;
-            default: return null;
-        }
-    }
-
     // Check if stylesheet has been loaded
-    // function cssLoaded() {
-    //     return cssValue(body, "display") === "flex";
-    // }
+    function cssLoaded() {
+        const checkEl = body.querySelector(".check-el");
+
+        return getElCssValue(checkEl, "width") === "1px";
+    }
 
     // Check if viewport is above given breakpoint
     // function aboveBreakpoint(bpName) {
@@ -95,11 +34,6 @@ import stylesheet from "../scss/style.scss";
 
     //     return window.matchMedia(`(min-width: ${bp})`).matches;
     // }
-
-    // Check if prefers-reduced-motion is set
-    function motionAllowed() {
-        return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    }
 
     // Valide an email address
     // Validation is done against the standard defined in the RFC 5322 specification.
@@ -122,7 +56,7 @@ import stylesheet from "../scss/style.scss";
 
         inputDeviceDetector();
 
-        devMode.init();
+        devLabel.init();
 
         main.init();
 
@@ -147,29 +81,34 @@ import stylesheet from "../scss/style.scss";
 
 
     // For development purposes
-    let devMode = {};
+    let devLabel = {};
 
-    devMode.init = function() {
-        console.log("In devMode.init().");
+    devLabel.init = function() {
+        console.log("In devLabel.init().");
 
-        if (!devMode.isSet) {
+        if (!devLabel.buildMode) {
             console.log("Exiting function - site is not in development mode!");
 
             return;
         }
 
-        devMode.setIndicator();
+        devLabel.setLabel();
     };
 
-    devMode.isSet = process.env.NODE_ENV !== "production";
+    devLabel.buildMode = process.env.NODE_ENV !== "production";
 
-    devMode.setIndicator = function() {
+    devLabel.setLabel = function() {
         const el = createEl("div");
 
-        el.style.cssText = "position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000; padding: 1rem; text-transform: uppercase; font-weight: 700; background-color: white; border: 0.125rem solid red;";
+        el.style.cssText = `
+        position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000;
+        padding: 1rem;
+        text-transform: uppercase; font-size: 1.25rem; font-weight: 700;
+        background-color: white; border: 0.25rem solid red;
+        `;
         el.textContent = "Build: dev";
 
-        body.firstElementChild.insertBefore(el, body.firstElementChild.firstElementChild);
+        body.insertBefore(el, body.firstElementChild);
     };
 
 
@@ -179,15 +118,15 @@ import stylesheet from "../scss/style.scss";
     main.init = function() {
         console.log("In main.init().");
 
-        // if (!cssLoaded()) {
-        //     const timeout = 1000;
+        if (!cssLoaded()) {
+            const timeout = 1000;
 
-        //     console.log(`CSS hasn't been loaded yet - running function in ${timeout} ms!`);
+            console.log(`CSS hasn't been loaded yet - running function in ${timeout} ms!`);
 
-        //     setTimeout(main.init, timeout);
+            setTimeout(main.init, timeout);
 
-        //     return;
-        // }
+            return;
+        }
 
         main.setVhProp();
 
@@ -196,7 +135,7 @@ import stylesheet from "../scss/style.scss";
         }, 25));
     };
 
-    main.el = document.querySelector("main");
+    main.el = body.querySelector("main");
 
     main.setVhProp = function() {
         console.log("In main.setVhProp().");
@@ -241,24 +180,25 @@ import stylesheet from "../scss/style.scss";
             deleteSpeed: 40,
             loop: true
         })
-            // 1
-            .type("Homo sapiens", {delay: 1450})
-            .delete(null, {delay: 900})
-            // 2
+            //
+            .type("Photographer", {delay: 1800})
+            .delete(null, {delay: 1000})
+            //
             .type("Web devlo", {delay: 500})
             .move(-2, {speed: 150, delay: 350})
             .type("e", {delay: 500})
             .move(2, {speed: 100, delay: 400})
             .type("per", {delay: 1850})
             .delete(null, {delay: 1000})
-            // 3
-            .type("Photogfr", {delay: 400})
+            //
+            .type("Car enthou", {delay: 400})
             .delete(2, {delay: 350})
-            .type("rapher", {delay: 2000})
+            .type("usiast", {delay: 2000})
             .delete(null, {delay: 900})
-            // 4
-            .type("Car enthusiast", {delay: 1800})
-            .delete(null, {delay: 1000})
+            //
+            .type("Human", {delay: 1450})
+            .delete(null, {delay: 900})
+            //
             .go();
     };
 
@@ -272,19 +212,20 @@ import stylesheet from "../scss/style.scss";
         wpcf7.els.forEach((wpcf7El) => {
             const wpcf7FormEl = wpcf7El.querySelector(".wpcf7-form");
 
-            wpcf7.mc.init(wpcf7FormEl);
+            if (!wpcf7FormEl)
+                return;
 
-            wpcf7.alert.init(wpcf7FormEl);
+            wpcf7.simpleNotifier = new SimpleNotifier({ parentEl: wpcf7FormEl });
+            wpcf7.simpleNotifier.init();
+            console.log(wpcf7.simpleNotifier);
+
+            wpcf7.mc.init(wpcf7FormEl);
 
             wpcf7.input.init(wpcf7FormEl);
 
             wpcf7.form.cleanHtml(wpcf7FormEl);
 
             wpcf7.form.enable(wpcf7FormEl);
-
-            // wpcf7El.addEventListener("wpcf7invalid", function(e) {
-            //     wpcf7.input.scrollToInvalid(e);
-            // });
 
             wpcf7El.addEventListener("wpcf7beforesubmit", function(e) {
                 wpcf7.submit.prepare(wpcf7FormEl);
@@ -293,10 +234,16 @@ import stylesheet from "../scss/style.scss";
             wpcf7El.addEventListener("wpcf7submit", function(e) {
                 wpcf7.submit.finish(wpcf7FormEl, e);
             });
+
+            // wpcf7El.addEventListener("wpcf7invalid", function(e) {
+            //     wpcf7.input.scrollToInvalid(e);
+            // });
         });
     };
 
     wpcf7.els = document.querySelectorAll(".wpcf7");
+
+    wpcf7.simpleNotifier = null;
 
     wpcf7.mc = {
         init: function(wpcf7FormEl) {
@@ -308,7 +255,7 @@ import stylesheet from "../scss/style.scss";
                 return;
             }
 
-            wpcf7.mc.id = randIntUnder(1000);
+            wpcf7.mc.id = getRandomIntUnder(1000);
 
             wpcf7.mc.generate(wpcf7FormEl);
 
@@ -383,7 +330,11 @@ import stylesheet from "../scss/style.scss";
             generate: function(wpcf7FormEl) {
                 console.log("In wpcf7.mc.els.generate().");
 
-                wpcf7.mc.els.remove();
+                Object.values(wpcf7.mc.els.nodes).forEach((node) => {
+                    if (node) {
+                        node.remove();
+                    }
+                });
 
                 wpcf7.submit.els.assignVars(wpcf7FormEl);
 
@@ -402,10 +353,6 @@ import stylesheet from "../scss/style.scss";
                     } else {
                         if (elObj.role === "input") {
                             wpcf7.mc.els.nodes.inputWrapper.append(el);
-
-                            el.addEventListener("input", () => {
-                                wpcf7.mc.validate();
-                            });
                         } else {
                             wpcf7.mc.els.nodes.field.append(el);
                         }
@@ -413,19 +360,6 @@ import stylesheet from "../scss/style.scss";
                 });
 
                 wpcf7.mc.els.observe.do(wpcf7FormEl);
-            },
-
-            remove: function() {
-                console.log("In wpcf7.mc.els.remove().");
-
-                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
-                    if (role === "wrapper")
-                        continue;
-
-                    if (el) {
-                        el.remove();
-                    }
-                }
             },
 
             observe: {
@@ -441,17 +375,18 @@ import stylesheet from "../scss/style.scss";
 
                     const callback = function(mutationRecords) {
                         mutationRecords.forEach((record) => {
-                            if (
-                                record.removedNodes.length > 0 &&
-                                (record.removedNodes[0] === fieldEl ||
-                                 record.removedNodes[0] === inputWrapperEl ||
-                                 record.removedNodes[0] === inputEl)
-                            ) {
-                                console.log("CAPTCHA .field or <input> has been removed!");
-
-                                wpcf7.mc.regenerate(wpcf7FormEl);
-                            }
+                            checkRecord(record);
                         });
+                    };
+
+                    const checkRecord = function(record) {
+                        if (record.removedNodes[0] === fieldEl ||
+                            record.removedNodes[0] === inputWrapperEl ||
+                            record.removedNodes[0] === inputEl) {
+                            console.log("CAPTCHA .field or <input> has been removed!");
+
+                            wpcf7.mc.regenerate(wpcf7FormEl);
+                        }
                     };
 
                     const options = {
@@ -474,8 +409,8 @@ import stylesheet from "../scss/style.scss";
             generate: function() {
                 console.log("In wpcf7.mc.problem.generate().");
 
-                const digit1 = randIntUnder(10),
-                      digit2 = randIntUnder(10);
+                const digit1 = getRandomIntUnder(10),
+                      digit2 = getRandomIntUnder(10);
 
                 wpcf7.mc.problem.digits = [digit1, digit2];
             },
@@ -492,7 +427,7 @@ import stylesheet from "../scss/style.scss";
 
                 wpcf7.mc.els.nodes.label.textContent = `${digit1} + ${digit2} =`;
 
-                wpcf7.mc.validate();
+                wpcf7.input.validate(wpcf7.mc.els.nodes.input);
 
                 wpcf7.mc.problem.scheduleNext(wpcf7FormEl, i);
             },
@@ -512,7 +447,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = devMode.isSet ? 3000 : 15000;
+                    timeout = devLabel.buildMode ? 3000 : 15000;
                 }
 
                 i++;
@@ -530,7 +465,7 @@ import stylesheet from "../scss/style.scss";
                 i = 0;
             }
 
-            // console.log(i);
+            console.log(i);
 
             wpcf7.mc.problem.generate();
 
@@ -551,20 +486,14 @@ import stylesheet from "../scss/style.scss";
             wpcf7.mc.generate(wpcf7FormEl);
         },
 
-        validate: function() {
-            console.log("In wpcf7.mc.validate().");
+        isValid: function() {
+            console.log("In wpcf7.mc.isValid().");
 
             const userInput = Number(wpcf7.mc.els.nodes.input.value);
             const answer = wpcf7.mc.problem.digits[0] + wpcf7.mc.problem.digits[1];
 
             const answerValid = userInput === answer;
             console.log(`User's answer is valid: ${answerValid}`);
-
-            if (answerValid) {
-                wpcf7.input.setState.valid(wpcf7.mc.els.nodes.input);
-            } else {
-                wpcf7.input.setState.invalid(wpcf7.mc.els.nodes.input);
-            }
 
             return answerValid;
         }
@@ -662,8 +591,8 @@ import stylesheet from "../scss/style.scss";
         validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
 
-            if (inputEl.id === "wpcf7mc-input") {
-                console.log("Exiting function - this <input> belongs to the maths CAPTCHA, so I'm not running the regular validation function.");
+            if (inputEl.id === "wpcf7mc-input" && !wpcf7.mc.isValid()) {
+                wpcf7.input.setState.invalid(inputEl);
 
                 return;
             }
@@ -686,84 +615,16 @@ import stylesheet from "../scss/style.scss";
                 maxAttr !== null && inputEl.value.length > max
             ) {
                 wpcf7.input.setState.invalid(inputEl);
-            } else {
-                wpcf7.input.setState.valid(inputEl);
+
+                return;
             }
+
+            wpcf7.input.setState.valid(inputEl);
         }
     };
 
     wpcf7.alert = {
-        init: function(wpcf7FormEl) {
-            wpcf7.alert.id = randIntUnder(1000);
-
-            wpcf7.alert.els.generate(wpcf7FormEl);
-        },
-
-        id: null,
-
-        els: {
-            nodes: {
-                alert: null,
-                message: null
-            },
-
-            objArr: function() {
-                const array = [
-                    {
-                        el: "div",
-                        role: "alert",
-                        attrs: {
-                            class: "alert"
-                        }
-                    },
-                    {
-                        el: "p",
-                        role: "message",
-                        attrs: {
-                            class: "alert__message"
-                        }
-                    },
-                ];
-
-                return array;
-            },
-
-            generate: function(wpcf7FormEl) {
-                console.log("In wpcf7.alert.els.generate().");
-
-                wpcf7.alert.els.remove();
-
-                const elObjArr = wpcf7.alert.els.objArr();
-
-                elObjArr.forEach((elObj) => {
-                    const el = createEl(elObj.el, elObj.attrs);
-
-                    wpcf7.alert.els.nodes[elObj.role] = el;
-
-                    if (elObj.role === "alert") {
-                        const container = wpcf7FormEl.closest(".container");
-
-                        container.insertBefore(el, container.firstElementChild);
-                    } else {
-                        wpcf7.alert.els.nodes.alert.append(el);
-                    }
-                });
-            },
-
-            remove: function() {
-                console.log("In wpcf7.alert.els.remove().");
-
-                for (const [role, el] of Object.entries(wpcf7.mc.els.nodes)) {
-                    if (el) {
-                        el.remove();
-                    }
-                }
-            }
-        },
-
         message: {
-            id: null,
-
             get: function(msgType) {
                 console.log("In wpcf7.alert.message.get().");
 
@@ -771,7 +632,7 @@ import stylesheet from "../scss/style.scss";
 
                 if (msgType === "mc") {
                     type = "warning";
-                    message = "Your answer to the maths problem was incorrect.";
+                    message = "Your answer to the maths problem is incorrect.";
                 }
 
                 if (msgType.type === "wpcf7submit") {
@@ -793,86 +654,18 @@ import stylesheet from "../scss/style.scss";
                     message = response.message;
                 }
 
-                return [type, message];
+                return [message, type];
             },
 
-            show: function(msgType) {
+            show: function(e) {
                 console.log("In wpcf7.alert.message.show().");
 
-                if (wpcf7.alert.message.id) {
-                    clearTimeout(wpcf7.alert.message.id);
+                const msgData = wpcf7.alert.message.get(e);
 
-                    const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
-                        wpcf7.alert.els.nodes.alert.className =
-                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
-                    }
-                }
-
-                const msgProps = wpcf7.alert.message.get(msgType);
-
-                if (msgProps[0]) {
-                    wpcf7.alert.els.nodes.alert.classList.add(`alert--${msgProps[0]}`);
-                }
-
-                wpcf7.alert.els.nodes.message.textContent = msgProps[1];
-
-                wpcf7.alert.els.nodes.alert.classList.add("is-shown");
-
-                if (motionAllowed()) {
-                    wpcf7.alert.els.nodes.alert.classList.add("animated", "fadeIn");
-
-                    const timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
-
-                    setTimeout(() => {
-                        wpcf7.alert.els.nodes.alert.classList.remove("animated", "fadeIn");
-                    }, timeout);
-                }
-
-                wpcf7.alert.message.id = setTimeout(() => {
-                    wpcf7.alert.message.hide();
-                }, 3500);
-            },
-
-            hide: function() {
-                console.log("In wpcf7.alert.message.hide().");
-
-                clearTimeout(wpcf7.alert.message.id);
-
-                const animated = motionAllowed();
-
-                let classes     = ["is-shown"],
-                    animClasses = [],
-                    timeout     = 0;
-
-                if (animated) {
-                    animClasses.push("animated", "fadeOut");
-
-                    wpcf7.alert.els.nodes.alert.classList.add(...animClasses);
-
-                    timeout = cssTimeToMs(cssValue(wpcf7.alert.els.nodes.alert, "animation-duration"));
-                }
-
-                setTimeout(() => {
-                    wpcf7.alert.els.nodes.alert.classList.remove(...classes);
-
-                    const typeRegex = /(alert--[A-Za-z]+)/g;
-
-                    if (wpcf7.alert.els.nodes.alert.className.match(typeRegex)) {
-                        wpcf7.alert.els.nodes.alert.className =
-                            wpcf7.alert.els.nodes.alert.className.replace(typeRegex, "");
-                    }
-
-                    if (animated) {
-                        wpcf7.alert.els.nodes.alert.classList.remove(...animClasses);
-                    }
-
-                    wpcf7.alert.els.nodes.message.textContent = "";
-                }, timeout);
+                wpcf7.simpleNotifier.show(...msgData);
             }
         }
-    },
+    };
 
     wpcf7.submit = {
         els: {
@@ -917,7 +710,7 @@ import stylesheet from "../scss/style.scss";
             e.preventDefault();
             e.stopImmediatePropagation();
 
-            if (wpcf7.mc.id !== null && !wpcf7.mc.validate()) {
+            if (wpcf7.mc.id !== null && !wpcf7.mc.isValid()) {
                 console.log("Preventing form submission - answer is invalid!");
 
                 wpcf7.alert.message.show("mc");
