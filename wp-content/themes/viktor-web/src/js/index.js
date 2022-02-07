@@ -141,7 +141,7 @@ import stylesheet from "../scss/style.scss";
 
         inputDeviceDetector();
 
-        devMode.init();
+        devLabel.init();
 
         main.init();
 
@@ -166,23 +166,23 @@ import stylesheet from "../scss/style.scss";
 
 
     // For development purposes
-    let devMode = {};
+    let devLabel = {};
 
-    devMode.init = function() {
-        console.log("In devMode.init().");
+    devLabel.init = function() {
+        console.log("In devLabel.init().");
 
-        if (!devMode.isSet) {
+        if (!devLabel.buildMode) {
             console.log("Exiting function - site is not in development mode!");
 
             return;
         }
 
-        devMode.setIndicator();
+        devLabel.setLabel();
     };
 
-    devMode.isSet = process.env.NODE_ENV !== "production";
+    devLabel.buildMode = process.env.NODE_ENV !== "production";
 
-    devMode.setIndicator = function() {
+    devLabel.setLabel = function() {
         const el = createEl("div");
 
         el.style.cssText = `
@@ -682,7 +682,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = devMode.isSet ? 3000 : 15000;
+                    timeout = devLabel.buildMode ? 3000 : 15000;
                 }
 
                 i++;
