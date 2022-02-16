@@ -1,18 +1,6 @@
 .animated {
     animation-duration: 0.5s;
     animation-fill-mode: both;
-
-    @media print, (prefers-reduced-motion: reduce) {
-        .animated {
-            animation-duration: 1ms !important;
-            transition-duration: 1ms !important;
-            animation-iteration-count: 1 !important;
-        }
-
-        .animated[class*='Out'] {
-            opacity: 0;
-        }
-    }
 }
 
 .fade {
