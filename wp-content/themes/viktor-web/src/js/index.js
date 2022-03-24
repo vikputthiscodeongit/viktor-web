@@ -3,6 +3,7 @@ import motionAllowed from "@codebundlesbyvik/css-media-functions";
 import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
+import HtmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import TypeIt from "typeit";
 
@@ -56,6 +57,7 @@ import stylesheet from "../scss/style.scss";
 
         inputDeviceDetector();
 
+        const devLabel = new HtmlDevLabel();
         devLabel.init();
 
         main.init();
@@ -78,38 +80,6 @@ import stylesheet from "../scss/style.scss";
             body.classList.remove("using-mouse");
         });
     }
-
-
-    // For development purposes
-    let devLabel = {};
-
-    devLabel.init = function() {
-        console.log("In devLabel.init().");
-
-        if (!devLabel.buildMode) {
-            console.log("Exiting function - site is not in development mode!");
-
-            return;
-        }
-
-        devLabel.setLabel();
-    };
-
-    devLabel.buildMode = process.env.NODE_ENV !== "production";
-
-    devLabel.setLabel = function() {
-        const el = createEl("div");
-
-        el.style.cssText = `
-        position: fixed; bottom: 0.25rem; right: 0.25rem; z-index: 10000;
-        padding: 1rem;
-        text-transform: uppercase; font-size: 1.25rem; font-weight: 700;
-        background-color: white; border: 0.25rem solid red;
-        `;
-        el.textContent = "Build: dev";
-
-        body.insertBefore(el, body.firstElementChild);
-    };
 
 
     // Main
@@ -447,7 +417,7 @@ import stylesheet from "../scss/style.scss";
                         wpcf7.mc.els.nodes.loader.remove();
                     }
 
-                    timeout = devLabel.buildMode ? 3000 : 15000;
+                    timeout = 15000;
                 }
 
                 i++;
