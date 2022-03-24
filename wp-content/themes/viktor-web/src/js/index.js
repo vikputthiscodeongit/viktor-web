@@ -1,6 +1,6 @@
 import debounce from "lodash/debounce";
-import motionAllowed from "@codebundlesbyvik/css-media-functions";
-import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
+import { getPropValue, motionAllowed } from "@codebundlesbyvik/css-operations";
+import createEl from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
 import HtmlDevLabel from "@codebundlesbyvik/html-dev-label";
@@ -15,7 +15,7 @@ import stylesheet from "../scss/style.scss";
     function cssLoaded() {
         const checkEl = body.querySelector(".check-el");
 
-        return getElCssValue(checkEl, "width") === "1px";
+        return getPropValue(checkEl, "width") === "1px";
     }
 
     // Check if viewport is above given breakpoint
