@@ -10,6 +10,11 @@ import TypeIt from "typeit";
 import stylesheet from "../scss/style.scss";
 
 (function() {
+    // Define globally used constants
+    const html = document.documentElement,
+          body = document.body;
+
+
     // Helpers
     // Check if stylesheet has been loaded
     function cssLoaded() {
@@ -44,11 +49,6 @@ import stylesheet from "../scss/style.scss";
 
         return regEx.test(address);
     }
-
-
-    // Define globally used constants
-    const html = document.documentElement,
-          body = document.body;
 
 
     // Event handlers
@@ -187,7 +187,6 @@ import stylesheet from "../scss/style.scss";
 
             wpcf7.simpleNotifier = new SimpleNotifier({ parentEl: wpcf7FormEl });
             wpcf7.simpleNotifier.init();
-            console.log(wpcf7.simpleNotifier);
 
             wpcf7.mc.init(wpcf7FormEl);
 
