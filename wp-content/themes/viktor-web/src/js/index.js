@@ -10,24 +10,6 @@ import stylesheet from "../scss/style.scss";
 
 (function() {
     // Helpers
-    // Check if viewport is above given breakpoint
-    // function aboveBreakpoint(bpName) {
-    //     if (!bpName || bpName === "0")
-    //         return true;
-
-    //     if (bpName === "wide") {
-    //         bpName = "lg";
-    //     }
-
-    //     const bp = stylesheet[`${bpName}Breakpoint`];
-
-    //     if (typeof bp === "undefined") {
-    //         console.error("The given breakpoint either doesn't exist or hasn't been exported to JavaScript.");
-    //     }
-
-    //     return window.matchMedia(`(min-width: ${bp})`).matches;
-    // }
-
     // Valide an email address
     // Validation is done against the standard defined in the RFC 5322 specification.
     // See also https://stackoverflow.com/a/201378/6396604 & https://emailregex.com/.
