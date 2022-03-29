@@ -27,15 +27,6 @@
 
 .form {
     max-width: rem(640px);
-    margin-top: rem(30px);
-
-    @include respond-above(md) {
-        margin-top: rem(40px);
-    }
-
-    @include respond-above(xxl) {
-        max-width: rem(720px);
-    }
 }
 
 fieldset {
