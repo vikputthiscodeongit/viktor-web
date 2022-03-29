@@ -1,5 +1,4 @@
-import debounce from "lodash/debounce";
-import { getPropValue, motionAllowed } from "@codebundlesbyvik/css-operations";
+import { motionAllowed } from "@codebundlesbyvik/css-operations";
 import createEl from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
@@ -16,13 +15,6 @@ import stylesheet from "../scss/style.scss";
 
 
     // Helpers
-    // Check if stylesheet has been loaded
-    function cssLoaded() {
-        const checkEl = body.querySelector(".check-el");
-
-        return getPropValue(checkEl, "width") === "1px";
-    }
-
     // Check if viewport is above given breakpoint
     // function aboveBreakpoint(bpName) {
     //     if (!bpName || bpName === "0")
@@ -60,8 +52,6 @@ import stylesheet from "../scss/style.scss";
         const devLabel = new HtmlDevLabel();
         devLabel.init();
 
-        main.init();
-
         typeItAbout.init();
 
         wpcf7.init();
@@ -80,51 +70,6 @@ import stylesheet from "../scss/style.scss";
             body.classList.remove("using-mouse");
         });
     }
-
-
-    // Main
-    let main = {};
-
-    main.init = function() {
-        console.log("In main.init().");
-
-        if (!cssLoaded()) {
-            const timeout = 1000;
-
-            console.log(`CSS hasn't been loaded yet - running function in ${timeout} ms!`);
-
-            setTimeout(main.init, timeout);
-
-            return;
-        }
-
-        main.setVhProp();
-
-        window.addEventListener("resize", debounce(function() {
-            main.setVhProp();
-        }, 25));
-    };
-
-    main.el = body.querySelector("main");
-
-    main.setVhProp = function() {
-        console.log("In main.setVhProp().");
-
-        let vh = html.clientHeight;
-
-        const vhMin = 480,
-              vhMax = 1080;
-
-        if (vh < vhMin) {
-            vh = vhMin;
-        }
-
-        if (vh > vhMax) {
-            vh = vhMax;
-        }
-
-        main.el.style.setProperty("--vh", `${vh}px`);
-    };
 
 
     // TypeIt

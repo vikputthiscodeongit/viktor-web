@@ -38,6 +38,4 @@
     </head>
 
     <body <?php body_class(); ?>>
-        <div class="check-el visually-hidden"></div>
-
         <main>

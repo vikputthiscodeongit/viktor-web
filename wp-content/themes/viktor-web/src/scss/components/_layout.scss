@@ -1,9 +1,5 @@
-html {
-    height: fill-available;
-}
-
 body {
-    min-width: $body-min-width;
+    min-width: $min-vw;
     margin: 0 auto;
 }
 
@@ -12,11 +8,7 @@ main {
 }
 
 section {
-    min-height: var(--vh);
-
-    .no-js & {
-        min-height: 100vh;
-    }
+    min-height: 100vh;
 
     &#home {
         display: flex;
@@ -28,7 +20,7 @@ section {
 .container {
     position: relative;
     max-width: rem(1440px);
-    min-height: var(--vh);
+    min-height: $min-vh;
     margin-left: auto;
     margin-right: auto;
     padding: rem(24px);
@@ -48,21 +40,13 @@ section {
         padding-right: rem(216px);
     }
 
-    .no-js & {
-        min-height: 100vh;
-    }
-
     #home > & {
         flex-basis: 100%;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
-
-        @include respond-below(md) {
-            min-height: auto;
-            max-height: rem(800px);
-            height: var(--vh);
-        }
+        height: 100vh;
+        padding-bottom: rem(88px);
     }
 }
 
