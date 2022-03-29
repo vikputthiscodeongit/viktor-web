@@ -17,7 +17,7 @@
 
                 <div class="viktor-about viktor-about--static visually-hidden">
                     <div>
-                        <span>Homo sapiens</span>
+                        <span>Photographer</span>
                     </div>
 
                     <div>
@@ -25,11 +25,11 @@
                     </div>
 
                     <div>
-                        <span>Photographer</span>
+                        <span>Motoring enthusiast</span>
                     </div>
 
                     <div>
-                        <span>Car enthusiast</span>
+                        <span>Human</span>
                     </div>
                 </div>
             </div>
