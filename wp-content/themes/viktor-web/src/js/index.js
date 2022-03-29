@@ -9,11 +9,6 @@ import TypeIt from "typeit";
 import stylesheet from "../scss/style.scss";
 
 (function() {
-    // Define globally used constants
-    const html = document.documentElement,
-          body = document.body;
-
-
     // Helpers
     // Check if viewport is above given breakpoint
     // function aboveBreakpoint(bpName) {
@@ -45,7 +40,7 @@ import stylesheet from "../scss/style.scss";
 
     // Event handlers
     document.addEventListener("DOMContentLoaded", function() {
-        html.classList.replace("no-js", "js");
+        document.documentElement.classList.replace("no-js", "js");
 
         inputDeviceDetector();
 
@@ -62,12 +57,12 @@ import stylesheet from "../scss/style.scss";
     function inputDeviceDetector() {
         console.log("In inputDeviceDetector().");
 
-        body.addEventListener("mousedown", function() {
-            body.classList.add("using-mouse");
+        document.body.addEventListener("mousedown", function() {
+            document.body.classList.add("using-mouse");
         });
 
-        body.addEventListener("keydown", function() {
-            body.classList.remove("using-mouse");
+        document.body.addEventListener("keydown", function() {
+            document.body.classList.remove("using-mouse");
         });
     }
 
