@@ -106,9 +106,9 @@ import stylesheet from "../scss/style.scss";
             .type("per", {delay: 1850})
             .delete(null, {delay: 1000})
             //
-            .type("Car enthou", {delay: 400})
-            .delete(2, {delay: 350})
-            .type("usiast", {delay: 2000})
+            .type("Moti", {delay: 400})
+            .delete(2, {speed: 120, delay: 350})
+            .type("toring enthusiast", {delay: 2000})
             .delete(null, {delay: 900})
             //
             .type("Human", {delay: 1450})
