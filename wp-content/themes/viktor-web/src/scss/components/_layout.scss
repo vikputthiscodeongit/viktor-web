@@ -65,6 +65,10 @@ section {
         @include respond-above(lg) {
             margin-bottom: rem(64px);
         }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
