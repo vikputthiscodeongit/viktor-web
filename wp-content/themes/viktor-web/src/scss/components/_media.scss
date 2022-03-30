@@ -5,4 +5,8 @@ img {
 
 .icon {
     width: rem(32px);
+
+    @include respond-above(lg) {
+        width: rem(40px);
+    }
 }
