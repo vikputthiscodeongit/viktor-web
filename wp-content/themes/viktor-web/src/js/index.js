@@ -1,4 +1,4 @@
-import { motionAllowed } from "@codebundlesbyvik/css-operations";
+// import { motionAllowed } from "@codebundlesbyvik/css-operations";
 import createEl from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
@@ -464,20 +464,20 @@ import stylesheet from "../scss/style.scss";
             }
         },
 
-        scrollToInvalid: function(e) {
-            console.log("In wpcf7.input.scrollToInvalid().");
+        // scrollToInvalid: function(e) {
+        //     console.log("In wpcf7.input.scrollToInvalid().");
 
-            const invalidInputs     = e.detail.apiResponse.invalid_fields,
-                  firstInvalidInput = document.getElementById(invalidInputs[0].idref);
+        //     const invalidInputs     = e.detail.apiResponse.invalid_fields,
+        //           firstInvalidInput = document.getElementById(invalidInputs[0].idref);
 
-            if (firstInvalidInput) {
-                firstInvalidInput.scrollIntoView({
-                    behavior: motionAllowed() ? "smooth" : "auto",
-                    block: "start",
-                    inline: "start"
-                });
-            }
-        },
+        //     if (firstInvalidInput) {
+        //         firstInvalidInput.scrollIntoView({
+        //             behavior: motionAllowed() ? "smooth" : "auto",
+        //             block: "start",
+        //             inline: "start"
+        //         });
+        //     }
+        // },
 
         validate: function(inputEl) {
             console.log("In wpcf7.input.validate().");
