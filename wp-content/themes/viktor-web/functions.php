@@ -28,6 +28,25 @@
 
 
     //
+    // Remove global-styles-inline-css from <head> - https://github.com/WordPress/gutenberg/issues/36834
+    function custom_wp_remove_global_css() {
+        remove_action("wp_enqueue_scripts", "wp_enqueue_global_styles");
+        // remove_action("wp_body_open", "wp_global_styles_render_svg_filters");
+    }
+    add_action("init", "custom_wp_remove_global_css");
+
+
+    //
+    //
+    function edit_wp_head() {
+        remove_action("wp_head", "rsd_link");
+        remove_action("wp_head", "wlwmanifest_link");
+        remove_action("wp_head", "wp_generator");
+    }
+    add_action("after_setup_theme", "edit_wp_head");
+
+
+    //
     // Disable XML-RPC - https://www.scottbrownconsulting.com/2020/03/two-ways-to-fully-disable-wordpress-xml-rpc/
     function remove_xmlrpc_methods($methods) {
         return array();
@@ -41,16 +60,6 @@
     //     remove_action("template_redirect", "redirect_canonical");
     // }
     // add_action("after_setup_theme", "disable_canonical_redirects");
-
-
-    //
-    //
-    function edit_wp_head() {
-        remove_action("wp_head", "rsd_link");
-        remove_action("wp_head", "wlwmanifest_link");
-        remove_action("wp_head", "wp_generator");
-    }
-    add_action("after_setup_theme", "edit_wp_head");
 
 
     //
