@@ -1,0 +1,120 @@
+body {
+    min-width: $min-vw;
+    margin: 0 auto;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: $off-white-light;
+
+        &-track {
+            background-color: $off-white-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        }
+
+        &-thumb {
+            background-color: $gray-light;
+            border-radius: 100px;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+    }
+}
+
+main {
+    overflow-x: hidden;
+}
+
+section {
+    min-height: 100vh;
+}
+
+ol,
+ul {
+    &[class] {
+        margin-bottom: 0;
+        padding-left: 0;
+
+        li {
+            list-style: none;
+        }
+    }
+}
+
+h1 {
+    @include respond-above(lg) {
+        font-size: rem(40px);
+    }
+}
+
+p {
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+a {
+    transition: $transition-base;
+    transition-property: text-decoration-color, color, outline;
+
+    &:focus {
+        outline: rem(2px) solid currentColor;
+        outline-offset: rem(2px);
+
+        .using-mouse & {
+            outline: none;
+        }
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.container {
+    position: relative;
+    max-width: rem(1440px);
+    min-height: $min-vh;
+    margin-left: auto;
+    margin-right: auto;
+    padding: rem(24px);
+
+    @include respond-above(xs) {
+        padding-left: 10vw;
+        padding-right: 10vw;
+    }
+
+    @include respond-above(sm) {
+        padding-left: 15vw;
+        padding-right: 15vw;
+    }
+
+    @include respond-above(xxl) {
+        padding-left: rem(216px);
+        padding-right: rem(216px);
+    }
+}
+
+.section {
+    &-title {
+        margin-bottom: rem(40px);
+
+        @include respond-above(lg) {
+            margin-bottom: rem(56px);
+        }
+    }
+
+    &-content {
+        margin-bottom: rem(48px);
+
+        @include respond-above(lg) {
+            margin-bottom: rem(64px);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

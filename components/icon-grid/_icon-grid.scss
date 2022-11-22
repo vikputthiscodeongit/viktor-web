@@ -1,0 +1,21 @@
+.icon {
+    display: inline-block;
+    margin: rem(6px);
+    width: rem(32px);
+
+    @include respond-above(lg) {
+        width: rem(40px);
+    }
+
+    &--shift-right {
+        margin-left: rem(40px);
+
+        @include respond-above(lg) {
+            margin-left: rem(60px);
+        }
+    }
+
+    &-grid {
+        margin: rem(-12px);
+    }
+}
