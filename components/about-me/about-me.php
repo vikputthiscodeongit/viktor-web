@@ -1,8 +1,10 @@
 <div class="viktor-info">
+    <?php include __DIR__ . "/../../components/about-me/about-me-content.php"; ?>
+
     <div class="viktor-name">
         <h1>
-            <span>Viktor </span>
-            <span>Chin</span>
+            <span><?php echo $MY_NAME_FIRST; ?></span>
+            <span><?php echo $MY_NAME_LAST_SHORT; ?></span>
         </h1>
     </div>
 
@@ -12,10 +14,11 @@
         </div>
 
         <div class="viktor-about viktor-about--static visually-hidden">
-			<span>Photographer</span>
-			<span>Web developer</span>
-			<span>Motoring enthusiast</span>
-			<span>Human</span>
+            <?php
+                foreach($HOBBIES as $HOBBY) {
+                    echo "<span>" . $HOBBY . "</span>\n";
+                }
+            ?>
 		</div>
     </div>
 </div>

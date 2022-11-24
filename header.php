@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+    <?php include __DIR__ . "/global-strings.php"; ?>
+
     <head>
+        <?php include __DIR__ . "/header-strings.php"; ?>
+
         <meta charset="utf-8">
 
         <!--
@@ -21,8 +25,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Site information -->
-        <meta name="keywords" content="Viktor Chin, Viktor Chin-Kon-Sung, picsmadebyvik">
-        <meta name="description" content="Viktor Chin, a man who's very keen on motorized vehicles, music, photography, nature and many other things. By the way, I also build websites.">
+        <title><?php echo $MY_NAME_SHORT; ?></title>
+        <meta name="keywords" content="<?php echo $META_KEYWORDS; ?>">
+        <meta name="description" content="<?php echo $META_DESCRIPTION; ?>">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
