@@ -1,2 +1,2 @@
 <?php
-$HOBBIES = ["Photographer", "Web developer", "Motoring enthusiast", "Human"];
+$MY_PROPERTIES = ["Photographer", "Web developer", "Motoring enthusiast", "Human"];

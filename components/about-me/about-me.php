@@ -15,8 +15,8 @@
 
         <div class="viktor-about viktor-about--static visually-hidden">
             <?php
-                foreach($HOBBIES as $HOBBY) {
-                    echo "<span>" . $HOBBY . "</span>\n";
+                foreach($MY_PROPERTIES as $PROPERTY) {
+                    echo "<span>" . $PROPERTY . "</span>\n";
                 }
             ?>
 		</div>
