@@ -1,6 +1,6 @@
 <form class="form form--contact">
     <?php
-        include __DIR__ . "/../../components/form/form-data.php";
+        include "./form-data.php";
 
         foreach($FIELDSETS as $FIELDSET) {
             echo "<fieldset>";

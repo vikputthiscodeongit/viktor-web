@@ -1,5 +1,5 @@
 <div class="viktor-info">
-    <?php include __DIR__ . "/../../components/about-me/about-me-data.php"; ?>
+    <?php include "./about-me-data.php"; ?>
 
     <div class="viktor-name">
         <h1>
