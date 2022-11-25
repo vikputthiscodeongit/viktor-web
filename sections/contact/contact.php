@@ -5,11 +5,11 @@
         </div>
 
         <div class="section-content">
-			<?php include __DIR__ . "/../../components/icon-grid/icon-grid.php"; ?>
+			<?php include __DIR__ . "/../../components/icon-grid/icon-grid-view.php"; ?>
         </div>
 
         <div class="section-content">
-			<?php include __DIR__ . "/../../components/form/form.php"; ?>
+			<?php include __DIR__ . "/../../components/form/form-view.php"; ?>
         </div>
     </div>
 </section>
