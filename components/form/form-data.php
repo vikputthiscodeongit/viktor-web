@@ -67,7 +67,7 @@ $FIELDSETS = array(
             "input" => array(
                 "el" => "input",
                 "type" => "submit",
-                "class" => "btn btn--submit"
+                "class" => "btn btn--submit",
                 "value" => "Send"
             )
         )
