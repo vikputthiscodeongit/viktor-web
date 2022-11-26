@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-    <?php include "./global-strings.php"; ?>
+    <?php include "global-strings.php"; ?>
 
     <head>
-        <?php include "./header-strings.php"; ?>
+        <?php include "header-strings.php"; ?>
 
         <meta charset="utf-8">
 

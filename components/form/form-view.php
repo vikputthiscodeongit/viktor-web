@@ -1,6 +1,6 @@
 <form action="form-controller.php" class="form form--contact">
     <?php
-        include "./form-data.php";
+        include "form-data.php";
 
         foreach($FIELDSETS as $FIELDSET) {
             echo "<fieldset>";
