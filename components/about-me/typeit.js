@@ -1,7 +1,7 @@
 import TypeIt from "typeit";
 
 export default function typeItAboutMe(targetEl) {
-    new TypeIt(targetEl, {
+    return new TypeIt(targetEl, {
         speed: 75,
         deleteSpeed: 40,
         loop: true
