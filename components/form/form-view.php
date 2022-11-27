@@ -1,4 +1,4 @@
-<form action="form-controller.php" class="form form--contact">
+<form action="/components/form/form-controller.php" method="post" class="form form--contact" name="contact-form">
     <?php
         include "form-data.php";
 
