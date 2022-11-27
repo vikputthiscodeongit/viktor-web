@@ -185,12 +185,12 @@ function isValidMessage($message) {
 }
 
 function sendMail($values) {
-    $mail_to = "mail@viktorchin.nl";
+    $mail_to = EMAIL_ADDRESS_PERSONAL;
     $mail_subject = "Inzending contactformulier viktorchin.nl van " . $values["email"];
     $mail_message = "Het onderstaande bericht is op " . date("jFY") . " om " . date("His") . " verstuurd via het contactformulier op viktorchin.nl.\n\nDoor: " . $values["name"] . "\nE-mail adres: " . $values["email"] . "\n\n" . $values["subject"] . "\n\n " . $values["message"];
     $mail_headers = array(
         "Content-Type" => "text/plain; charset=utf-8",
-        "From" => "webmaster@viktorchin.nl",
+        "From" => EMAIL_ADDRESS_WEBMASTER,
         "Reply-To" => $values["email"]
     );
 
