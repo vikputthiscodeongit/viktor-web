@@ -1,156 +1,152 @@
 <?PHP
-enum FormSubmitStatusses {
-    case REQUEST_METHOD_INVALID;
-    case INPUT_MISSING;
-    case INPUT_INVALID;
-    case MAIL_FAILED;
-    case SUCCESS;
+include __DIR__ . "/../../admin/form-constants.php";
+
+// Todo: look up appropriate status codes for unknown & mail failed statuses.
+enum FormSubmitStatusses: int {
+    case UNKNOWN_ERROR = 0;
+    case REQUEST_METHOD_INVALID = 405;
+    case REQUIRED_INPUT_MISSING = 400;
+    case INPUT_INVALID = 422;
+    case MAIL_FAILED = 1;
+    case SUCCESS = 204;
 }
 
-$server_protocol = "http://";
-
-if (isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1) ||
-    isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https") {
-  $server_protocol = "https://";
+enum FormInputs: string {
+    case NAME = "cf-name";
+    case EMAIL = "cf-email";
+    case SUBJECT = "cf-subject";
+    case MESSAGE = "cf-message";
 }
 
-// Check if this is a POST request
+var_dump(FormInputs::NAME);
+var_dump(FormInputs::NAME->value);
+
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    $query_string = makeStatusQueryString(FormSubmitStatusses::REQUEST_METHOD_INVALID);
-
-    http_response_code(405);
-    header("Location: " . $server_protocol . $_SERVER["SERVER_NAME"] . "/#contact?" . $query_string);
-    exit();
+    redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-// Check if all required values are set
-$REQUIRED_VALUES = array(
-    "email" => "cf-email",
-    "subject" => "cf-subject",
-    "message" => "cf-message"
+$REQUIRED_INPUTS = [FormInputs::EMAIL, FormInputs::SUBJECT, FormInputs::MESSAGE];
+$names_of_required_empty_inputs = getEmptyPostVars($REQUIRED_INPUTS);
+
+if (!empty($names_of_required_empty_inputs)) {
+    redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_required_empty_inputs);
+}
+
+$cf_name_clean = isset($_POST[FormInputs::NAME]) ? htmlspecialchars(trim($_POST[FormInputs::NAME])) : false;
+$cf_email_trimmed = trim($_POST[FormInputs::EMAIL]);
+$cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT]));
+$cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE]));
+$all_input_values = array(
+    FormInputs::NAME => $cf_name_clean,
+    FormInputs::EMAIL => $cf_email_trimmed,
+    FormInputs::SUBJECT => $cf_subject_clean,
+    FormInputs::MESSAGE => $cf_message_clean
 );
 
-$errors = getMissingRequiredFormValues($REQUIRED_VALUES);
+$names_of_invalid_inputs = getNamesOfInvalidFormInputs($all_input_values);
 
-if (!empty($errors)) {
-    $query_string = makeStatusQueryString(FormSubmitStatusses::INPUT_MISSING, $errors);
+if (!empty($names_of_invalid_inputs)) {
+    redirectToForm(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
+}
 
-    http_response_code(400);
-    header("Location: " . $server_protocol . $_SERVER["SERVER_NAME"] . "/#contact?" . $query_string);
+$mail_sent = sendMail($all_input_values);
+
+$status = $mail_sent
+    ? redirectToForm(FormSubmitStatusses::SUCCESS)
+    : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_input_values);
+
+function redirectToForm($status, $values = []) {
+    setFormStatusCookie($status, $values);
+
+    if ($status === FormSubmitStatusses::MAIL_FAILED) {
+        setFormContentCookie($values);
+    }
+
+    http_response_code($status->value);
+    header("Location: " . getUrlProtocol() . $_SERVER["SERVER_NAME"] . "/#contact");
+
     exit();
 }
 
-// Sanitize values
-$cf_name_clean = isset($_POST["cf-name"]) ? htmlspecialchars(trim($_POST["cf-name"])) : false;
-$cf_email_trimmed = trim($_POST["cf-email"]);
-$cf_subject_clean = htmlspecialchars(trim($_POST["cf-subject"]));
-$cf_message_clean = htmlspecialchars(trim($_POST["cf-message"]));
-$all_values = array(
-    "name" => $cf_name_clean,
-    "email" => $cf_email_trimmed,
-    "subject" => $cf_subject_clean,
-    "message" => $cf_message_clean
-);
-
-// Check if all values are valid
-$errors = getInvalidFormValues($all_values);
-
-if (!empty($errors)) {
-    $query_string = makeStatusQueryString(FormSubmitStatusses::INPUT_INVALID, $errors);
-
-    http_response_code(422);
-    header("Location: " . $server_protocol . $_SERVER["SERVER_NAME"] . "/#contact?" . $query_string);
-    exit();
-}
-
-// Send email
-$mail_sent = sendMail($all_values);
-
-$query_string = $mail_sent
-    ? makeStatusQueryString(FormSubmitStatusses::SUCCESS)
-    : makeStatusQueryString(FormSubmitStatusses::MAIL_FAILED);
-
-http_response_code(303);
-header("Location: " . $server_protocol . $_SERVER["SERVER_NAME"] . "/#contact?" . $query_string);
-exit();
-
-function makeStatusQueryString($status, $errors = []) {
-    $status_string = "status=";
+function setFormStatusCookie($status, $values) {
+    $cookie_key = "cf_s_";
 
     switch($status) {
-        case FormSubmitStatusses::INPUT_MISSING:
-            $status_string .= "input_missing";
+        case FormSubmitStatusses::REQUEST_METHOD_INVALID:
+            $cookie_key .= "rmi";
+            break;
+
+        case FormSubmitStatusses::REQUIRED_INPUT_MISSING:
+            $cookie_key .= "rim";
             break;
 
         case FormSubmitStatusses::INPUT_INVALID:
-            $status_string .= "input_invalid";
+            $cookie_key .= "ii";
             break;
 
         case FormSubmitStatusses::MAIL_FAILED:
-            $status_string .= "mail_failed";
-            break;
-
-        case FormSubmitStatusses::SUCCESS:
-            $status_string .= "success";
+            $cookie_key .= "mf";
             break;
 
         default:
-            $status_string .= "unknown_error";
+            $cookie_key .= "error";
     }
 
-    if ($errors) {
-        $status_string .= "&";
+    setcookie($cookie_key, isset($values) ? json_encode($values) : "");
+}
 
-        foreach($errors as $error) {
-            $status_string .= $error;
+function setFormContentCookie($values) {
+    setcookie("cf_pfc", json_encode($values));
+}
 
-            if ($error !== array_key_last($errors)) {
-                $status_string .= ",";
-            }
+function getUrlProtocol() {
+    $url_protocol =
+        isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1) ||
+        isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https"
+            ? "https://"
+            : "http://";
+
+    return $url_protocol;
+}
+
+function getEmptyPostVars($values) {
+    $empty = array();
+
+    foreach($values as $key => $value) {
+        if (empty($_POST[$value->value])) {
+            array_push($empty, $key);
         }
     }
 
-    return $status_string;
+    return $empty;
 }
 
-function getMissingRequiredFormValues($values) {
+function getNamesOfInvalidFormInputs($values) {
     $errors = array();
 
-    foreach($values as $key => $value) {
-        if (empty($_POST[$value])) {
-            array_push($errors, $key);
-        }
-    }
-
-    return $errors;
-}
-
-function getInvalidFormValues($values) {
-    $errors = array();
-
-    foreach($values as $key => $value) {
-        switch($key) {
-            case "name";
-                if ($value && !isValidName($value)) {
-                    array_push($errors, $key);
+    foreach($values as $input_for => $input_value) {
+        switch($input_for) {
+            case FormInputs::NAME;
+                if (isset($input_for) && !isValidName($input_value)) {
+                    array_push($errors, $input_for);
                 }
                 break;
 
-            case "email";
-                if (!isValidEmailAddress($value)) {
-                    array_push($errors, $key);
+            case FormInputs::EMAIL;
+                if (!isValidEmailAddress($input_value)) {
+                    array_push($errors, $input_for);
                 }
                 break;
 
-            case "subject";
-                if (!isValidSubject($value)) {
-                    array_push($errors, $key);
+            case FormInputs::SUBJECT;
+                if (!isValidSubject($input_value)) {
+                    array_push($errors, $input_for);
                 }
                 break;
 
-            case "message";
-                if (!isValidMessage($value)) {
-                    array_push($errors, $key);
+            case FormInputs::MESSAGE;
+                if (!isValidMessage($input_value)) {
+                    array_push($errors, $input_for);
                 }
                 break;
         }
@@ -186,12 +182,12 @@ function isValidMessage($message) {
 
 function sendMail($values) {
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = "Inzending contactformulier viktorchin.nl van " . $values["email"];
-    $mail_message = "Het onderstaande bericht is op " . date("jFY") . " om " . date("His") . " verstuurd via het contactformulier op viktorchin.nl.\n\nDoor: " . $values["name"] . "\nE-mail adres: " . $values["email"] . "\n\n" . $values["subject"] . "\n\n " . $values["message"];
+    $mail_subject = "Inzending contactformulier " . WEBSITE_DOMAIN . " van " . $values[FormInputs::EMAIL];
+    $mail_message = "Het onderstaande bericht is op " . date("jFY") . " om " . date("His") . " verstuurd via het contactformulier op " . WEBSITE_DOMAIN . ".\n\nDoor: " . $values[FormInputs::NAME] . "\nE-mail adres: " . $values[FormInputs::EMAIL] . "\n\n" . $values[FormInputs::SUBJECT] . "\n\n " . $values[FormInputs::MESSAGE];
     $mail_headers = array(
         "Content-Type" => "text/plain; charset=utf-8",
         "From" => EMAIL_ADDRESS_WEBMASTER,
-        "Reply-To" => $values["email"]
+        "Reply-To" => $values[FormInputs::EMAIL]
     );
 
     mail($mail_to, $mail_subject, $mail_message, $mail_headers);
