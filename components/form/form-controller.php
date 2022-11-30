@@ -1,4 +1,6 @@
 <?PHP
+// Todo:
+// * Check setFormStatusCookie::INPUT_INVALID case.
 include __DIR__ . "/../../admin/form-constants.php";
 
 // Todo: look up appropriate status codes for unknown & mail failed statuses.
@@ -18,9 +20,6 @@ enum FormInputs: string {
     case MESSAGE = "cf-message";
 }
 
-var_dump(FormInputs::NAME);
-var_dump(FormInputs::NAME->value);
-
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
@@ -32,15 +31,15 @@ if (!empty($names_of_required_empty_inputs)) {
     redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_required_empty_inputs);
 }
 
-$cf_name_clean = isset($_POST[FormInputs::NAME]) ? htmlspecialchars(trim($_POST[FormInputs::NAME])) : false;
-$cf_email_trimmed = trim($_POST[FormInputs::EMAIL]);
-$cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT]));
-$cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE]));
+$cf_name_clean = isset($_POST[FormInputs::NAME->value]) ? htmlspecialchars(trim($_POST[FormInputs::NAME->value])) : false;
+$cf_email_trimmed = trim($_POST[FormInputs::EMAIL->value]);
+$cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT->value]));
+$cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE->value]));
 $all_input_values = array(
-    FormInputs::NAME => $cf_name_clean,
-    FormInputs::EMAIL => $cf_email_trimmed,
-    FormInputs::SUBJECT => $cf_subject_clean,
-    FormInputs::MESSAGE => $cf_message_clean
+    FormInputs::NAME->value => $cf_name_clean,
+    FormInputs::EMAIL->value => $cf_email_trimmed,
+    FormInputs::SUBJECT->value => $cf_subject_clean,
+    FormInputs::MESSAGE->value => $cf_message_clean
 );
 
 $names_of_invalid_inputs = getNamesOfInvalidFormInputs($all_input_values);
@@ -55,13 +54,8 @@ $status = $mail_sent
     ? redirectToForm(FormSubmitStatusses::SUCCESS)
     : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_input_values);
 
-function redirectToForm($status, $values = []) {
+function redirectToForm($status, $values = false) {
     setFormStatusCookie($status, $values);
-
-    if ($status === FormSubmitStatusses::MAIL_FAILED) {
-        setFormContentCookie($values);
-    }
-
     http_response_code($status->value);
     header("Location: " . getUrlProtocol() . $_SERVER["SERVER_NAME"] . "/#contact");
 
@@ -92,11 +86,8 @@ function setFormStatusCookie($status, $values) {
             $cookie_key .= "error";
     }
 
-    setcookie($cookie_key, isset($values) ? json_encode($values) : "");
-}
-
-function setFormContentCookie($values) {
-    setcookie("cf_pfc", json_encode($values));
+    $cookie_value = empty($values) ? "0" : json_encode($values);
+    setcookie($cookie_key, $cookie_value, 0, "/");
 }
 
 function getUrlProtocol() {
@@ -112,12 +103,13 @@ function getUrlProtocol() {
 function getEmptyPostVars($values) {
     $empty = array();
 
-    foreach($values as $key => $value) {
+    foreach($values as $value) {
         if (empty($_POST[$value->value])) {
-            array_push($empty, $key);
+            array_push($empty, $value->value);
         }
     }
 
+    var_dump($empty);
     return $empty;
 }
 
@@ -182,12 +174,12 @@ function isValidMessage($message) {
 
 function sendMail($values) {
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = "Inzending contactformulier " . WEBSITE_DOMAIN . " van " . $values[FormInputs::EMAIL];
-    $mail_message = "Het onderstaande bericht is op " . date("jFY") . " om " . date("His") . " verstuurd via het contactformulier op " . WEBSITE_DOMAIN . ".\n\nDoor: " . $values[FormInputs::NAME] . "\nE-mail adres: " . $values[FormInputs::EMAIL] . "\n\n" . $values[FormInputs::SUBJECT] . "\n\n " . $values[FormInputs::MESSAGE];
+    $mail_subject = "Inzending contactformulier " . WEBSITE_DOMAIN . " van " . $values[FormInputs::EMAIL->value];
+    $mail_message = "Het onderstaande bericht is op " . date("j F Y") . " om " . date("H:i:s") . " verstuurd via het contactformulier op " . WEBSITE_DOMAIN . ".\n\nDoor: " . $values[FormInputs::NAME->value] . "\nE-mail adres: " . $values[FormInputs::EMAIL->value] . "\n\n" . $values[FormInputs::SUBJECT->value] . "\n\n " . $values[FormInputs::MESSAGE->value];
     $mail_headers = array(
         "Content-Type" => "text/plain; charset=utf-8",
         "From" => EMAIL_ADDRESS_WEBMASTER,
-        "Reply-To" => $values[FormInputs::EMAIL]
+        "Reply-To" => $values[FormInputs::EMAIL->value]
     );
 
     mail($mail_to, $mail_subject, $mail_message, $mail_headers);
