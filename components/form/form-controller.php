@@ -36,24 +36,25 @@ $cf_name_clean = isset($_POST[FormInputs::NAME->value]) ? htmlspecialchars(trim(
 $cf_email_trimmed = trim($_POST[FormInputs::EMAIL->value]);
 $cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT->value]));
 $cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE->value]));
-$all_input_values = array(
+$all_inputs_and_values = array(
     FormInputs::NAME->value => $cf_name_clean,
     FormInputs::EMAIL->value => $cf_email_trimmed,
     FormInputs::SUBJECT->value => $cf_subject_clean,
     FormInputs::MESSAGE->value => $cf_message_clean
 );
 
-$names_of_invalid_inputs = getNamesOfInvalidFormInputs($all_input_values);
+$names_of_invalid_inputs =
+    getNamesOfInvalidFormInputs($validation_conditions_per_input, $all_inputs_and_values);
 
 if (!empty($names_of_invalid_inputs)) {
     redirectToForm(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
 }
 
-$mail_sent = sendMail($all_input_values);
+$mail_sent = sendMail($all_inputs_and_values);
 
 $status = $mail_sent
     ? redirectToForm(FormSubmitStatusses::SUCCESS)
-    : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_input_values);
+    : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
 function redirectToForm($status, $values = false) {
     setFormStatusCookie($status, $values);
@@ -152,34 +153,50 @@ function getEmptyPostVars($values) {
     return $empty;
 }
 
-function getNamesOfInvalidFormInputs($values) {
+function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_per_input) {
     $errors = array();
 
-    foreach($values as $input_for => $input_value) {
-        switch($input_for) {
-            case FormInputs::NAME;
-                if (isset($input_for) && !isValidName($input_value)) {
-                    array_push($errors, $input_for);
-                }
-                break;
+    foreach($values_per_input as $input_for => $input_value) {
+        if (
+            !isset($validation_conditions_per_input[$input_for]["required"]) ||
+            $validation_conditions_per_input[$input_for]["required"] === "false"
+        ) {
+            continue;
+        }
 
-            case FormInputs::EMAIL;
-                if (!isValidEmailAddress($input_value)) {
-                    array_push($errors, $input_for);
-                }
-                break;
+        if ($input_for === FormInputs::EMAIL->value) {
+            if (!isValidEmailAddress($input_value)) {
+                array_push($errors, $input_for);
+            }
+        } else {
+            $condition_passed = null;
 
-            case FormInputs::SUBJECT;
-                if (!isValidSubject($input_value)) {
-                    array_push($errors, $input_for);
+            foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
+                if ($condition_passed !== null) {
+                    break;
                 }
-                break;
 
-            case FormInputs::MESSAGE;
-                if (!isValidMessage($input_value)) {
+                switch($condition_key) {
+                    case "minlength":
+                        $condition_passed = strlen($input_value) >= (int) $condition_value;
+                        break;
+
+                    case "maxlength":
+                        $condition_passed = strlen($input_value) <= (int) $condition_value;
+                        break;
+
+                    case "pattern":
+                        $condition_passed = preg_match($condition_value, $input_value);
+                        break;
+
+                    default:
+                        $condition_passed = false;
+                }
+
+                if ($condition_passed === false) {
                     array_push($errors, $input_for);
                 }
-                break;
+            }
         }
     }
 
@@ -191,24 +208,6 @@ function isValidEmailAddress($email) {
     $VALID_EMAIL_RFC5321_REGEX = '/^([-!#-\'*+\/-9=?A-Z^-~]+(\.[-!#-\'*+\/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+$/';
 
     return preg_match($VALID_EMAIL_RFC5321_REGEX, $email);
-}
-
-function isValidName($name) {
-    $MIN_LENGTH = 2;
-
-    return $name >= $MIN_LENGTH;
-}
-
-function isValidSubject($subject) {
-    $MIN_LENGTH = 8;
-
-    return $subject >= $MIN_LENGTH;
-}
-
-function isValidMessage($message) {
-    $MIN_LENGTH = 12;
-
-    return $message >= $MIN_LENGTH;
 }
 
 function sendMail($values) {
