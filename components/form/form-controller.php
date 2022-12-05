@@ -2,6 +2,7 @@
 // Todo:
 // * Check setFormStatusCookie::INPUT_INVALID case.
 include __DIR__ . "/../../admin/form-constants.php";
+include "form-content.php";
 
 enum FormSubmitStatusses: int {
     case UNKNOWN_ERROR = 500;
