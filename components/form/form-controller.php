@@ -3,14 +3,13 @@
 // * Check setFormStatusCookie::INPUT_INVALID case.
 include __DIR__ . "/../../admin/form-constants.php";
 
-// Todo: look up appropriate status codes for unknown & mail failed statuses.
 enum FormSubmitStatusses: int {
-    case UNKNOWN_ERROR = 0;
+    case UNKNOWN_ERROR = 500;
     case REQUEST_METHOD_INVALID = 405;
     case REQUIRED_INPUT_MISSING = 400;
     case INPUT_INVALID = 422;
-    case MAIL_FAILED = 1;
-    case SUCCESS = 204;
+    case MAIL_FAILED = 502;
+    case SUCCESS = 200;
 }
 
 enum FormInputs: string {
