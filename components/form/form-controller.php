@@ -23,11 +23,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-$REQUIRED_INPUTS = [FormInputs::EMAIL, FormInputs::SUBJECT, FormInputs::MESSAGE];
-$names_of_required_empty_inputs = getEmptyPostVars($REQUIRED_INPUTS);
+$validation_conditions_per_input = getValidationConditionsForInputs($FIELDSETS);
+$required_inputs = getRequiredInputs($validation_conditions_per_input);
+$names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
 
-if (!empty($names_of_required_empty_inputs)) {
-    redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_required_empty_inputs);
+if (!empty($names_of_empty_required_inputs)) {
+    redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_empty_required_inputs);
 }
 
 $cf_name_clean = isset($_POST[FormInputs::NAME->value]) ? htmlspecialchars(trim($_POST[FormInputs::NAME->value])) : false;
@@ -97,6 +98,45 @@ function getUrlProtocol() {
             : "http://";
 
     return $url_protocol;
+}
+
+function getValidationConditionsForInputs($fieldsets) {
+    $INPUT_VALIDATION_PROPS = ["required", "minlength", "maxlength", "pattern"];
+    $array_of_inputs = array();
+
+    foreach($fieldsets as $fieldset) {
+        foreach($fieldset as $field) {
+            $input = $field["input"];
+
+            if (isset($input["type"]) && $input["type"] === "submit") continue;
+
+            $input_validation_props_and_values = array();
+
+            foreach($input as $input_prop => $input_prop_value) {
+                if (in_array($input_prop, $INPUT_VALIDATION_PROPS)) {
+                    $input_validation_props_and_values[$input_prop] = $input_prop_value;
+                }
+
+                if ($input_prop === array_key_last($input)) {
+                    $array_of_inputs[$input["id"]] = $input_validation_props_and_values;
+                }
+            }
+        }
+    }
+
+    return $array_of_inputs;
+}
+
+function getRequiredInputs($inputs) {
+    $required_inputs = array();
+
+    foreach($inputs as $input_name => $input_props) {
+        if (isset($input_props["required"]) && $input_props["required"] === "true") {
+            array_push($required_inputs, $input_name);
+        }
+    }
+
+    return $required_inputs;
 }
 
 function getEmptyPostVars($values) {
