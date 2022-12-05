@@ -143,12 +143,11 @@ function getEmptyPostVars($values) {
     $empty = array();
 
     foreach($values as $value) {
-        if (empty($_POST[$value->value])) {
-            array_push($empty, $value->value);
+        if (empty($_POST[$value])) {
+            array_push($empty, $value);
         }
     }
 
-    var_dump($empty);
     return $empty;
 }
 
