@@ -1,4 +1,4 @@
-<?php include "home-nav-data.php"; ?>
+<?php include "home-nav-content.php"; ?>
 
 <nav class="home-nav">
     <ul class="home-nav__items">

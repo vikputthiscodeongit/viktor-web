@@ -1,4 +1,4 @@
-<?php include "icon-grid-data.php"; ?>
+<?php include "icon-grid-content.php"; ?>
 
 <ul class="icon-grid" aria-label="<?php echo $ICON_GRID_LABEL; ?>">
     <?php

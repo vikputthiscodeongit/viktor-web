@@ -1,5 +1,5 @@
 <div class="viktor-info">
-    <?php include "about-me-data.php"; ?>
+    <?php include "about-me-content.php"; ?>
 
     <div class="viktor-name">
         <h1>
