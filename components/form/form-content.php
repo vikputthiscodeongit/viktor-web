@@ -67,6 +67,7 @@ $FIELDSETS = array(
             "input" => array(
                 "el" => "input",
                 "type" => "submit",
+                "id" => "cf-submit",
                 "class" => "btn btn--submit",
                 "value" => "Send"
             )
