@@ -11,7 +11,7 @@ htmlDevLabel();
 
 typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-document.querySelector("#cf-submit").addEventListener("click", (e) => sendForm(e));
+// document.querySelector("#cf-submit").addEventListener("click", (e) => sendForm(e));
 
 function replaceBodyJsClass(targetEl) {
     targetEl.classList.replace("no-js", "js");

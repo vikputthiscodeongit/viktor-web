@@ -57,9 +57,13 @@ $status = $mail_sent
     : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
 function redirectToForm($status, $values = false) {
-    setFormStatusCookie($status, $values);
+    echo "In redirectToForm().";
+
+    // setFormStatusCookie($status, $values);
     http_response_code($status->value);
-    header("Location: " . getUrlProtocol() . $_SERVER["SERVER_NAME"] . "/#contact");
+    // header("Location: " . getUrlProtocol() . $_SERVER["SERVER_NAME"] . "/#contact");
+    header("Content-Type: application/json; charset=utf-8");
+    json_encode($values);
 
     exit();
 }
