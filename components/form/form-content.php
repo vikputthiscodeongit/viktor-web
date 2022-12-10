@@ -24,8 +24,9 @@ $FIELDSETS = array(
                 "el" => "input",
                 "type" => "email",
                 "id" => "cf-email",
-                "minlength" => "4",
-                "maxlength" => "256",
+                "pattern" => '([-!#-\'*+\/-9=?A-Z^-~]+(\.[-!#-\'*+\/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+',
+                // "minlength" => "4",
+                // "maxlength" => "256",
                 "placeholder" => "j.green@example.com",
                 "required" => "true"
             )

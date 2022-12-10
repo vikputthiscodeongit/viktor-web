@@ -177,16 +177,16 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
                 }
 
                 switch($condition_key) {
+                    case "pattern":
+                        $condition_passed = preg_match("/^" . $condition_value . "$/", $input_value);
+                        break;
+
                     case "minlength":
                         $condition_passed = strlen($input_value) >= (int) $condition_value;
                         break;
 
                     case "maxlength":
                         $condition_passed = strlen($input_value) <= (int) $condition_value;
-                        break;
-
-                    case "pattern":
-                        $condition_passed = preg_match($condition_value, $input_value);
                         break;
 
                     default:
