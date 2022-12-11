@@ -7,6 +7,7 @@ async function sendForm(e) {
             body: new FormData(e.target.form),
         });
         console.log(response);
+        console.log(response.json());
         return response;
     } catch (error) {
         return console.error(error);

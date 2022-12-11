@@ -57,11 +57,9 @@ $status = $mail_sent
     : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
 function redirectToForm($status, $values = false) {
-    echo "In redirectToForm().";
-
     http_response_code($status->value);
     header("Content-Type: application/json; charset=utf-8");
-    json_encode($values);
+    echo json_encode($values);
 
     exit();
 }
