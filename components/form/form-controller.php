@@ -59,51 +59,11 @@ $status = $mail_sent
 function redirectToForm($status, $values = false) {
     echo "In redirectToForm().";
 
-    // setFormStatusCookie($status, $values);
     http_response_code($status->value);
-    // header("Location: " . getUrlProtocol() . $_SERVER["SERVER_NAME"] . "/#contact");
     header("Content-Type: application/json; charset=utf-8");
     json_encode($values);
 
     exit();
-}
-
-function setFormStatusCookie($status, $values) {
-    $cookie_key = "cf_s_";
-
-    switch($status) {
-        case FormSubmitStatusses::REQUEST_METHOD_INVALID:
-            $cookie_key .= "rmi";
-            break;
-
-        case FormSubmitStatusses::REQUIRED_INPUT_MISSING:
-            $cookie_key .= "rim";
-            break;
-
-        case FormSubmitStatusses::INPUT_INVALID:
-            $cookie_key .= "ii";
-            break;
-
-        case FormSubmitStatusses::MAIL_FAILED:
-            $cookie_key .= "mf";
-            break;
-
-        default:
-            $cookie_key .= "error";
-    }
-
-    $cookie_value = empty($values) ? "0" : json_encode($values);
-    setcookie($cookie_key, $cookie_value, 0, "/");
-}
-
-function getUrlProtocol() {
-    $url_protocol =
-        isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1) ||
-        isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https"
-            ? "https://"
-            : "http://";
-
-    return $url_protocol;
 }
 
 function getValidationConditionsForInputs($fieldsets) {
@@ -168,50 +128,37 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
             continue;
         }
 
-        if ($input_for === FormInputs::EMAIL->value) {
-            if (!isValidEmailAddress($input_value)) {
-                array_push($errors, $input_for);
+        $condition_passed = null;
+
+        foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
+            if ($condition_passed !== null) {
+                break;
             }
-        } else {
-            $condition_passed = null;
 
-            foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
-                if ($condition_passed !== null) {
+            switch($condition_key) {
+                case "pattern":
+                    $condition_passed = (bool) preg_match("/^" . $condition_value . "$/", $input_value);
                     break;
-                }
 
-                switch($condition_key) {
-                    case "pattern":
-                        $condition_passed = preg_match("/^" . $condition_value . "$/", $input_value);
-                        break;
+                case "minlength":
+                    $condition_passed = strlen($input_value) >= (int) $condition_value;
+                    break;
 
-                    case "minlength":
-                        $condition_passed = strlen($input_value) >= (int) $condition_value;
-                        break;
+                case "maxlength":
+                    $condition_passed = strlen($input_value) <= (int) $condition_value;
+                    break;
 
-                    case "maxlength":
-                        $condition_passed = strlen($input_value) <= (int) $condition_value;
-                        break;
+                default:
+                    $condition_passed = false;
+            }
 
-                    default:
-                        $condition_passed = false;
-                }
-
-                if ($condition_passed === false) {
-                    array_push($errors, $input_for);
-                }
+            if ($condition_passed === false) {
+                array_push($errors, $input_for);
             }
         }
     }
 
     return $errors;
-}
-
-function isValidEmailAddress($email) {
-    // https://stackoverflow.com/a/14075810
-    $VALID_EMAIL_RFC5321_REGEX = '/^([-!#-\'*+\/-9=?A-Z^-~]+(\.[-!#-\'*+\/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+$/';
-
-    return preg_match($VALID_EMAIL_RFC5321_REGEX, $email);
 }
 
 function sendMail($values) {
