@@ -1,6 +1,6 @@
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import typeItAboutMe from "./components/about-me/typeit";
-import sendForm from "./components/form/form-controller";
+import { sendForm, getJsUtf8RegExFromPerlUtf8RegEx } from "./components/form/form-controller";
 import "./sass/style.scss";
 
 replaceBodyJsClass(document.documentElement);
@@ -11,7 +11,8 @@ htmlDevLabel();
 
 typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-// document.querySelector("#cf-submit").addEventListener("click", (e) => sendForm(e));
+document.querySelector("#cf-submit").addEventListener("click", (e) => sendForm(e));
+getJsUtf8RegExFromPerlUtf8RegEx(document.querySelector("#cf-email").getAttribute("pattern"));
 
 function replaceBodyJsClass(targetEl) {
     targetEl.classList.replace("no-js", "js");

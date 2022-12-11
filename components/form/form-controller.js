@@ -1,4 +1,4 @@
-export default async function sendForm(e) {
+async function sendForm(e) {
     e.preventDefault();
 
     try {
@@ -12,3 +12,13 @@ export default async function sendForm(e) {
         return console.error(error);
     }
 }
+
+function getJsUtf8RegExFromPerlUtf8RegEx(regex) {
+    console.log(regex);
+
+    const perlUtf8CharacterSyntax = new RegExp("x{(\\w|\\d){4}}", "g");
+    const matchAll = regex.matchAll(perlUtf8CharacterSyntax);
+    console.log(...matchAll);
+}
+
+export { sendForm, getJsUtf8RegExFromPerlUtf8RegEx };

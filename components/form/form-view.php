@@ -26,9 +26,9 @@
                                     echo $VALUE . " ";
                                 } else {
                                     if ($PROP === "id") {
-                                        echo "name='" . $VALUE . "' ";
+                                        echo 'name="' . $VALUE . '" ';
                                     }
-                                    echo $PROP . "='" . $VALUE . "' ";
+                                    echo $PROP . '="' . $VALUE . '" ';
                                 }
                             }
                             if ($INPUT["el"] !== "input") {
