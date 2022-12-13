@@ -24,6 +24,7 @@ $FIELDSETS = array(
                 "el" => "input",
                 "type" => "email",
                 "id" => "cf-email",
+                "class" => "ipce-utf8-perl",
                 "pattern" => "([-!#-\x{0027}*+\/-9=?A-Z^-~]+(\.[-!#-\x{0027}*+\/-9=?A-Z^-~]+)*|\x{0022}([]!#-[^-~\x{0020}\x{0009}]|(\x{005c}[\x{0009}\x{0020}-~]))+\x{0022})@[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?(\.[0-9A-Za-z]([0-9A-Za-z-]{0,61}[0-9A-Za-z])?)+",
                 "placeholder" => "j.green@example.com",
                 "required" => "true"
