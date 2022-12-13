@@ -32,6 +32,9 @@ async function sendForm(e) {
             method: "POST",
             body: new FormData(e.target.form),
         });
+        const data = await response.json();
+
+        return [response.status, data];
     } catch (error) {
         return console.error(error);
     }
