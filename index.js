@@ -3,7 +3,7 @@ import typeItAboutMe from "./components/about-me/typeit";
 import initContactForm from "./components/form/form-controller";
 import "./sass/style.scss";
 
-replaceBodyJsClass(document.documentElement);
+replaceJsClass(document.documentElement);
 
 initMouseInputDetector(document.body);
 
@@ -13,7 +13,7 @@ typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
 initContactForm(document.querySelector(".form--contact"));
 
-function replaceBodyJsClass(targetEl) {
+function replaceJsClass(targetEl) {
     targetEl.classList.replace("no-js", "js");
 }
 
