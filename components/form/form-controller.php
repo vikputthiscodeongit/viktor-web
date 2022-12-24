@@ -30,9 +30,9 @@ if (!empty($names_of_empty_required_inputs)) {
     redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_empty_required_inputs);
 }
 
-$cf_name_clean = isset($_POST[FormInputs::NAME->value])
+$cf_name_clean = !empty($_POST[FormInputs::NAME->value])
     ? htmlspecialchars(trim($_POST[FormInputs::NAME->value]))
-    : false;
+    : null;
 $cf_email_trimmed = trim($_POST[FormInputs::EMAIL->value]);
 $cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT->value]));
 $cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE->value]));
