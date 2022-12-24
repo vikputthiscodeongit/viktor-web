@@ -20,11 +20,6 @@ function replaceJsClass(targetEl) {
 function initMouseInputDetector(targetEl) {
     console.log("In initMouseInputDetector().");
 
-    targetEl.addEventListener("mousedown", function() {
-        targetEl.classList.add("using-mouse");
-    });
-
-    targetEl.addEventListener("keydown", function() {
-        targetEl.classList.remove("using-mouse");
-    });
+    targetEl.addEventListener("mousedown", () => targetEl.classList.add("using-mouse"));
+    targetEl.addEventListener("keydown", () => targetEl.classList.remove("using-mouse"));
 }
