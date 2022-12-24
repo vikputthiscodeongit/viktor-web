@@ -12,6 +12,11 @@ async function sendForm(e) {
             method: "POST",
             body: new FormData(e.target.form),
         });
+
+        if (!response.ok) {
+            console.warn("Recieved erroreous response.");
+        }
+
         const data = await response.json();
 
         return data;

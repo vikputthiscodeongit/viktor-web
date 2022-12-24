@@ -11,15 +11,13 @@ htmlDevLabel();
 
 typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-initContactForm(document.querySelector(".form--contact"));
+// initContactForm(document.querySelector(".form--contact"));
 
 function replaceJsClass(targetEl) {
     targetEl.classList.replace("no-js", "js");
 }
 
 function initMouseInputDetector(targetEl) {
-    console.log("In initMouseInputDetector().");
-
     targetEl.addEventListener("mousedown", () => targetEl.classList.add("using-mouse"));
     targetEl.addEventListener("keydown", () => targetEl.classList.remove("using-mouse"));
 }
