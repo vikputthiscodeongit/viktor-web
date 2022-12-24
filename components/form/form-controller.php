@@ -65,20 +65,28 @@ function redirectToForm($status, $values = false) {
 }
 
 function getValidationConditionsForInputs($fieldsets) {
-    $INPUT_VALIDATION_PROPS = ["required", "minlength", "maxlength", "pattern"];
+    $INPUT_VALIDATION_PROPS = ["type", "required", "minlength", "maxlength", "pattern"];
     $array_of_inputs = array();
 
     foreach($fieldsets as $fieldset) {
         foreach($fieldset as $field) {
             $input = $field["input"];
 
-            if (isset($input["type"]) && $input["type"] === "submit") continue;
-
             $input_validation_props_and_values = array();
 
             foreach($input as $input_prop => $input_prop_value) {
                 if (in_array($input_prop, $INPUT_VALIDATION_PROPS)) {
-                    $input_validation_props_and_values[$input_prop] = $input_prop_value;
+                    if ($input_prop === "type") {
+                        if ($input_prop_value === "submit") {
+                            continue 2;
+                        }
+
+                        if ($input_prop_value === "email") {
+                            $input_validation_props_and_values["email"] = true;
+                        }
+                    } else {
+                        $input_validation_props_and_values[$input_prop] = $input_prop_value;
+                    }
                 }
 
                 if ($input_prop === array_key_last($input)) {
@@ -134,8 +142,8 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
             }
 
             switch($condition_key) {
-                case "pattern":
-                    $condition_passed = (bool) preg_match("/^" . $condition_value . "$/", $input_value);
+                case "email":
+                    $condition_passed = isValidEmailAddress($input_value);
                     break;
 
                 case "minlength":
@@ -157,6 +165,13 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
     }
 
     return $errors;
+}
+
+function isValidEmailAddress($email) {
+    // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
+    $regex = "/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/";
+
+    return preg_match($regex, $email) === 1;
 }
 
 function sendMail($values) {
