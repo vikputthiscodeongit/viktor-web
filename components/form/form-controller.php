@@ -176,8 +176,18 @@ function isValidEmailAddress($email) {
 
 function sendMail($values) {
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = "Inzending contactformulier " . WEBSITE_DOMAIN . " van " . $values[FormInputs::EMAIL->value];
-    $mail_message = "Het onderstaande bericht is op " . date("j F Y") . " om " . date("H:i:s") . " verstuurd via het contactformulier op " . WEBSITE_DOMAIN . ".\n\nDoor: " . $values[FormInputs::NAME->value] . "\nE-mail adres: " . $values[FormInputs::EMAIL->value] . "\n\n" . $values[FormInputs::SUBJECT->value] . "\n\n " . $values[FormInputs::MESSAGE->value];
+    $mail_subject = sprintf(
+        'Inzending contactformulier %1$s van %2$s', WEBSITE_DOMAIN, $values[FormInputs::EMAIL->value]
+    );
+    $mail_message = sprintf(
+        'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd via het contactformulier op %4$s.' . "\n\n" . '%5$s' . "\n\n" . '%6$s',
+        $values[FormInputs::NAME->value] ?? "een bezoeker",
+        date("j F Y"),
+        date("H:i:s"),
+        WEBSITE_DOMAIN,
+        $values[FormInputs::SUBJECT->value],
+        $values[FormInputs::MESSAGE->value]
+    );
     $mail_headers = array(
         "Content-Type" => "text/plain; charset=utf-8",
         "From" => EMAIL_ADDRESS_WEBMASTER,
