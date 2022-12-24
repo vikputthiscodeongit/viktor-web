@@ -14,7 +14,7 @@ async function sendForm(e) {
         });
         const data = await response.json();
 
-        return [response.status, data];
+        return data;
     } catch (error) {
         return console.error(error);
     }
