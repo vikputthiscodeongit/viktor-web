@@ -1,7 +1,7 @@
 .wpcf7 {
     form {
         &.has-wpcf7mc {
-            .no-js & {
+            .js-disabled & {
                 position: relative;
 
                 &::after {

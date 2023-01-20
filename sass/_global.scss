@@ -48,6 +48,12 @@ h1 {
     }
 }
 
+h2 {
+    @include respond-above(lg) {
+        font-size: rem(24px);
+    }
+}
+
 p {
     &:last-child {
         margin-bottom: 0;
@@ -71,6 +77,48 @@ a {
 img {
     max-width: 100%;
     height: auto;
+}
+
+.js-required {
+    html:not(.js-enabled) & {
+        position: relative;
+
+        &::after {
+            content: "This feature requires JavaScript.";
+            position: absolute;
+            top: rem(-8px);
+            bottom: rem(-8px);
+            left: rem(-8px);
+            right: rem(-8px);
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: rem(18px);
+            color: $off-white-light;
+            background: rgba(0, 0, 0, 0.9);
+
+            @include respond-above(lg) {
+                top: rem(-12px);
+                bottom: rem(-12px);
+                left: rem(-12px);
+                right: rem(-12px);
+                font-size: rem(21px);
+            }
+        }
+    }
+
+    .js-pending & {
+        &::after {
+            content: "Loading feature...";
+        }
+    }
+
+    .js-no-server & {
+        &::after {
+            content: "Something went wrong! Do you have an active connection to the world wide web?"
+        }
+    }
 }
 
 .container {
@@ -97,12 +145,20 @@ img {
     }
 }
 
+.site-section-title {
+    margin-bottom: rem(40px);
+
+    @include respond-above(lg) {
+        margin-bottom: rem(56px);
+    }
+}
+
 .section {
     &-title {
-        margin-bottom: rem(40px);
+        margin-bottom: rem(20px);
 
         @include respond-above(lg) {
-            margin-bottom: rem(56px);
+            margin-bottom: rem(24px);
         }
     }
 

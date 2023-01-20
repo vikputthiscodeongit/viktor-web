@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
-    <?php include "global-strings.php"; ?>
 
+<html class="js-disabled" lang="en">
     <head>
         <?php include "header-strings.php"; ?>
 
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
 
         <!--
                                        ___                         ___           ___

@@ -21,6 +21,8 @@ export default function typeItAboutMe(targetEl) {
         .delete(2, {speed: 120, delay: 350})
         .type("toring enthusiast", {delay: 2000})
         .delete(null, {delay: 900})
+        .type("beb", {delay: 2000})
+        .delete(null, {delay: 600})
         //
         .type("Human", {delay: 1450})
         .delete(null, {delay: 900})

@@ -3,7 +3,7 @@ import typeItAboutMe from "./components/about-me/typeit";
 import initContactForm from "./components/form/form-controller";
 import "./sass/style.scss";
 
-replaceJsClass(document.documentElement);
+unlockJavaScript(document.documentElement);
 
 initMouseInputDetector(document.body);
 
@@ -13,8 +13,23 @@ typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
 // initContactForm(document.querySelector(".form--contact"));
 
-function replaceJsClass(targetEl) {
-    targetEl.classList.replace("no-js", "js");
+async function unlockJavaScript(targetEl) {
+    targetEl.classList.remove("js-disabled");
+    targetEl.classList.add("js-pending");
+
+    try {
+        await fetch("/admin/global-controller.php", {
+            method: "POST",
+        });
+
+        targetEl.classList.remove("js-pending");
+        targetEl.classList.add("js-enabled");
+    } catch (error) {
+        targetEl.classList.remove("js-pending");
+        targetEl.classList.add("js-no-server");
+
+        return console.error(error);
+    }
 }
 
 function initMouseInputDetector(targetEl) {

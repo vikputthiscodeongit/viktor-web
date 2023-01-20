@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Make this array reflect the <form>'s structure.
+
 $FIELDSETS = array(
     "fs_personal" => array(
         "field_name" => array(
