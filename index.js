@@ -18,12 +18,15 @@ async function unlockJavaScript(targetEl) {
     targetEl.classList.add("js-pending");
 
     try {
-        await fetch("/admin/global-controller.php", {
+        const response = await fetch("/admin/global-controller.php", {
             method: "POST",
         });
 
         targetEl.classList.remove("js-pending");
         targetEl.classList.add("js-enabled");
+        if (response.status < 200 || response.status > 299) {
+            throw new Error("Invalid server response.");
+        }
     } catch (error) {
         targetEl.classList.remove("js-pending");
         targetEl.classList.add("js-no-server");
