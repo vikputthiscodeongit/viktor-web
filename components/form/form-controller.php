@@ -57,6 +57,29 @@ $status = $mail_sent
     ? redirectToForm(FormSubmitStatusses::SUCCESS)
     : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
+// Store hash of last successful submission in $_SESSION. Compare on new submission. If the hash is the same,
+// reject submission.
+
+// JS
+//  Success
+//   Respond with 200
+//   IN JS: Show mapped message
+//   IN JS: Clear form
+//
+//  Invalid fields
+//   Respond with 400 / 422 and return input names
+//   IN JS: Show mapped message
+//
+//  Mail failed
+//
+//
+// NO JS
+//  Success
+//   Respond with 200 and redirect with GET ?status=success
+//   IN HTML: Show mapped message
+//
+//  Invalid fields
+
 function redirectToForm($status, $values = false) {
     http_response_code($status->value);
     header("Content-Type: application/json; charset=utf-8");
