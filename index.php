@@ -1,6 +1,4 @@
 <?php
-    var_dump($_SERVER['HTTP_USER_AGENT']);
-
     if (!session_id()) {
         session_start();
     }

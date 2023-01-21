@@ -170,9 +170,9 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
 
 function isValidEmailAddress($email) {
     // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-    $regex = "/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/";
+    $REGEX = "/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/";
 
-    return preg_match($regex, $email) === 1;
+    return preg_match($REGEX, $email) === 1;
 }
 
 function sendMail($values) {
