@@ -12,12 +12,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // TODO: Add UA string browser engine check.
     if (!empty($_SERVER["HTTP_USER_AGENT"])) {
-        $_SESSION["js_enabled"] = true;
+        $BROWSER_ENGINE_UA_REGEX = "/(AppleWebKit|Chrome|Edge|Gecko|Opera|Trident)+/";
 
-        // TODO: Check if $_SESSION is set when cookies are disabled. If so, this check can be skipped.
-        if ($_SESSION["js_enabled"]) {
-            $response_code = 204;
-        }
+        if (preg_match($BROWSER_ENGINE_UA_REGEX, $_SERVER["HTTP_USER_AGENT"]) === 1) {
+            $_SESSION["js_enabled"] = true;
+
+            // TODO: Check if $_SESSION is set when cookies are disabled. If so, this check can be skipped.
+            if ($_SESSION["js_enabled"]) {
+                $response_code = 204;
+            }
+        };
     }
 }
 
