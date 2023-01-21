@@ -80,11 +80,12 @@ img {
 }
 
 .js-required {
-    html:not(.js-enabled) & {
+    html:not(.js-client) &,
+    html.js-client:not(.js-server):not(.js-server-error) &.js-for-sy,
+    html.js-client.js-server-error &.js-for-sy {
         position: relative;
 
         &::after {
-            content: "This feature requires JavaScript.";
             position: absolute;
             top: rem(-8px);
             bottom: rem(-8px);
@@ -108,16 +109,16 @@ img {
         }
     }
 
-    .js-pending & {
-        &::after {
-            content: "Loading feature...";
-        }
+    html:not(.js-client) &::after {
+        content: "This feature requires JavaScript.";
     }
 
-    .js-no-server & {
-        &::after {
-            content: "Something went wrong! Do you have an active connection to the world wide web?"
-        }
+    html.js-client:not(.js-server):not(.js-server-error) &.js-for-sy::after {
+        content: "Loading feature...";
+    }
+
+    html.js-client.js-server-error &.js-for-sy::after {
+        content: "Something went wrong! Do you have an active connection to the world wide web?"
     }
 }
 

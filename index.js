@@ -13,23 +13,22 @@ typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
 // initContactForm(document.querySelector(".form--contact"));
 
-async function unlockJavaScript(targetEl) {
-    targetEl.classList.remove("js-disabled");
-    targetEl.classList.add("js-pending");
+async function unlockJavaScript(rootEl) {
+    rootEl.classList.remove("js-disabled");
+    rootEl.classList.add("js-client");
 
     try {
         const response = await fetch("/admin/global-controller.php", {
             method: "POST",
         });
 
-        targetEl.classList.remove("js-pending");
-        targetEl.classList.add("js-enabled");
         if (response.status < 200 || response.status > 299) {
             throw new Error("Invalid server response.");
         }
+
+        rootEl.classList.add("js-server");
     } catch (error) {
-        targetEl.classList.remove("js-pending");
-        targetEl.classList.add("js-no-server");
+        rootEl.classList.add("js-server-error")
 
         return console.error(error);
     }
