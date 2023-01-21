@@ -1,4 +1,5 @@
 <?PHP
+include __DIR__ . "/../../admin/global-vars.php";
 include __DIR__ . "/../../admin/form-constants.php";
 include "form-content.php";
 
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-$validation_conditions_per_input = getValidationConditionsForInputs($FIELDSETS);
+$validation_conditions_per_input = getValidationConditionsForInputs($FORM["fieldsets"]);
 $required_inputs = getRequiredInputs($validation_conditions_per_input);
 $names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
 
