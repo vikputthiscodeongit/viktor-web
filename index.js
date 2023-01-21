@@ -34,7 +34,7 @@ async function unlockJavaScript(rootEl) {
     }
 }
 
-function initMouseInputDetector(targetEl) {
-    targetEl.addEventListener("mousedown", () => targetEl.classList.add("using-mouse"));
-    targetEl.addEventListener("keydown", () => targetEl.classList.remove("using-mouse"));
+function initMouseInputDetector(bodyEl) {
+    bodyEl.addEventListener("mousedown", () => bodyEl.classList.add("using-mouse"));
+    bodyEl.addEventListener("keydown", () => bodyEl.classList.remove("using-mouse"));
 }
