@@ -1,18 +1,21 @@
+<?php
+// TODO:
+// * Abstract view into render function.
+?>
+
+<?php include "form-content.php"; ?>
+
 <form
-    action="/components/form/form-controller.php"
-    method="POST"
-    class="form form--contact js-required"
-    name="contact-form"
+    action="<?php if (isset($FORM['action'])) echo $FORM['action']; ?>"
+    method="<?php if (isset($FORM['method'])) echo $FORM['method']; ?>"
+    class="<?php if (isset($FORM['class'])) echo $FORM['class']; ?>"
+    name="<?php if (isset($FORM['name'])) echo $FORM['name']; ?>"
 >
     <?php
-        include "form-content.php";
+        $js_required = str_contains($FORM["class"], "js-required");
 
-        // TODO:
-        // Abstract view into render function. Inject disabled attribute
-        // if $FORM array's className contains "js-required".
-
-        foreach($FIELDSETS as $FIELDSET) {
-            echo "<fieldset>";
+        foreach($FORM["fieldsets"] as $FIELDSET) {
+            echo $js_required ? "<fieldset disabled>" : "<fieldset>";
 
             foreach($FIELDSET as $FIELD) {
                 $LABEL = isset($FIELD["label"]) ? $FIELD["label"] : false;
