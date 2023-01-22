@@ -26,4 +26,4 @@ Thumbs.db
 
 #
 _old/
-admin/form-constants.php
+admin/not-dotenv.php
