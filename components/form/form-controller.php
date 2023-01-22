@@ -1,5 +1,10 @@
 <?PHP
+if (!session_id()) {
+    session_start();
+}
+
 include __DIR__ . "/../../admin/not-dotenv.php";
+include __DIR__ . "/../../admin/session-vars.php";
 include "form-content.php";
 
 enum FormSubmitStatusses: int {
@@ -61,29 +66,56 @@ $status = $mail_sent
 
 // Success
 //  JS:   Respond with 200
-//  NOJS: Respond with 200 and redirect with GET ?status=mail_sent
+//  NOJS: Respond with 200 and redirect with GET ?cf_status=mail_sent
 //  JS/NOJS: Show response code mapped to message as notification
 //  JS: Clear form
 //
 // Invalid fields
 //  JS:   Respond with 400 / 422 and return input names
-//  NOJS: Respond with 400 / 422 and redirect with GET ?status=invalid_fields[input names]
+//  NOJS: Respond with 400 / 422 and redirect with GET ?cf_status=invalid_fields[input names]
 //  JS/NOJS: Show response code mapped to message as notification
 //  JS/NOJS: Show validation message at inputs
 //
 // Mail failed
 //  JS:   Respond with 502 and return input names & values
 //  NOJS: Respond with 502, save values to cookie
-//  (clear on next successful submit (add a clear form button)), and redirect with GET ?status=mail_failed
+//  (clear on next successful submit (add a clear form button)), and redirect with GET ?cf_status=mail_failed
 //  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
 //  JS/NOJS: Show response code mapped to message as notification
 
-function redirectToForm($status, $values = false) {
+function redirectToForm($status, array|false $values = false) {
     http_response_code($status->value);
-    header("Content-Type: application/json; charset=utf-8");
-    echo json_encode($values);
 
-    exit();
+    // var_dump($_SESSION);
+
+    // TODO: Always redirect regardless of whether sessions are enabled.
+    if ($_SESSION["js_enabled"]) {
+        header("Content-Type: application/json; charset=utf-8");
+        echo json_encode($values);
+
+        exit();
+    } else {
+        $_SESSION["cf-status"] = $status->name;
+
+        if ($values) {
+            $_SESSION["cf-status-values"] = $values;
+        }
+
+        $redirect_url = getUrlProtocol() . WEBSITE_DOMAIN . "/#contact";
+        header("Location: " . $redirect_url);
+
+        exit();
+    }
+}
+
+function getUrlProtocol() {
+    $url_protocol =
+        isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1) ||
+        isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https"
+            ? "https://"
+            : "http://";
+
+    return $url_protocol;
 }
 
 function getValidationConditionsForInputs($fieldsets) {
