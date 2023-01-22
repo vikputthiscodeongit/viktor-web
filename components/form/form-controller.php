@@ -1,6 +1,5 @@
 <?PHP
-include __DIR__ . "/../../admin/global-vars.php";
-include __DIR__ . "/../../admin/form-constants.php";
+include __DIR__ . "/../../admin/not-dotenv.php";
 include "form-content.php";
 
 enum FormSubmitStatusses: int {

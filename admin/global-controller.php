@@ -3,7 +3,8 @@ if (!session_id()) {
     session_start();
 }
 
-include "global-vars.php";
+include "global-consts.php";
+include "session-vars.php";
 
 $response_code = 405;
 

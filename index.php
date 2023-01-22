@@ -3,8 +3,6 @@
         session_start();
     }
 
-    include "admin/global-vars.php";
-
     include "global-strings.php";
 
     include "header.php";
