@@ -57,28 +57,27 @@ $status = $mail_sent
     ? redirectToForm(FormSubmitStatusses::SUCCESS)
     : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
-// Store hash of last successful submission in $_SESSION. Compare on new submission. If the hash is the same,
-// reject submission.
+// Store hash of last successful submission in $_SESSION. Compare on next new successful submission.
+// Reject if equal, clear if not.
 
-// JS
-//  Success
-//   Respond with 200
-//   IN JS: Show mapped message
-//   IN JS: Clear form
+// Success
+//  JS:   Respond with 200
+//  NOJS: Respond with 200 and redirect with GET ?status=mail_sent
+//  JS/NOJS: Show response code mapped to message as notification
+//  JS: Clear form
 //
-//  Invalid fields
-//   Respond with 400 / 422 and return input names
-//   IN JS: Show mapped message
+// Invalid fields
+//  JS:   Respond with 400 / 422 and return input names
+//  NOJS: Respond with 400 / 422 and redirect with GET ?status=invalid_fields[input names]
+//  JS/NOJS: Show response code mapped to message as notification
+//  JS/NOJS: Show validation message at inputs
 //
-//  Mail failed
-//
-//
-// NO JS
-//  Success
-//   Respond with 200 and redirect with GET ?status=success
-//   IN HTML: Show mapped message
-//
-//  Invalid fields
+// Mail failed
+//  JS:   Respond with 502 and return input names & values
+//  NOJS: Respond with 502, save values to cookie
+//  (clear on next successful submit (add a clear form button)), and redirect with GET ?status=mail_failed
+//  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
+//  JS/NOJS: Show response code mapped to message as notification
 
 function redirectToForm($status, $values = false) {
     http_response_code($status->value);
