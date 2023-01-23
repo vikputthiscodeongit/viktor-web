@@ -2,7 +2,7 @@
 $FORM = array(
     "action" => "/components/form/form-controller.php",
     "method" => "POST",
-    "class" => "form form--contact js-required js-for-sy",
+    "class" => "form form--contact js-required js-server-required",
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(

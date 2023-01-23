@@ -86,14 +86,9 @@ $status = $mail_sent
 function redirectToForm($status, array|false $values = false) {
     http_response_code($status->value);
 
-    // var_dump($_SESSION);
-
-    // TODO: Always redirect regardless of whether sessions are enabled.
     if ($_SESSION["js_enabled"]) {
         header("Content-Type: application/json; charset=utf-8");
         echo json_encode($values);
-
-        exit();
     } else {
         $_SESSION["cf-status"] = $status->name;
 
@@ -103,9 +98,9 @@ function redirectToForm($status, array|false $values = false) {
 
         $redirect_url = getUrlProtocol() . WEBSITE_DOMAIN . "/#contact";
         header("Location: " . $redirect_url);
-
-        exit();
     }
+
+    exit();
 }
 
 function getUrlProtocol() {
@@ -228,6 +223,7 @@ function isValidEmailAddress($email) {
     return preg_match($REGEX, $email) === 1;
 }
 
+// TODO: Catch errors
 function sendMail($values) {
     $mail_to = EMAIL_ADDRESS_PERSONAL;
     $mail_subject = sprintf(

@@ -11,7 +11,7 @@ htmlDevLabel();
 
 typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-// initContactForm(document.querySelector(".form--contact"));
+initContactForm(document.querySelector(".form--contact"));
 
 async function unlockJavaScript(rootEl) {
     rootEl.classList.remove("js-disabled");

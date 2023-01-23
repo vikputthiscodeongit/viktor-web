@@ -82,8 +82,8 @@ img {
 
 .js-required {
     html:not(.js-client) &,
-    html.js-client:not(.js-server):not(.js-server-error) &.js-for-sy,
-    html.js-client.js-server-error &.js-for-sy {
+    html.js-client:not(.js-server):not(.js-server-error) &.js-server-required,
+    html.js-client.js-server-error &.js-server-required {
         position: relative;
 
         &::after {
@@ -115,11 +115,11 @@ img {
         content: "This feature requires JavaScript.";
     }
 
-    html.js-client:not(.js-server):not(.js-server-error) &.js-for-sy::after {
+    html.js-client:not(.js-server):not(.js-server-error) &.js-server-required::after {
         content: "Loading feature...";
     }
 
-    html.js-client.js-server-error &.js-for-sy::after {
+    html.js-client.js-server-error &.js-server-required::after {
         content: "Something went wrong! Do you have an active connection to the world wide web?"
     }
 }
