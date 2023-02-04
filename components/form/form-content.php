@@ -1,7 +1,7 @@
 <?php
 $FORM = array(
     "method" => "POST",
-    "class" => "form form--contact js-required js-server-required",
+    "class" => "form form--contact js-required",
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(

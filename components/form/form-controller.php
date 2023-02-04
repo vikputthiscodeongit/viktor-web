@@ -4,7 +4,6 @@ if (!session_id()) {
 }
 
 include __DIR__ . "/../../admin/not-dotenv.php";
-include __DIR__ . "/../../admin/session-vars.php";
 include "form-content.php";
 
 enum FormSubmitStatusses: int {

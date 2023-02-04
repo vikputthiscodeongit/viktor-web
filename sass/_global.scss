@@ -81,12 +81,11 @@ img {
 }
 
 .js-required {
-    html:not(.js-client) &,
-    html.js-client:not(.js-server):not(.js-server-error) &.js-server-required,
-    html.js-client.js-server-error &.js-server-required {
+    html:not(.js-enabled) & {
         position: relative;
 
         &::after {
+            content: "This feature requires JavaScript.";
             position: absolute;
             top: rem(-8px);
             bottom: rem(-8px);
@@ -96,8 +95,8 @@ img {
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: rem(20px);
             text-align: center;
-            font-size: rem(18px);
             color: $off-white-light;
             background: rgba(0, 0, 0, 0.9);
 
@@ -106,21 +105,8 @@ img {
                 bottom: rem(-12px);
                 left: rem(-12px);
                 right: rem(-12px);
-                font-size: rem(21px);
             }
         }
-    }
-
-    html:not(.js-client) &::after {
-        content: "This feature requires JavaScript.";
-    }
-
-    html.js-client:not(.js-server):not(.js-server-error) &.js-server-required::after {
-        content: "Loading feature...";
-    }
-
-    html.js-client.js-server-error &.js-server-required::after {
-        content: "Something went wrong! Do you have an active connection to the world wide web?"
     }
 }
 
