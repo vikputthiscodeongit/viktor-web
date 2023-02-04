@@ -204,15 +204,13 @@ function isValidEmailAddress($email) {
 // TODO: Catch errors
 function sendMail($values) {
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = sprintf(
-        'Inzending contactformulier %1$s van %2$s', WEBSITE_DOMAIN, $values[FormInputs::EMAIL->value]
     );
+    $mail_subject = "Contactformulier inzending van " . $values[FormInputs::EMAIL->value];
     $mail_message = sprintf(
-        'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd via het contactformulier op %4$s.' . "\n\n" . '%5$s' . "\n\n" . '%6$s',
+        'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd.' . "\n\n" . '%4$s' . "\n\n" . '%5$s',
         $values[FormInputs::NAME->value] ?? "een bezoeker",
         date("j F Y"),
         date("H:i:s"),
-        WEBSITE_DOMAIN,
         $values[FormInputs::SUBJECT->value],
         $values[FormInputs::MESSAGE->value]
     );
