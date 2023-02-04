@@ -13,7 +13,7 @@ typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
 initForm(document.querySelector(".form--contact"));
 
-function initMouseInputDetector(bodyEl) {
-    bodyEl.addEventListener("mousedown", () => bodyEl.classList.add("using-mouse"));
-    bodyEl.addEventListener("keydown", () => bodyEl.classList.remove("using-mouse"));
+function initMouseInputDetector(el) {
+    el.addEventListener("mousedown", () => el.classList.add("using-mouse"));
+    el.addEventListener("keydown", () => el.classList.remove("using-mouse"));
 }

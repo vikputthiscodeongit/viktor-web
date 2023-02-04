@@ -23,7 +23,7 @@ enum FormInputs: string {
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
+    returnStatus(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
 $fieldsets = array_filter($FORM["fieldsets"], function($key) { $key !== "disabled"; }, ARRAY_FILTER_USE_KEY);
@@ -32,7 +32,7 @@ $required_inputs = getRequiredInputs($validation_conditions_per_input);
 $names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
 
 if (!empty($names_of_empty_required_inputs)) {
-    redirectToForm(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_empty_required_inputs);
+    returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_empty_required_inputs);
 }
 
 $cf_name_clean = !empty($_POST[FormInputs::NAME->value])
@@ -52,14 +52,14 @@ $names_of_invalid_inputs =
     getNamesOfInvalidFormInputs($validation_conditions_per_input, $all_inputs_and_values);
 
 if (!empty($names_of_invalid_inputs)) {
-    redirectToForm(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
+    returnStatus(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
 }
 
 $mail_sent = sendMail($all_inputs_and_values);
 
 $status = $mail_sent
-    ? redirectToForm(FormSubmitStatusses::SUCCESS)
-    : redirectToForm(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
+    ? returnStatus(FormSubmitStatusses::SUCCESS)
+    : returnStatus(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
 // Store hash of last successful submission in $_SESSION. Compare on next new successful submission.
 // Reject if equal, clear if not.
@@ -83,7 +83,7 @@ $status = $mail_sent
 //  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
 //  JS/NOJS: Show response code mapped to message as notification
 
-function redirectToForm($status, array|false $values = false) {
+function returnStatus($status, array|false $values = false) {
     http_response_code($status->value);
     header("Content-Type: application/json; charset=utf-8");
     echo json_encode($values);
@@ -201,7 +201,6 @@ function isValidEmailAddress($email) {
     return preg_match($REGEX, $email) === 1;
 }
 
-// TODO: Catch errors
 function sendMail($values) {
     $fmt = datefmt_create(
         "nl_NL",
