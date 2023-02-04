@@ -86,32 +86,10 @@ $status = $mail_sent
 
 function redirectToForm($status, array|false $values = false) {
     http_response_code($status->value);
-
-    if ($_SESSION["js_enabled"]) {
-        header("Content-Type: application/json; charset=utf-8");
-        echo json_encode($values);
-    } else {
-        $_SESSION["cf-status"] = $status->name;
-
-        if ($values) {
-            $_SESSION["cf-status-values"] = $values;
-        }
-
-        $redirect_url = getUrlProtocol() . WEBSITE_DOMAIN . "/#contact";
-        header("Location: " . $redirect_url);
-    }
+    header("Content-Type: application/json; charset=utf-8");
+    echo json_encode($values);
 
     exit();
-}
-
-function getUrlProtocol() {
-    $url_protocol =
-        isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1) ||
-        isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https"
-            ? "https://"
-            : "http://";
-
-    return $url_protocol;
 }
 
 function getValidationConditionsForInputs($fieldsets) {
