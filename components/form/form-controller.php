@@ -203,13 +203,21 @@ function isValidEmailAddress($email) {
 
 // TODO: Catch errors
 function sendMail($values) {
-    $mail_to = EMAIL_ADDRESS_PERSONAL;
+    $fmt = datefmt_create(
+        "nl_NL",
+        IntlDateFormatter::FULL,
+        IntlDateFormatter::FULL,
+        "Europe/Amsterdam",
+        IntlDateFormatter::GREGORIAN,
+        "EEEE d MMMM YYYY"
     );
+
+    $mail_to = EMAIL_ADDRESS_PERSONAL;
     $mail_subject = "Contactformulier inzending van " . $values[FormInputs::EMAIL->value];
     $mail_message = sprintf(
         'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd.' . "\n\n" . '%4$s' . "\n\n" . '%5$s',
         $values[FormInputs::NAME->value] ?? "een bezoeker",
-        date("j F Y"),
+        datefmt_format($fmt, time()),
         date("H:i:s"),
         $values[FormInputs::SUBJECT->value],
         $values[FormInputs::MESSAGE->value]
