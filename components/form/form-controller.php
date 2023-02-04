@@ -27,7 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     redirectToForm(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-$validation_conditions_per_input = getValidationConditionsForInputs($FORM["fieldsets"]);
+$fieldsets = array_filter($FORM["fieldsets"], function($key) { $key !== "disabled"; }, ARRAY_FILTER_USE_KEY);
+$validation_conditions_per_input = getValidationConditionsForInputs($fieldsets);
 $required_inputs = getRequiredInputs($validation_conditions_per_input);
 $names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
 

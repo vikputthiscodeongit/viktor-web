@@ -15,10 +15,10 @@
         $js_required = str_contains($FORM["class"], "js-required");
 
         foreach($FORM["fieldsets"] as $FIELDSET) {
-            echo $js_required && !$_SESSION["js_enabled"] ? "<fieldset disabled>" : "<fieldset>";
-            // echo "<fieldset>";
+            $fs_disabled = $FIELDSET["disabled"] ?? "false";
+            echo "<fieldset disabled='" . $fs_disabled . "'>";
 
-            foreach($FIELDSET as $FIELD) {
+            foreach($FIELDSET["fields"] as $FIELD) {
                 $LABEL = isset($FIELD["label"]) ? $FIELD["label"] : false;
                 $INPUT = $FIELD["input"];
                 ?>
