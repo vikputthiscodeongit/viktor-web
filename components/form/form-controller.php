@@ -1,6 +1,7 @@
 <?PHP
 include __DIR__ . "/../../admin/session.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
+include "helpers.php";
 include "form-content.php";
 
 enum FormSubmitStatusses: int {
@@ -79,14 +80,6 @@ $status = $mail_sent
 //  (clear on next successful submit (add a clear form button)), and redirect with GET ?cf_status=mail_failed
 //  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
 //  JS/NOJS: Show response code mapped to message as notification
-
-function returnStatus($status, array|false $values = false) {
-    http_response_code($status->value);
-    header("Content-Type: application/json; charset=utf-8");
-    echo json_encode($values);
-
-    exit();
-}
 
 function getValidationConditionsForInputs($fieldsets) {
     $INPUT_VALIDATION_PROPS = ["type", "required", "minlength", "maxlength", "pattern"];
