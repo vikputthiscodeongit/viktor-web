@@ -1,7 +1,5 @@
 <?php
-    if (!session_id()) {
-        session_start();
-    }
+    include "admin/session.php";
 
     include "global-strings.php";
 

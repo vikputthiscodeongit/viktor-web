@@ -1,8 +1,5 @@
 <?PHP
-if (!session_id()) {
-    session_start();
-}
-
+include __DIR__ . "/../../admin/session.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
 include "form-content.php";
 
