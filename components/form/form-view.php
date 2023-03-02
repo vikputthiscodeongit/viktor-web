@@ -22,7 +22,7 @@
                 $LABEL = isset($FIELD["label"]) ? $FIELD["label"] : false;
                 $INPUT = $FIELD["input"];
                 ?>
-                    <div class="field <?php if (isset($FIELD['class'])) echo $FIELD['class']; ?>">
+                    <div class="<?php if (isset($FIELD['class'])) echo $FIELD['class']; ?>">
                         <?php
                             if ($LABEL) {
                                 ?>

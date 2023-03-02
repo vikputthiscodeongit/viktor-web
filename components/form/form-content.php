@@ -8,7 +8,7 @@ $FORM = array(
             "disabled" => "true",
             "fields" => array(
                 "field_name" => array(
-                    "class" => "field--ifl",
+                    "class" => "field field--ifl",
                     "label" => array(
                         "label" => "My name is"
                     ),
@@ -22,7 +22,7 @@ $FORM = array(
                     )
                 ),
                 "field_email" => array(
-                    "class" => "field--ifl",
+                    "class" => "field field--ifl",
                     "label" => array(
                         "label" => "My email address is"
                     ),
@@ -40,7 +40,7 @@ $FORM = array(
             "disabled" => "true",
             "fields" => array(
                 "field_subject" => array(
-                    "class" => "field--ifl",
+                    "class" => "field field--ifl",
                     "label" => array(
                         "label" => "I want to talk about"
                     ),
@@ -55,7 +55,7 @@ $FORM = array(
                     )
                 ),
                 "field_message" => array(
-                    "class" => "field--ifl",
+                    "class" => "field field--ifl",
                     "label" => array(
                         "label" => "Message"
                     ),
