@@ -32,45 +32,31 @@ var_dump($input_array);
 $validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
 var_dump($validation_conditions_per_input);
 
-$required_inputs = array_filter($validation_conditions_per_input, function($key, $value) {
-    return $key === "required" && $value === "true";
-}, ARRAY_FILTER_USE_BOTH );
+$required_inputs = getRequiredInputs($validation_conditions_per_input);
+var_dump($required_inputs);
 
-$names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
+$inputs_and_values = getSanitizedInputsAndValues();
+var_dump($inputs_and_values);
 
-if (!empty($names_of_empty_required_inputs)) {
-    returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $names_of_empty_required_inputs);
+$empty_required_inputs = getEmptyRequiredInputs($inputs_and_values, $required_inputs);
+var_dump($empty_required_inputs);
+
+if (!empty($empty_required_inputs)) {
+    returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $empty_required_inputs);
 }
 
-$cf_name_clean = !empty($_POST[FormInputs::NAME->value])
-    ? htmlspecialchars(trim($_POST[FormInputs::NAME->value]))
-    : null;
-$cf_email_trimmed = trim($_POST[FormInputs::EMAIL->value]);
-$cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT->value]));
-$cf_mc_clean = htmlspecialchars(trim($_POST[FormInputs::MC->value]));
-$cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE->value]));
-$all_inputs_and_values = array(
-    FormInputs::NAME->value => $cf_name_clean,
-    FormInputs::EMAIL->value => $cf_email_trimmed,
-    FormInputs::SUBJECT->value => $cf_subject_clean,
-    FormInputs::MC->value => $cf_mc_clean,
-    FormInputs::MESSAGE->value => $cf_message_clean
-);
-var_dump($all_inputs_and_values);
+$invalid_inputs = getInvalidInputs($inputs_and_values, $validation_conditions_per_input);
+var_dump($invalid_inputs);
 
-$names_of_invalid_inputs =
-    getNamesOfInvalidFormInputs($validation_conditions_per_input, $all_inputs_and_values);
-var_dump($names_of_invalid_inputs);
-
-if (!empty($names_of_invalid_inputs)) {
-    returnStatus(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
+if (!empty($invalid_inputs)) {
+    returnStatus(FormSubmitStatusses::INPUT_INVALID, $invalid_inputs);
 }
 
-$mail_sent = sendMail($all_inputs_and_values);
+$mail_sent = sendMail($inputs_and_values);
 
 $status = $mail_sent
     ? returnStatus(FormSubmitStatusses::SUCCESS)
-    : returnStatus(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
+    : returnStatus(FormSubmitStatusses::MAIL_FAILED, $inputs_and_values);
 
 function getInputArray($fieldsets) {
     $input_array = [];
@@ -117,14 +103,9 @@ function getValidationConditionsOfInputs($input_array) {
     return $validation_props_per_input;
 }
 
-function getEmptyPostVars($values) {
-    $empty = array();
 function getRequiredInputs($validation_conditions_per_input) {
     $required_inputs = [];
 
-    foreach($values as $value) {
-        if (empty($_POST[$value])) {
-            array_push($empty, $value);
     foreach($validation_conditions_per_input as $input_name => $conditions_for_input) {
         foreach($conditions_for_input as $prop => $value) {
             if ($prop === "required" && ($value === "true" || $value === true)) {
@@ -133,7 +114,6 @@ function getRequiredInputs($validation_conditions_per_input) {
         }
     }
 
-    return $empty;
     return $required_inputs;
 }
 

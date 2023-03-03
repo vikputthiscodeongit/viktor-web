@@ -32,7 +32,7 @@ $FORM = array(
                         "type" => "email",
                         "id" => "cf-email",
                         "placeholder" => "j.green@example.com",
-                        "required" => "true"
+                        "required" => true
                     )
                 )
             )
@@ -52,7 +52,7 @@ $FORM = array(
                         "minlength" => "4",
                         "maxlength" => "256",
                         "placeholder" => "Some work of yours that I came across",
-                        "required" => "true"
+                        "required" => true
                     )
                 ),
                 "field_message" => array(
@@ -66,7 +66,7 @@ $FORM = array(
                         "rows" => "8",
                         "minlength" => "12",
                         "placeholder" => "Hey man, how are you doing? Last week I was browsing the web when ...",
-                        "required" => "true"
+                        "required" => true
                     )
                 )
             )
@@ -84,7 +84,7 @@ $FORM = array(
                         "type" => "text",
                         "id" => "cf-mc",
                         "inputmode" => "numeric",
-                        "required" => "true"
+                        "required" => true
                     )
                 ),
                 "field_submit" => array(
