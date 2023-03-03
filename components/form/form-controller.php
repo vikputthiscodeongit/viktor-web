@@ -75,9 +75,11 @@ $status = $mail_sent
 function getInputArray($fieldsets) {
     $input_array = [];
 
-    foreach(array_values($fieldsets) as $fieldset) {
-        foreach($fieldset as $fields) {
-            foreach($fields as $field) {
+    foreach(array_values($fieldsets) as $entry) {
+        foreach($entry as $key => $value) {
+            if ($key !== "fields") continue;
+
+            foreach($value as $field) {
                 array_push($input_array, $field["input"]);
             }
         }
