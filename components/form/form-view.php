@@ -12,8 +12,6 @@
     name="<?php if (isset($FORM['name'])) echo $FORM['name']; ?>"
 >
     <?php
-        $js_required = str_contains($FORM["class"], "js-required");
-
         foreach($FORM["fieldsets"] as $FIELDSET) {
             $fs_disabled = $FIELDSET["disabled"] ?? "false";
             echo "<fieldset disabled='" . $fs_disabled . "'>";

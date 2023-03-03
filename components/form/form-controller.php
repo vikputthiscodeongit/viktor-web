@@ -68,28 +68,6 @@ $status = $mail_sent
     ? returnStatus(FormSubmitStatusses::SUCCESS)
     : returnStatus(FormSubmitStatusses::MAIL_FAILED, $all_inputs_and_values);
 
-// Store hash of last successful submission in $_SESSION. Compare on next new successful submission.
-// Reject if equal, clear if not.
-
-// Success
-//  JS:   Respond with 200
-//  NOJS: Respond with 200 and redirect with GET ?cf_status=mail_sent
-//  JS/NOJS: Show response code mapped to message as notification
-//  JS: Clear form
-//
-// Invalid fields
-//  JS:   Respond with 400 / 422 and return input names
-//  NOJS: Respond with 400 / 422 and redirect with GET ?cf_status=invalid_fields[input names]
-//  JS/NOJS: Show response code mapped to message as notification
-//  JS/NOJS: Show validation message at inputs
-//
-// Mail failed
-//  JS:   Respond with 502 and return input names & values
-//  NOJS: Respond with 502, save values to cookie
-//  (clear on next successful submit (add a clear form button)), and redirect with GET ?cf_status=mail_failed
-//  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
-//  JS/NOJS: Show response code mapped to message as notification
-
 function getInputArray($fieldsets) {
     $input_array = [];
 
