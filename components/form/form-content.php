@@ -6,7 +6,7 @@ $FORM = array(
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(
-            // "disabled" => "true",
+            "disabled" => false,
             "fields" => array(
                 "field_name" => array(
                     "class" => "field field--ifl",
@@ -38,7 +38,7 @@ $FORM = array(
             )
         ),
         "fs_message" => array(
-            // "disabled" => "true",
+            "disabled" => false,
             "fields" => array(
                 "field_subject" => array(
                     "class" => "field field--ifl",
@@ -72,7 +72,7 @@ $FORM = array(
             )
         ),
         "fs_submit" => array(
-            // "disabled" => "true",
+            "disabled" => false,
             "fields" => array(
                 "field_mc" => array(
                     "class" => "field field--inline",

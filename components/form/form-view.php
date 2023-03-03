@@ -13,8 +13,12 @@
 >
     <?php
         foreach($FORM["fieldsets"] as $FIELDSET) {
-            $fs_disabled = $FIELDSET["disabled"] ?? "false";
-            echo "<fieldset disabled='" . $fs_disabled . "'>";
+            $fs_disabled =
+                isset($FIELDSET["disabled"]) && $FIELDSET["disabled"] !== false && $FIELDSET["disabled"] !== "false"
+                    ? "disabled"
+                    : "";
+
+            echo "<fieldset " . $fs_disabled . ">";
 
             foreach($FIELDSET["fields"] as $FIELD) {
                 $LABEL = isset($FIELD["label"]) ? $FIELD["label"] : false;
