@@ -1,6 +1,7 @@
 <?PHP
 include __DIR__ . "/../../admin/session.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
+include __DIR__ . "/../form-mc/form-mc-validator.php";
 include "helpers.php";
 include "form-content.php";
 
@@ -17,6 +18,7 @@ enum FormInputs: string {
     case NAME = "cf-name";
     case EMAIL = "cf-email";
     case SUBJECT = "cf-subject";
+    case MC = "cf-mc";
     case MESSAGE = "cf-message";
 }
 
@@ -24,9 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     returnStatus(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-$fieldsets = array_filter($FORM["fieldsets"], function($key) { $key !== "disabled"; }, ARRAY_FILTER_USE_KEY);
-$validation_conditions_per_input = getValidationConditionsForInputs($fieldsets);
-$required_inputs = getRequiredInputs($validation_conditions_per_input);
+$input_array = getInputArray($FORM["fieldsets"]);
+
+$validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
+
+$required_inputs = array_filter($validation_conditions_per_input, function($key, $value) {
+    return $key === "required" && $value === "true";
+}, ARRAY_FILTER_USE_BOTH );
+
 $names_of_empty_required_inputs = getEmptyPostVars($required_inputs);
 
 if (!empty($names_of_empty_required_inputs)) {
@@ -38,11 +45,13 @@ $cf_name_clean = !empty($_POST[FormInputs::NAME->value])
     : null;
 $cf_email_trimmed = trim($_POST[FormInputs::EMAIL->value]);
 $cf_subject_clean = htmlspecialchars(trim($_POST[FormInputs::SUBJECT->value]));
+$cf_mc_clean = htmlspecialchars(trim($_POST[FormInputs::MC->value]));
 $cf_message_clean = htmlspecialchars(trim($_POST[FormInputs::MESSAGE->value]));
 $all_inputs_and_values = array(
     FormInputs::NAME->value => $cf_name_clean,
     FormInputs::EMAIL->value => $cf_email_trimmed,
     FormInputs::SUBJECT->value => $cf_subject_clean,
+    FormInputs::MC->value => $cf_mc_clean,
     FormInputs::MESSAGE->value => $cf_message_clean
 );
 
@@ -81,51 +90,47 @@ $status = $mail_sent
 //  JS: Save message to localStorage (clear on next successful submit (add a clear form button))
 //  JS/NOJS: Show response code mapped to message as notification
 
-function getValidationConditionsForInputs($fieldsets) {
-    $INPUT_VALIDATION_PROPS = ["type", "required", "minlength", "maxlength", "pattern"];
-    $array_of_inputs = array();
+function getInputArray($fieldsets) {
+    $input_array = [];
 
-    foreach($fieldsets as $fieldset) {
-        foreach($fieldset as $field) {
-            $input = $field["input"];
-
-            $input_validation_props_and_values = array();
-
-            foreach($input as $input_prop => $input_prop_value) {
-                if (in_array($input_prop, $INPUT_VALIDATION_PROPS)) {
-                    if ($input_prop === "type") {
-                        if ($input_prop_value === "submit") {
-                            continue 2;
-                        }
-
-                        if ($input_prop_value === "email") {
-                            $input_validation_props_and_values["email"] = true;
-                        }
-                    } else {
-                        $input_validation_props_and_values[$input_prop] = $input_prop_value;
-                    }
-                }
-
-                if ($input_prop === array_key_last($input)) {
-                    $array_of_inputs[$input["id"]] = $input_validation_props_and_values;
-                }
+    foreach(array_values($fieldsets) as $fieldset) {
+        foreach($fieldset as $fields) {
+            foreach($fields as $field) {
+                array_push($input_array, $field["input"]);
             }
         }
     }
 
-    return $array_of_inputs;
+    return $input_array;
 }
 
-function getRequiredInputs($inputs) {
-    $required_inputs = array();
+function getValidationConditionsOfInputs($input_array) {
+    $PROPS_TO_CHECK = ["minlength", "maxlength", "pattern", "required"];
+    $VALUES_TO_CHECK = ["id", "type"];
+    $validation_props_per_input = array();
 
-    foreach($inputs as $input_name => $input_props) {
-        if (isset($input_props["required"]) && $input_props["required"] === "true") {
-            array_push($required_inputs, $input_name);
+    foreach($input_array as $input) {
+        $input_validation_props_and_values = array();
+
+        foreach($input as $input_prop => $input_prop_value) {
+            if (in_array($input_prop, $PROPS_TO_CHECK)) {
+                $input_validation_props_and_values[$input_prop] = $input_prop_value;
+            } else if (in_array($input_prop, $VALUES_TO_CHECK)) {
+                if (
+                    $input_prop === "type" && $input_prop_value === "email" ||
+                    $input_prop === "id" && $input_prop_value === FormInputs::MC->value
+                ) {
+                    $input_validation_props_and_values[$input_prop_value] = true;
+                }
+            }
+
+            if ($input_prop === array_key_last($input)) {
+                $validation_props_per_input[$input["id"]] = $input_validation_props_and_values;
+            }
         }
     }
 
-    return $required_inputs;
+    return $validation_props_per_input;
 }
 
 function getEmptyPostVars($values) {
@@ -144,13 +149,6 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
     $errors = array();
 
     foreach($values_per_input as $input_for => $input_value) {
-        if (
-            !isset($validation_conditions_per_input[$input_for]["required"]) ||
-            $validation_conditions_per_input[$input_for]["required"] === "false"
-        ) {
-            continue;
-        }
-
         $condition_passed = null;
 
         foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
@@ -169,6 +167,10 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
 
                 case "maxlength":
                     $condition_passed = strlen($input_value) <= (int) $condition_value;
+                    break;
+
+                case "mc":
+                    $condition_passed = isValidProblem($input_value);
                     break;
 
                 default:

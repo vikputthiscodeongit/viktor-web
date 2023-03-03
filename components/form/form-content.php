@@ -73,6 +73,19 @@ $FORM = array(
         "fs_submit" => array(
             "disabled" => "true",
             "fields" => array(
+                "field_mc" => array(
+                    "class" => "field field--inline",
+                    "label" => array(
+                        "label" => "MC UNLOADED"
+                    ),
+                    "input" => array(
+                        "el" => "input",
+                        "type" => "text",
+                        "id" => "cf-mc",
+                        "inputmode" => "numeric",
+                        "required" => "true"
+                    )
+                ),
                 "field_submit" => array(
                     "input" => array(
                         "el" => "input",
