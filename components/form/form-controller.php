@@ -150,15 +150,33 @@ function getSanitizedInputsAndValues() {
     return $inputs_and_values;
 }
 
+function getEmptyRequiredInputs($inputs_and_values, $required_inputs) {
+    $errors = [];
+
+    foreach($inputs_and_values as $input_name => $input_value) {
+        if (in_array($input_name, $required_inputs) && is_null($input_value)) {
+            array_push($errors, $input_name);
+        }
+    }
+
+    return $errors;
+}
+
 function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) {
     $errors = array();
 
-    foreach($values_per_input as $input_for => $input_value) {
+    foreach($inputs_and_values as $input_name => $input_value) {
         $condition_passed = null;
 
-        foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
-            var_dump($condition_key);
+        if (is_null($input_value)) {
+            if (in_array("required", $validation_conditions_per_input[$input_name])) {
+                $condition_passed = false;
+            } else {
+                continue;
+            }
+        }
 
+        foreach($validation_conditions_per_input[$input_name] as $condition_key => $condition_value) {
             if ($condition_passed !== null) {
                 break;
             }
@@ -183,10 +201,10 @@ function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) 
                 default:
                     $condition_passed = false;
             }
+        }
 
-            if ($condition_passed === false) {
-                array_push($errors, $input_for);
-            }
+        if ($condition_passed === false) {
+            array_push($errors, $input_name);
         }
     }
 
