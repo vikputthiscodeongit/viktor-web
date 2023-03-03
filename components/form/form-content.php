@@ -1,11 +1,12 @@
 <?php
 $FORM = array(
+    "action" => "/components/form/form-controller.php",
     "method" => "POST",
     "class" => "form form--contact js-required",
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(
-            "disabled" => "true",
+            // "disabled" => "true",
             "fields" => array(
                 "field_name" => array(
                     "class" => "field field--ifl",
@@ -37,7 +38,7 @@ $FORM = array(
             )
         ),
         "fs_message" => array(
-            "disabled" => "true",
+            // "disabled" => "true",
             "fields" => array(
                 "field_subject" => array(
                     "class" => "field field--ifl",
@@ -71,7 +72,7 @@ $FORM = array(
             )
         ),
         "fs_submit" => array(
-            "disabled" => "true",
+            // "disabled" => "true",
             "fields" => array(
                 "field_mc" => array(
                     "class" => "field field--inline",

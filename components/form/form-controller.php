@@ -27,8 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 $input_array = getInputArray($FORM["fieldsets"]);
+var_dump($input_array);
 
 $validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
+var_dump($validation_conditions_per_input);
 
 $required_inputs = array_filter($validation_conditions_per_input, function($key, $value) {
     return $key === "required" && $value === "true";
@@ -54,9 +56,11 @@ $all_inputs_and_values = array(
     FormInputs::MC->value => $cf_mc_clean,
     FormInputs::MESSAGE->value => $cf_message_clean
 );
+var_dump($all_inputs_and_values);
 
 $names_of_invalid_inputs =
     getNamesOfInvalidFormInputs($validation_conditions_per_input, $all_inputs_and_values);
+var_dump($names_of_invalid_inputs);
 
 if (!empty($names_of_invalid_inputs)) {
     returnStatus(FormSubmitStatusses::INPUT_INVALID, $names_of_invalid_inputs);
@@ -130,6 +134,8 @@ function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_p
         $condition_passed = null;
 
         foreach($validation_conditions_per_input[$input_for] as $condition_key => $condition_value) {
+            var_dump($condition_key);
+
             if ($condition_passed !== null) {
                 break;
             }
