@@ -117,14 +117,22 @@ function getValidationConditionsOfInputs($input_array) {
 
 function getEmptyPostVars($values) {
     $empty = array();
+function getRequiredInputs($validation_conditions_per_input) {
+    $required_inputs = [];
 
     foreach($values as $value) {
         if (empty($_POST[$value])) {
             array_push($empty, $value);
+    foreach($validation_conditions_per_input as $input_name => $conditions_for_input) {
+        foreach($conditions_for_input as $prop => $value) {
+            if ($prop === "required" && ($value === "true" || $value === true)) {
+                array_push($required_inputs, $input_name);
+            }
         }
     }
 
     return $empty;
+    return $required_inputs;
 }
 
 function getSanitizedInputsAndValues() {
