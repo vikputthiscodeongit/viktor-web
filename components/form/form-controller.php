@@ -127,7 +127,22 @@ function getEmptyPostVars($values) {
     return $empty;
 }
 
-function getNamesOfInvalidFormInputs($validation_conditions_per_input, $values_per_input) {
+function getSanitizedInputsAndValues() {
+    $inputs_and_values = [];
+
+    foreach (FormInputs::cases() as $input_name) {
+        if (!empty($_POST[$input_name->value])) {
+            $input_value_sanitized = htmlspecialchars(trim($_POST[$input_name->value]));
+            $inputs_and_values[$input_name->value] = $input_value_sanitized;
+        } else {
+            $inputs_and_values[$input_name->value] = null;
+        }
+    }
+
+    return $inputs_and_values;
+}
+
+function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) {
     $errors = array();
 
     foreach($values_per_input as $input_for => $input_value) {
