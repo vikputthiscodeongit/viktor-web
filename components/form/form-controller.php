@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     returnStatus(FormSubmitStatusses::REQUEST_METHOD_INVALID);
 }
 
-$input_array = getInputArray($FORM["fieldsets"]);
+$input_array = getInputElArray($FORM["fieldsets"]);
 var_dump($input_array);
 
 $validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
@@ -49,7 +49,7 @@ $status = $mail_sent
 
 returnStatus(FormSubmitStatusses::UNKNOWN_ERROR);
 
-function getInputArray($fieldsets) {
+function getInputElArray($fieldsets) {
     $input_array = [];
 
     foreach(array_values($fieldsets) as $entry) {
@@ -110,7 +110,7 @@ function getSanitizedInputsAndValues() {
 }
 
 function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) {
-    $errors = array();
+    $invalid_inputs = array();
 
     foreach($inputs_and_values as $input_name => $input_value) {
         $condition_passed = null;
@@ -151,11 +151,11 @@ function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) 
         }
 
         if ($condition_passed === false) {
-            array_push($errors, $input_name);
+            array_push($invalid_inputs, $input_name);
         }
     }
 
-    return $errors;
+    return $invalid_inputs;
 }
 
 function isValidEmailAddress($email) {
