@@ -58,6 +58,8 @@ $status = $mail_sent
     ? returnStatus(FormSubmitStatusses::SUCCESS)
     : returnStatus(FormSubmitStatusses::MAIL_FAILED, $inputs_and_values);
 
+returnStatus(FormSubmitStatusses::UNKNOWN_ERROR);
+
 function getInputArray($fieldsets) {
     $input_array = [];
 
