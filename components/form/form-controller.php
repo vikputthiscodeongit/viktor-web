@@ -8,7 +8,7 @@ include "form-content.php";
 enum FormSubmitStatusses: int {
     case UNKNOWN_ERROR = 500;
     case REQUEST_METHOD_INVALID = 405;
-    case REQUIRED_INPUT_MISSING = 400;
+    // case REQUIRED_INPUT_MISSING = 400;
     case INPUT_INVALID = 422;
     case MAIL_FAILED = 502;
     case SUCCESS = 200;
@@ -38,12 +38,12 @@ var_dump($required_inputs);
 $inputs_and_values = getSanitizedInputsAndValues();
 var_dump($inputs_and_values);
 
-$empty_required_inputs = getEmptyRequiredInputs($inputs_and_values, $required_inputs);
-var_dump($empty_required_inputs);
+// $empty_required_inputs = getEmptyRequiredInputs($inputs_and_values, $required_inputs);
+// var_dump($empty_required_inputs);
 
-if (!empty($empty_required_inputs)) {
-    returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $empty_required_inputs);
-}
+// if (!empty($empty_required_inputs)) {
+//     returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $empty_required_inputs);
+// }
 
 $invalid_inputs = getInvalidInputs($inputs_and_values, $validation_conditions_per_input);
 var_dump($invalid_inputs);
