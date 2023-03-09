@@ -8,7 +8,6 @@ include "form-content.php";
 enum FormSubmitStatusses: int {
     case UNKNOWN_ERROR = 500;
     case REQUEST_METHOD_INVALID = 405;
-    // case REQUIRED_INPUT_MISSING = 400;
     case INPUT_INVALID = 422;
     case MAIL_FAILED = 502;
     case SUCCESS = 200;
@@ -32,18 +31,8 @@ var_dump($input_array);
 $validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
 var_dump($validation_conditions_per_input);
 
-$required_inputs = getRequiredInputs($validation_conditions_per_input);
-var_dump($required_inputs);
-
 $inputs_and_values = getSanitizedInputsAndValues();
 var_dump($inputs_and_values);
-
-// $empty_required_inputs = getEmptyRequiredInputs($inputs_and_values, $required_inputs);
-// var_dump($empty_required_inputs);
-
-// if (!empty($empty_required_inputs)) {
-//     returnStatus(FormSubmitStatusses::REQUIRED_INPUT_MISSING, $empty_required_inputs);
-// }
 
 $invalid_inputs = getInvalidInputs($inputs_and_values, $validation_conditions_per_input);
 var_dump($invalid_inputs);
@@ -105,20 +94,6 @@ function getValidationConditionsOfInputs($input_array) {
     return $validation_props_per_input;
 }
 
-function getRequiredInputs($validation_conditions_per_input) {
-    $required_inputs = [];
-
-    foreach($validation_conditions_per_input as $input_name => $conditions_for_input) {
-        foreach($conditions_for_input as $prop => $value) {
-            if ($prop === "required" && ($value === "true" || $value === true)) {
-                array_push($required_inputs, $input_name);
-            }
-        }
-    }
-
-    return $required_inputs;
-}
-
 function getSanitizedInputsAndValues() {
     $inputs_and_values = [];
 
@@ -132,18 +107,6 @@ function getSanitizedInputsAndValues() {
     }
 
     return $inputs_and_values;
-}
-
-function getEmptyRequiredInputs($inputs_and_values, $required_inputs) {
-    $errors = [];
-
-    foreach($inputs_and_values as $input_name => $input_value) {
-        if (in_array($input_name, $required_inputs) && is_null($input_value)) {
-            array_push($errors, $input_name);
-        }
-    }
-
-    return $errors;
 }
 
 function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) {
