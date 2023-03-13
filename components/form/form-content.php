@@ -6,6 +6,7 @@ $FORM = array(
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(
+            "class" => "js-enable",
             "disabled" => false,
             "fields" => array(
                 "field_name" => array(
@@ -38,6 +39,7 @@ $FORM = array(
             )
         ),
         "fs_message" => array(
+            "class" => "js-enable",
             "disabled" => false,
             "fields" => array(
                 "field_subject" => array(
@@ -72,6 +74,7 @@ $FORM = array(
             )
         ),
         "fs_submit" => array(
+            "class" => "js-enable",
             "disabled" => false,
             "fields" => array(
                 "field_mc" => array(

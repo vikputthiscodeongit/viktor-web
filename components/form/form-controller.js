@@ -10,8 +10,8 @@ export default async function initForm(formEl) {
             console.warn("form-mc not initiated.");
         }
 
-        const disabledEls = formEl.querySelectorAll(":disabled");
-        disabledEls.forEach((el) => el.removeAttribute("disabled"));
+        const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
+        elsToEnable.forEach((el) => el.removeAttribute("disabled"));
 
         const submitInputEl = formEl.querySelector("[type=submit]");
         submitInputEl.addEventListener("click", (e) => sendForm(e));
