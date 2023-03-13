@@ -15,16 +15,18 @@ export default async function initFormMc(formEl) {
 
 async function getProblem() {
     try {
-        const response = await fetch("./components/form-mc/form-mc-generator.php", { method: "GET" });
+        const response = await fetch("./components/form-mc/form-mc-generator.php", {
+            method: "GET"
+        });
 
         if (!response.ok) {
-            console.warn("Recieved erroreous response.");
+            console.warn("Received erroreous response.");
         }
 
-        const data = await response.json();
-        console.log(data);
+        const problem = await response.json();
+        console.log(problem);
 
-        return data;
+        return problem;
     } catch (error) {
         return console.error(error);
     }

@@ -5,7 +5,7 @@ include __DIR__ . "/../form/helpers.php";
 getProblem();
 
 function makeProblem() {
-    $unix_time = (int)floor(microtime(true) * 1000);
+    $unix_time = (int) floor(microtime(true) * 1000);
     $FORM_MC_REFRESH_TIME_MS = 15000;
 
     $invalid_after = $unix_time + $FORM_MC_REFRESH_TIME_MS;

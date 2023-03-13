@@ -6,11 +6,11 @@ include "helpers.php";
 include "form-content.php";
 
 enum FormSubmitStatusses: int {
-    case UNKNOWN_ERROR = 500;
+    case SUCCESS = 200;
     case REQUEST_METHOD_INVALID = 405;
     case INPUT_INVALID = 422;
+    case UNKNOWN_ERROR = 500;
     case MAIL_FAILED = 502;
-    case SUCCESS = 200;
 }
 
 enum FormInputs: string {
@@ -77,6 +77,7 @@ function getValidationConditionsOfInputs($input_array) {
             if (in_array($input_prop, $PROPS_TO_CHECK)) {
                 $input_validation_props_and_values[$input_prop] = $input_prop_value;
             } else if (in_array($input_prop, $VALUES_TO_CHECK)) {
+                // TODO: Dit kan beter.
                 if (
                     $input_prop === "type" && $input_prop_value === "email" ||
                     $input_prop === "id" && $input_prop_value === FormInputs::MC->value
