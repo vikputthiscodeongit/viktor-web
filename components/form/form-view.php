@@ -35,21 +35,28 @@
                             }
                         ?>
 
-                        <<?php
+                        <?php
+                            echo "<";
+
                             foreach($INPUT as $PROP => $VALUE) {
                                 if ($PROP === "el") {
                                     echo $VALUE . " ";
+                                } else if ($PROP === "id") {
+                                    echo 'name="' . $VALUE . '" ';
                                 } else {
-                                    if ($PROP === "id") {
-                                        echo 'name="' . $VALUE . '" ';
+                                    if (is_bool($VALUE)) {
+                                        echo $PROP . " ";
+                                    } else {
+                                        echo $PROP . '="' . $VALUE . '" ';
                                     }
-                                    echo $PROP . '="' . $VALUE . '" ';
                                 }
                             }
                             if ($INPUT["el"] !== "input") {
                                 echo "></" . $INPUT["el"];
                             }
-                        ?>>
+
+                            echo ">";
+                        ?>
                     </div>
                     <?php
             }
