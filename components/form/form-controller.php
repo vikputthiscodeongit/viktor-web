@@ -26,16 +26,16 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 $input_array = getInputElArray($FORM["fieldsets"]);
-var_dump($input_array);
+// var_dump($input_array);
 
 $validation_conditions_per_input = getValidationConditionsOfInputs($input_array);
-var_dump($validation_conditions_per_input);
+// var_dump($validation_conditions_per_input);
 
 $inputs_and_values = getSanitizedInputsAndValues();
-var_dump($inputs_and_values);
+// var_dump($inputs_and_values);
 
 $invalid_inputs = getInvalidInputs($inputs_and_values, $validation_conditions_per_input);
-var_dump($invalid_inputs);
+// var_dump($invalid_inputs);
 
 if (!empty($invalid_inputs)) {
     returnStatus(FormSubmitStatusses::INPUT_INVALID, $invalid_inputs);
