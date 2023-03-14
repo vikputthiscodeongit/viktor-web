@@ -1,5 +1,5 @@
-export default async function initFormMc(formEl) {
-    const mcLabel = formEl.querySelector("#cf-mc").previousElementSibling;
+export default async function initFormMc(mcEl) {
+    const mcLabel = mcEl.previousElementSibling;
     mcLabel.textContent = "MC LOADING";
 
     try {

@@ -11,7 +11,7 @@ htmlDevLabel();
 
 typeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-// initForm(document.querySelector(".form--contact"));
+initForm(document.querySelector(".form--contact"));
 
 function initMouseInputDetector(el) {
     el.addEventListener("mousedown", () => el.classList.add("using-mouse"));

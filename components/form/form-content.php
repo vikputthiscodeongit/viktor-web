@@ -1,6 +1,6 @@
 <?php
 $FORM = array(
-    "action" => "/components/form/form-controller.php",
+    // "action" => "/components/form/form-controller.php",
     "method" => "POST",
     "class" => "form form--contact js-required",
     "name" => "contact-form",

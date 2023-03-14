@@ -1,7 +1,7 @@
 <?PHP
 include __DIR__ . "/../../admin/session.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
-include __DIR__ . "/../form-mc/form-mc-validator.php";
+// include __DIR__ . "/../form-mc/form-mc-validator.php";
 include "helpers.php";
 include "form-content.php";
 
@@ -17,7 +17,7 @@ enum FormInputs: string {
     case NAME = "cf-name";
     case EMAIL = "cf-email";
     case SUBJECT = "cf-subject";
-    case MC = "cf-mc";
+    // case MC = "cf-mc";
     case MESSAGE = "cf-message";
 }
 
@@ -79,8 +79,8 @@ function getValidationConditionsOfInputs($input_array) {
             } else if (in_array($input_prop, $VALUES_TO_CHECK)) {
                 // TODO: Dit kan beter.
                 if (
-                    $input_prop === "type" && $input_prop_value === "email" ||
-                    $input_prop === "id" && $input_prop_value === FormInputs::MC->value
+                    $input_prop === "type" && $input_prop_value === "email"
+                    // $input_prop === "id" && $input_prop_value === FormInputs::MC->value
                 ) {
                     $input_validation_props_and_values[$input_prop_value] = true;
                 }
@@ -142,9 +142,9 @@ function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) 
                     $condition_passed = strlen($input_value) <= (int) $condition_value;
                     break;
 
-                case "mc":
-                    $condition_passed = isValidProblem($input_value);
-                    break;
+                // case "mc":
+                //     $condition_passed = isValidProblem($input_value);
+                //     break;
 
                 default:
                     $condition_passed = false;
