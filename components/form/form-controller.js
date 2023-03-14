@@ -41,6 +41,8 @@ async function submitForm(e, alert) {
     const form = e.target.form;
     const formData = new FormData(form);
     const formSendResponse = await sendForm(formData);
+
+    showAlert(alert, formSendResponse[0]);
 }
 
 async function sendForm(formData) {
@@ -49,38 +51,23 @@ async function sendForm(formData) {
             method: "POST",
             body: formData,
         });
+        console.log(response);
+        const data = response.json();
 
         if (!response.ok) {
             console.warn("sendForm(): Recieved erroreous response.");
         }
 
-        const data = await response.json();
-        console.log(data);
-
-        return data;
+        return [response.status, data];
     } catch (error) {
-        return console.error(error);
+        console.error(error);
     }
 }
 
-function getStatusMessage(response, data) {
-    switch (response.status) {
-        case 200:
-            return ;
+function showAlert(alert, statusCode) {
+    const message = USER_STATUS_MESSAGES[statusCode] ?? USER_STATUS_MESSAGES[500];
+    alert.show(message);
+}
 
-        case 405:
-            return ;
 
-        case 422:
-            return ;
-
-        case 500:
-            return ;
-
-        case 502:
-            return ;
-
-        default:
-            return ;
-    }
 }
