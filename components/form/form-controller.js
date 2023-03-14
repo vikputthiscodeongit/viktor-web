@@ -43,6 +43,10 @@ async function submitForm(e, alert) {
     const formSendResponse = await sendForm(formData);
 
     showAlert(alert, formSendResponse[0]);
+
+    if (formSendResponse.statusCode === "502") {
+        storeFormInput(formSendResponse[1]);
+    }
 }
 
 async function sendForm(formData) {
@@ -69,5 +73,6 @@ function showAlert(alert, statusCode) {
     alert.show(message);
 }
 
+function storeFormInput(form) {
 
 }
