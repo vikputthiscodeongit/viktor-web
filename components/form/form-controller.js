@@ -29,30 +29,33 @@ export default async function initForm(formEl) {
         elsToEnable.forEach((el) => el.removeAttribute("disabled"));
 
         const submitInputEl = formEl.querySelector("[type=submit]");
-        submitInputEl.addEventListener("click", (e) => sendForm(e, alert));
+        submitInputEl.addEventListener("click", (e) => submitForm(e, alert));
     // } catch (error) {
     //     return console.error(error);
     // }
 }
 
-async function sendForm(e, alert) {
+async function submitForm(e, alert) {
     e.preventDefault();
 
+    const form = e.target.form;
+    const formData = new FormData(form);
+    const formSendResponse = await sendForm(formData);
+}
+
+async function sendForm(formData) {
     try {
         const response = await fetch("./components/form/form-controller.php", {
             method: "POST",
-            body: new FormData(e.target.form),
+            body: formData,
         });
 
         if (!response.ok) {
-            console.warn("Recieved erroreous response.");
+            console.warn("sendForm(): Recieved erroreous response.");
         }
 
         const data = await response.json();
         console.log(data);
-
-        const message = getStatusMessage(response, data);
-        alert.show(message);
 
         return data;
     } catch (error) {
