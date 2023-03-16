@@ -35,18 +35,33 @@ export default async function initForm(formEl) {
     // }
 }
 
+var formDataClearTimeout;
+
 async function submitForm(e, alert) {
     e.preventDefault();
+
+    if (formDataClearTimeout) {
+        clearTimeout(formDataClearTimeout);
+    }
 
     const form = e.target.form;
     const formData = new FormData(form);
     const formSendResponse = await sendForm(formData);
 
-    showAlert(alert, formSendResponse[0]);
+    if (formSendResponse.status === 200) {
+        console.log("submitForm(): Form sent successfully.");
 
-    if (formSendResponse.statusCode === "502") {
-        storeFormInput(formSendResponse[1]);
+        formDataClearTimeout = setTimeout(clearForm, 3000, form);
     }
+
+    if (formSendResponse.status === 502 || formSendResponse instanceof Error) {
+        console.log("submitForm(): Storing form data...");
+
+        storeFormInput(form.name, formSendResponse.data);
+    }
+
+    const [alertMessage, alertType] = getMessageByStatusCode(formSendResponse.status);
+    alert.show(alertMessage, alertType);
 }
 
 async function sendForm(formData) {
@@ -56,23 +71,44 @@ async function sendForm(formData) {
             body: formData,
         });
         console.log(response);
-        const data = response.json();
 
-        if (!response.ok) {
-            console.warn("sendForm(): Recieved erroreous response.");
+        const contentType = response.headers.get("Content-Type");
+
+        if (!contentType.includes("application/json")) {
+            throw new Error("sendForm(): Response type invalid.");
         }
 
-        return [response.status, data];
+        const data = await response.json();
+        console.log(data);
+
+        return { status: response.status, data };
     } catch (error) {
-        console.error(error);
+        return error;
     }
 }
 
-function showAlert(alert, statusCode) {
+function clearForm(form) {
+    const inputs = form.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
+    console.log(inputs);
+
+    inputs.forEach((input) => input.value = "");
+}
+
+
+function storeFormInput(formName, formData) {
+    console.log(formData);
+
+    const key = `${formName}-data`;
+    const value = JSON.stringify(formData);
+    localStorage.setItem(key, value);
+}
+
+function getMessageByStatusCode(statusCode) {
     const message = USER_STATUS_MESSAGES[statusCode] ?? USER_STATUS_MESSAGES[500];
-    alert.show(message);
+    const messageType = statusCode === 200 ? "success" : "warning";
+    return [message, messageType];
 }
 
-function storeFormInput(form) {
-
-}
+function loadStorageFormData(form) {
+    const storageItem = localStorage.getItem("");
+};
