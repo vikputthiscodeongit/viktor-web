@@ -1,4 +1,12 @@
 <?PHP
+//
+// TODO:
+// * Set $_SESSION variable with form data hash on succesful submit.
+//   Compare on next submit. If equal > reject.
+//
+
+
+
 include __DIR__ . "/../../admin/session.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
 // include __DIR__ . "/../form-mc/form-mc-validator.php";
