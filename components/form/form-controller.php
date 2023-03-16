@@ -152,7 +152,7 @@ function getInvalidInputs($inputs_and_values, $validation_conditions_per_input) 
         }
 
         if ($condition_passed === false) {
-            array_push($invalid_inputs, $input_name);
+            $invalid_inputs[$input_name] = false;
         }
     }
 
