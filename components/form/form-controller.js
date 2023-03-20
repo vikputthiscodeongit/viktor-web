@@ -25,6 +25,19 @@ export default async function initForm(formEl) {
     //         console.warn("form-mc not initiated.");
     //     }
 
+        if (localStorage.getItem(`${formEl.name}-data`)) {
+            const loadStorageButtonEl = Object.assign(
+                document.createElement("button"),
+                {
+                    type: "button",
+                    value: "Load values"
+                }
+            );
+
+            formEl.appendChild(loadStorageButtonEl);
+            loadStorageButtonEl.addEventListener("click", () => loadStorageFormData(formEl));
+        }
+
         const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
         elsToEnable.forEach((el) => el.removeAttribute("disabled"));
 
@@ -110,5 +123,15 @@ function getMessageByStatusCode(statusCode) {
 }
 
 function loadStorageFormData(form) {
-    const storageItem = localStorage.getItem("");
+    const storageItem = localStorage.getItem(`${form.name}-data`);
+    const formData = JSON.parse(storageItem);
+    console.log(`loadStorageFormData - formData: ${formData}`);
+
+    const inputElList = document.querySelectorAll(`form[name=${form.name}] input, form[name=${form.name}] textarea`)
+    const inputEls = Array.prototype.slice.call(inputElList);
+    console.log(`loadStorageFormData - inputEls: ${inputEls}`);
+
+    Object.keys(formData).map((inputName) => {
+        inputEls.map((input) => input.name === inputName ? input.value = formData[inputName] : false);
+    });
 };
