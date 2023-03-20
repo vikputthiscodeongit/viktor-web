@@ -48,7 +48,7 @@ export default async function initForm(formEl) {
     // }
 }
 
-var formDataClearTimeout;
+let formDataClearTimeout;
 
 async function submitForm(e, alert) {
     e.preventDefault();
@@ -101,15 +101,16 @@ async function sendForm(formData) {
 }
 
 function clearForm(form) {
-    const inputs = form.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
-    console.log(inputs);
+    const inputEls = form.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
+    console.log(inputEls);
 
-    inputs.forEach((input) => input.value = "");
+    inputEls.forEach((input) => input.value = "");
 }
 
 
 function storeFormInput(formName, formData) {
-    console.log(formData);
+    console.log(`storeFormInput - formName: ${formName}`);
+    console.log(`storeFormInput - formData: ${formData}`);
 
     const key = `${formName}-data`;
     const value = JSON.stringify(formData);
