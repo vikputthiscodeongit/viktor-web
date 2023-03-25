@@ -6,7 +6,12 @@ const USER_STATUS_MESSAGES = {
     405: "An error occurred - your message has not been sent. Please try again at a later time.",
     422: "One or more fields didn't pass validation, please check and correct them.",
     500: "An error occurred - your message has not been sent. Please try again at a later time.",
-    502: "An error occurred - your message has not been sent. Please try again at a later time."
+    502: [
+        "Messsage failed to send - please hit the submit button again in a few minutes.",
+        "The message has been saved to your device, so you may also try again at a later time."
+    ]
+};
+
 const FORM_STORED_MSG_EL_SKELETONS = {
     fieldset: {
         el: "fieldset"
