@@ -1,4 +1,4 @@
-// import initFormMc from "../form-mc/form-mc-controller";
+import initFormMc from "../form-mc/form-mc-controller";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 const USER_STATUS_MESSAGES = {
@@ -91,15 +91,15 @@ export default async function initForm(formEl) {
     const notifier = new SimpleNotifier();
     notifier.init();
 
-    // const mcEl = formEl.querySelector("[name=cf-mc]");
-    // console.log(mcEl);
+    const mcEl = formEl.querySelector("[name=cf-mc]");
+    console.log(mcEl);
 
-    // try {
-    //     const mcInit = await initFormMc(mcEl);
+    try {
+        const mcInit = await initFormMc(mcEl);
 
-    //     if (mcInit !== true) {
-    //         console.warn("form-mc not initiated.");
-    //     }
+        if (mcInit !== true) {
+            console.warn("form-mc not initiated.");
+        }
 
         const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
         elsToEnable.forEach((el) => el.removeAttribute("disabled"));
@@ -110,9 +110,9 @@ export default async function initForm(formEl) {
 
         const submitInputEl = formEl.querySelector("[type=submit]");
         submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
-    // } catch (error) {
-    //     return console.error(error);
-    // }
+    } catch (error) {
+        return console.error(error);
+    }
 }
 
 let formDataClearTimeout;
