@@ -7,6 +7,70 @@ const USER_STATUS_MESSAGES = {
     422: "One or more fields didn't pass validation, please check and correct them.",
     500: "An error occurred - your message has not been sent. Please try again at a later time.",
     502: "An error occurred - your message has not been sent. Please try again at a later time."
+const FORM_STORED_MSG_EL_SKELETONS = {
+    fieldset: {
+        el: "fieldset"
+    },
+    field: {
+        el: "div",
+        attrs: {
+            class: "field"
+        }
+    },
+    explainer: {
+        el: "p",
+        attrs: {
+            id: `stored-msg-info`,
+            text: "Your last message failed to send and was stored.",
+        }
+    },
+    loadStorageButton: {
+        el: "button",
+        attrs: {
+            class: "button",
+            ariaLabelledby: `stored-msg-info`,
+            text: "Insert message in form"
+        }
+    },
+    clearStorageButton: {
+        el: "button",
+        attrs: {
+            class: "button",
+            ariaLabelledby: `stored-msg-info`,
+            text: "Remove message from storage"
+        }
+    }
+};
+
+function createEl(tagName, attrs) {
+    const el = document.createElement(tagName);
+
+    if (attrs) {
+        for (let [prop, val] of Object.entries(attrs)) {
+            if (prop === "text") {
+                el.innerText = val;
+
+                continue;
+            }
+
+            prop = prop.replace(/[A-Z0-9]/g, letter => `-${letter.toLowerCase()}`);
+            el.setAttribute(prop, val);
+        }
+    }
+
+    return el;
+}
+
+function createEls(elSkeletons) {
+    let els = {};
+
+    for (const [name, skeleton] of Object.entries(elSkeletons)) {
+        const el = createEl(skeleton.el, skeleton.attrs);
+        els[name] = el;
+    }
+
+    console.log(els);
+    return els;
 }
 
 export default async function initForm(formEl) {
@@ -25,21 +89,12 @@ export default async function initForm(formEl) {
     //         console.warn("form-mc not initiated.");
     //     }
 
-        if (localStorage.getItem(`${formEl.name}-data`)) {
-            const loadStorageButtonEl = Object.assign(
-                document.createElement("button"),
-                {
-                    type: "button",
-                    value: "Load values"
-                }
-            );
-
-            formEl.appendChild(loadStorageButtonEl);
-            loadStorageButtonEl.addEventListener("click", () => loadStorageFormData(formEl));
-        }
-
         const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
         elsToEnable.forEach((el) => el.removeAttribute("disabled"));
+
+        if (localStorage.getItem(`${formEl.name}-data`)) {
+            makeStorageEls(formEl, FORM_STORED_MSG_EL_SKELETONS, notifier);
+        }
 
         const submitInputEl = formEl.querySelector("[type=submit]");
         submitInputEl.addEventListener("click", (e) => submitForm(e, alert));
@@ -135,4 +190,41 @@ function loadStorageFormData(form) {
     Object.keys(formData).map((inputName) => {
         inputEls.map((input) => input.name === inputName ? input.value = formData[inputName] : false);
     });
-};
+}
+
+function makeStorageEls(formEl, elSkeletons, notifier) {
+    elSkeletons = getStoredFormDataElSkeletons(formEl.name, elSkeletons);
+    const els = createEls(elSkeletons);
+
+    els.field.appendChild(els.explainer);
+    els.field.appendChild(els.loadStorageButton);
+    els.field.appendChild(els.clearStorageButton);
+    els.fieldset.appendChild(els.field);
+    formEl.insertBefore(els.fieldset, formEl.firstElementChild);
+
+    els.loadStorageButton.addEventListener("click", () => loadStoredFormData(formEl));
+    els.clearStorageButton.addEventListener("click", () => {
+        localStorage.removeItem(`${formEl.name}-data`);
+        notifier.show("Your locally stored message has been removed.", "info");
+        setTimeout(() => els.fieldset.remove(), 3500);
+    });
+}
+
+function getStoredFormDataElSkeletons(formName, elSkeletons) {
+    const SEARCH_VALUES = {
+        explainer: "id",
+        loadStorageButton: "ariaLabelledby",
+        clearStorageButton: "ariaLabelledby"
+    };
+
+    let modifiedSkeletons = {...elSkeletons};
+
+    for (const [elName, skeleton] of Object.entries(modifiedSkeletons)) {
+        if (SEARCH_VALUES.hasOwnProperty(elName)) {
+            skeleton.attrs[SEARCH_VALUES[elName]] = `${formName}-${skeleton.attrs[elName]}`;
+        }
+    }
+
+    console.log(modifiedSkeletons);
+    return modifiedSkeletons;
+}
