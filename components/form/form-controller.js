@@ -1,4 +1,4 @@
-import initFormMc from "../form-mc/form-mc-controller";
+// import initFormMc from "../form-mc/form-mc-controller";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 const USER_STATUS_MESSAGES = {
@@ -83,8 +83,8 @@ function getMessageByStatusCode(statusMessages, statusCode) {
 export default async function initForm(formEl) {
     // // TODO: Do the following after form interaction.
 
-    const alert = new SimpleNotifier();
-    alert.init();
+    const notifier = new SimpleNotifier();
+    notifier.init();
 
     // const mcEl = formEl.querySelector("[name=cf-mc]");
     // console.log(mcEl);
@@ -104,7 +104,7 @@ export default async function initForm(formEl) {
         }
 
         const submitInputEl = formEl.querySelector("[type=submit]");
-        submitInputEl.addEventListener("click", (e) => submitForm(e, alert));
+        submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
     // } catch (error) {
     //     return console.error(error);
     // }
@@ -112,31 +112,33 @@ export default async function initForm(formEl) {
 
 let formDataClearTimeout;
 
-async function submitForm(e, alert) {
+async function submitForm(e, notifier) {
     e.preventDefault();
 
     if (formDataClearTimeout) {
         clearTimeout(formDataClearTimeout);
     }
 
-    const form = e.target.form;
-    const formData = new FormData(form);
+    const formEl = e.target.form;
+    const formData = new FormData(formEl);
     const formSendResponse = await sendForm(formData);
+    console.log(formSendResponse);
 
     if (formSendResponse.status === 200) {
         console.log("submitForm(): Form sent successfully.");
 
-        formDataClearTimeout = setTimeout(clearForm, 3000, form);
+        localStorage.removeItem(`${formEl.name}-data`);
+        formDataClearTimeout = setTimeout(clearForm, 3000, formEl);
     }
 
     if (formSendResponse.status === 502 || formSendResponse instanceof Error) {
         console.log("submitForm(): Storing form data...");
 
-        storeFormInput(form.name, formSendResponse.data);
+        storeFormData(formEl.name, formSendResponse.data);
     }
 
-    alert.show(alertMessage, alertType);
     const [alertMessage, alertType] = getMessageByStatusCode(USER_STATUS_MESSAGES, formSendResponse.status);
+    notifier.show(alertMessage, alertType);
 }
 
 async function sendForm(formData) {
@@ -162,31 +164,35 @@ async function sendForm(formData) {
     }
 }
 
-function clearForm(form) {
-    const inputEls = form.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
+function clearForm(formEl) {
+    const inputEls = formEl.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
     console.log(inputEls);
 
     inputEls.forEach((input) => input.value = "");
 }
 
-
-function storeFormInput(formName, formData) {
-    console.log(`storeFormInput - formName: ${formName}`);
-    console.log(`storeFormInput - formData: ${formData}`);
+function storeFormData(formName, formData) {
+    console.log(`storeFormData - formName: ${formName}`);
+    console.log(`storeFormData - formData: ${formData}`);
 
     const key = `${formName}-data`;
     const value = JSON.stringify(formData);
     localStorage.setItem(key, value);
 }
 
-function loadStorageFormData(form) {
-    const storageItem = localStorage.getItem(`${form.name}-data`);
+function loadStoredFormData(formEl) {
+    const storageItem = localStorage.getItem(`${formEl.name}-data`);
     const formData = JSON.parse(storageItem);
-    console.log(`loadStorageFormData - formData: ${formData}`);
+    console.log(`loadStoredFormData - formData: ${formData}`);
 
-    const inputElList = document.querySelectorAll(`form[name=${form.name}] input, form[name=${form.name}] textarea`)
+    // :-webkit-any for maximum compatibility.
+    const inputElList = document.querySelectorAll(
+        `[name=${formEl.name}] input:not([type=button], [type=reset], [type=submit]),
+         [name=${formEl.name}] textarea`
+    );
     const inputEls = Array.prototype.slice.call(inputElList);
-    console.log(`loadStorageFormData - inputEls: ${inputEls}`);
+    console.log(`loadStoredFormData - inputEls:`);
+    console.log(inputEls);
 
     Object.keys(formData).map((inputName) => {
         inputEls.map((input) => input.name === inputName ? input.value = formData[inputName] : false);
