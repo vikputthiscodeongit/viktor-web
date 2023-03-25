@@ -73,6 +73,13 @@ function createEls(elSkeletons) {
     return els;
 }
 
+function getMessageByStatusCode(statusMessages, statusCode) {
+    const message = statusMessages[statusCode] ?? statusMessages[500];
+    const messageType = statusCode === 200 ? "success" : "warning";
+
+    return [message, messageType];
+}
+
 export default async function initForm(formEl) {
     // // TODO: Do the following after form interaction.
 
@@ -128,8 +135,8 @@ async function submitForm(e, alert) {
         storeFormInput(form.name, formSendResponse.data);
     }
 
-    const [alertMessage, alertType] = getMessageByStatusCode(formSendResponse.status);
     alert.show(alertMessage, alertType);
+    const [alertMessage, alertType] = getMessageByStatusCode(USER_STATUS_MESSAGES, formSendResponse.status);
 }
 
 async function sendForm(formData) {
@@ -170,12 +177,6 @@ function storeFormInput(formName, formData) {
     const key = `${formName}-data`;
     const value = JSON.stringify(formData);
     localStorage.setItem(key, value);
-}
-
-function getMessageByStatusCode(statusCode) {
-    const message = USER_STATUS_MESSAGES[statusCode] ?? USER_STATUS_MESSAGES[500];
-    const messageType = statusCode === 200 ? "success" : "warning";
-    return [message, messageType];
 }
 
 function loadStorageFormData(form) {
