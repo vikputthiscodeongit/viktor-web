@@ -14,7 +14,8 @@
     <?php
         foreach($FORM["fieldsets"] as $FIELDSET) {
             $fs_disabled =
-                isset($FIELDSET["disabled"]) && $FIELDSET["disabled"] !== false && $FIELDSET["disabled"] !== "false"
+               (!isset($FIELDSET["disabled"]) && str_contains($FORM["class"], "js-enable") && str_contains($FIELDSET["class"], "js-enable")) ||
+                (isset($FIELDSET["disabled"]) && $FIELDSET["disabled"] !== false && $FIELDSET["disabled"] !== "false")
                     ? "disabled"
                     : "";
 

@@ -2,12 +2,11 @@
 $FORM = array(
     // "action" => "/components/form/form-controller.php",
     "method" => "POST",
-    "class" => "form form--contact js-required",
+    "class" => "form form--contact has-overlay js-enable",
     "name" => "contact-form",
     "fieldsets" => array(
         "fs_personal" => array(
             "class" => "js-enable",
-            "disabled" => false,
             "fields" => array(
                 "field_name" => array(
                     "class" => "field field--ifl",
@@ -40,7 +39,6 @@ $FORM = array(
         ),
         "fs_message" => array(
             "class" => "js-enable",
-            "disabled" => false,
             "fields" => array(
                 "field_subject" => array(
                     "class" => "field field--ifl",
@@ -75,7 +73,6 @@ $FORM = array(
         ),
         "fs_submit" => array(
             "class" => "js-enable",
-            "disabled" => false,
             "fields" => array(
                 "field_mc" => array(
                     "class" => "field field--inline",
