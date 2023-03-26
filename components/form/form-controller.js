@@ -4,10 +4,10 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 const USER_STATUS_MESSAGES = {
     200: "Message sent - I'll be in touch soon :).",
     405: "An error occurred - your message has not been sent. Please try again at a later time.",
-    422: "One or more fields didn't pass validation, please check and correct them.",
-    500: "An error occurred - your message has not been sent. Please try again at a later time.",
+    422: "One or more fields failed validation. Please check and correct them.",
+    500: "An unknown error occurred - your message has not been sent. Please try again at a later time.",
     502: [
-        "Messsage failed to send - please hit the submit button again in a few minutes.",
+        "Messsage failed to send - please try submitting it again in a few minutes.",
         "The message has been saved to your device, so you may also try again at a later time."
     ]
 };
@@ -86,7 +86,7 @@ function getMessageByStatusCode(statusMessages, statusCode) {
 }
 
 export default async function initForm(formEl) {
-    // // TODO: Do the following after form interaction.
+    // TODO: Do the following after form interaction.
 
     const notifier = new SimpleNotifier();
     notifier.init();
@@ -142,6 +142,7 @@ async function submitForm(e, notifier) {
         storeFormData(formEl.name, formSendResponse.data);
     }
 
+    // TODO: Send 2 notifications if alertMessage is an array.
     const [alertMessage, alertType] = getMessageByStatusCode(USER_STATUS_MESSAGES, formSendResponse.status);
     notifier.show(alertMessage, alertType);
 }

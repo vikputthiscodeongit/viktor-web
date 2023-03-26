@@ -8,11 +8,14 @@ export default async function initFormMc(mcEl) {
     mcLabel.textContent = "MC LOADING";
 
     try {
+        throw new Error();
         await makeProblem(mcLabel);
 
         return true;
     } catch (error) {
-        return console.error(error);
+        console.error(error);
+
+        return error;
     }
 }
 
@@ -32,6 +35,8 @@ async function makeProblem(mcLabel) {
         scheduleProblemRefresh(problem[2], mcLabel);
     } catch (error) {
         console.error(error);
+
+        return error;
     }
 }
 
