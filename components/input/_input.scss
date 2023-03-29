@@ -4,7 +4,7 @@
             margin: 2em 0 0;
             padding: 0.25em 0.75em;
 
-            .js-enabled & {
+            .has-js & {
                 display: none;
             }
         }
@@ -13,7 +13,7 @@
     &-not-valid-tip {
         margin-top: 0.5em;
 
-        .js-enabled & {
+        .has-js & {
             display: none;
         }
     }
@@ -82,7 +82,7 @@ label {
     }
 
     .field--ifl & {
-        .js-enabled & {
+        .has-js & {
             position: absolute;
             top: rem(2px);
             left: rem(2px);
@@ -151,7 +151,7 @@ textarea {
     }
 
     .field--ifl & {
-        .js-enabled & {
+        .has-js & {
             padding-top: rem(31px);
             padding-bottom: rem(8px);
         }
@@ -197,7 +197,7 @@ input {
     }
 
     .field--ifl & {
-        .js-enabled & {
+        .has-js & {
             height: rem(69px); // Setting a fixed height is sadly the only way to guarantee consistent appearance across browsers.
         }
     }

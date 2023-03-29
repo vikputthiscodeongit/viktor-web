@@ -3,7 +3,7 @@ import typeItAboutMe from "./components/about-me/typeit";
 import initForm from "./components/form/form-controller";
 import "./sass/style.scss";
 
-document.documentElement.classList.replace("js-disabled", "js-enabled");
+document.documentElement.classList.replace("js-disabled", "has-js");
 
 initMouseInputDetector(document.body);
 
