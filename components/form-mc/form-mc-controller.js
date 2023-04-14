@@ -8,7 +8,7 @@ export default async function initFormMc(mcEl) {
     mcLabel.textContent = "MC LOADING";
 
     try {
-        throw new Error();
+        // throw new Error();
         await makeProblem(mcLabel);
 
         return true;
@@ -19,25 +19,37 @@ export default async function initFormMc(mcEl) {
     }
 }
 
+const MAKE_PROBLEM_TIMEOUTS = [3000, 5000, 8000];
+let makeProblemTryCount = 0;
 
 async function makeProblem(mcLabel) {
     console.log("makeProblem() - running");
+
+    makeProblemTryCount++;
+    console.log(`makeProblem(): makeProblemTryCount - ${makeProblemTryCount}`);
+
+    if (makeProblemTryCount > MAKE_PROBLEM_TIMEOUTS.length) {
+        console.error("makeProblem(): Failed to make problem 3 times. Exiting.");
+
+        return;
+    }
 
     try {
         const problem = await getMathsProblem();
         console.log(problem);
 
         if (problem instanceof Error) {
-            // Retry 2 times
-            return;
+            throw new Error(problem.message);
         }
 
-        setMathsProblem(mcLabel, problem);
-        scheduleProblemRefresh(problem[2], mcLabel);
+        mcLabel.textContent = `${problem[0]} + ${problem[1]} =`;
+
+        scheduleMakeProblem(problem[2], mcLabel);
+        makeProblemTryCount = 0;
     } catch (error) {
         console.error(error);
 
-        return error;
+        setTimeout(scheduleMakeProblem, MAKE_PROBLEM_TIMEOUTS[makeProblemTryCount - 1], 0, mcLabel);
     }
 }
 
@@ -51,6 +63,8 @@ async function getMathsProblem() {
 
         if (!response.ok) {
             console.warn("getMathsProblem() - Received erroreous response.");
+
+            throw new Error(response.statusText);
         }
 
         const problem = await response.json();
@@ -64,41 +78,18 @@ async function getMathsProblem() {
     }
 }
 
-function setMathsProblem(mcLabel, problem) {
-    console.log("setMathsProblem() - running");
+const PROBLEM_REFRESH_GRACE_TIME = 500;
 
-    mcLabel.textContent = `${problem[0]} + ${problem[1]} =`;
-}
+function scheduleMakeProblem(invalidAfter, mcLabel) {
+    console.log("scheduleMakeProblem(): Running.");
 
-async function refreshProblem(mcLabel) {
-    console.log("refreshProblem() - running");
-
-    let retries = 0;
-
-    try {
-        await makeProblem(mcLabel);
-    } catch (error) {
-        retries++;
-
-        if (retries <= 2) {
-            setTimeout(() => refreshProblem(mcLabel), 5000);
-        } else {
-            return console.error(error);
-        }
-    }
-}
-
-function scheduleProblemRefresh(invalidAfter, mcLabel) {
-    console.log("scheduleProblemRefresh() - running");
-
-    const currentTime = Date.now();
-    const timeToRefresh = invalidAfter - currentTime - 500;
+    let timeToRefresh = invalidAfter - Date.now() - PROBLEM_REFRESH_GRACE_TIME;
+    console.log(`scheduleMakeProblem(): timeToRefresh 1 - ${timeToRefresh}`);
 
     if (timeToRefresh <= 0) {
-        refreshProblem(mcLabel);
-
-        return;
+        timeToRefresh = 0;
     }
+    console.log(`scheduleMakeProblem(): timeToRefresh 2 - ${timeToRefresh}`);
 
-    setTimeout(() => refreshProblem(mcLabel), timeToRefresh);
+    setTimeout(makeProblem, timeToRefresh, mcLabel);
 }
