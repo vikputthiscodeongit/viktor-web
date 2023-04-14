@@ -85,9 +85,10 @@ function getMessageByStatusCode(statusMessages, statusCode) {
     return [message, messageType];
 }
 
+// TODO:
+// * Add retry-timer.
+// * Do after form interaction.
 export default async function initForm(formEl) {
-    // TODO: Do the following after form interaction.
-
     const notifier = new SimpleNotifier();
     notifier.init();
 
@@ -111,7 +112,7 @@ export default async function initForm(formEl) {
         const submitInputEl = formEl.querySelector("[type=submit]");
         submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
     } catch (error) {
-        return console.error(error);
+        return error;
     }
 }
 
@@ -158,6 +159,8 @@ async function sendForm(formData) {
         const contentType = response.headers.get("Content-Type");
 
         if (!contentType.includes("application/json")) {
+            // TODO: Handle case.
+
             throw new Error("sendForm(): Response type invalid.");
         }
 

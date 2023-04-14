@@ -74,7 +74,7 @@ $FORM = array(
                 "field_mc" => array(
                     "class" => "field field--inline",
                     "label" => array(
-                        "label" => "MC UNLOADED"
+                        "label" => "CAPTCHA is inactive"
                     ),
                     "input" => array(
                         "el" => "input",

@@ -1,11 +1,11 @@
 export default async function initFormMc(mcEl) {
-    console.log("initFormMc() - running");
+    console.log("initFormMc(): Running.");
 
     const mcLabel = mcEl.previousElementSibling;
-    console.log("initFormMc() - mcLabel");
+    console.log("initFormMc(): mcLabel");
     console.log(mcLabel);
 
-    mcLabel.textContent = "MC LOADING";
+    mcLabel.textContent = "CAPTCHA is loading";
 
     try {
         // throw new Error();
@@ -23,7 +23,7 @@ const MAKE_PROBLEM_TIMEOUTS = [3000, 5000, 8000];
 let makeProblemTryCount = 0;
 
 async function makeProblem(mcLabel) {
-    console.log("makeProblem() - running");
+    console.log("makeProblem(): Running.");
 
     makeProblemTryCount++;
     console.log(`makeProblem(): makeProblemTryCount - ${makeProblemTryCount}`);
@@ -36,7 +36,6 @@ async function makeProblem(mcLabel) {
 
     try {
         const problem = await getMathsProblem();
-        console.log(problem);
 
         if (problem instanceof Error) {
             throw new Error(problem.message);
@@ -54,7 +53,7 @@ async function makeProblem(mcLabel) {
 }
 
 async function getMathsProblem() {
-    console.log("getMathsProblem() - running");
+    console.log("getMathsProblem(): Running.");
 
     try {
         const response = await fetch("./components/form-mc/form-mc-generator.php", {
@@ -62,13 +61,13 @@ async function getMathsProblem() {
         });
 
         if (!response.ok) {
-            console.warn("getMathsProblem() - Received erroreous response.");
+            console.warn("getMathsProblem(): Received erroreous response.");
 
             throw new Error(response.statusText);
         }
 
         const problem = await response.json();
-        console.log(`getMathsProblem() / problem - ${problem}`);
+        console.log(`getMathsProblem(): problem - ${problem}`);
 
         return problem;
     } catch (error) {
