@@ -9,7 +9,7 @@ export default async function initFormMc(mcEl) {
 
     try {
         // throw new Error();
-        await makeProblem(mcLabel);
+        await makeProblem(0, mcLabel);
 
         return true;
     } catch (error) {
@@ -20,19 +20,12 @@ export default async function initFormMc(mcEl) {
 }
 
 const MAKE_PROBLEM_TIMEOUTS = [3000, 5000, 8000];
-let makeProblemTryCount = 0;
 
-async function makeProblem(mcLabel) {
+async function makeProblem(tryCount, mcLabel) {
     console.log("makeProblem(): Running.");
 
-    makeProblemTryCount++;
-    console.log(`makeProblem(): makeProblemTryCount - ${makeProblemTryCount}`);
-
-    if (makeProblemTryCount > MAKE_PROBLEM_TIMEOUTS.length) {
-        console.error("makeProblem(): Failed to make problem 3 times. Exiting.");
-
-        return;
-    }
+    tryCount++;
+    console.log(`makeProblem(): tryCount - ${tryCount}`);
 
     try {
         const problem = await getMathsProblem();
@@ -43,12 +36,17 @@ async function makeProblem(mcLabel) {
 
         mcLabel.textContent = `${problem[0]} + ${problem[1]} =`;
 
-        scheduleMakeProblem(problem[2], mcLabel);
-        makeProblemTryCount = 0;
+        scheduleMakeProblem(problem[2], 0, mcLabel);
     } catch (error) {
         console.error(error);
 
-        setTimeout(scheduleMakeProblem, MAKE_PROBLEM_TIMEOUTS[makeProblemTryCount - 1], 0, mcLabel);
+        if (tryCount > MAKE_PROBLEM_TIMEOUTS.length) {
+            console.error(`makeProblem(): Failed to make problem ${tryCount} times. Exiting.`);
+
+            return;
+        }
+
+        setTimeout(scheduleMakeProblem, MAKE_PROBLEM_TIMEOUTS[tryCount - 1], 0, tryCount, mcLabel);
     }
 }
 
@@ -79,7 +77,7 @@ async function getMathsProblem() {
 
 const PROBLEM_REFRESH_GRACE_TIME = 500;
 
-function scheduleMakeProblem(invalidAfter, mcLabel) {
+function scheduleMakeProblem(invalidAfter, tryCount, mcLabel) {
     console.log("scheduleMakeProblem(): Running.");
 
     let timeToRefresh = invalidAfter - Date.now() - PROBLEM_REFRESH_GRACE_TIME;
@@ -90,5 +88,5 @@ function scheduleMakeProblem(invalidAfter, mcLabel) {
     }
     console.log(`scheduleMakeProblem(): timeToRefresh 2 - ${timeToRefresh}`);
 
-    setTimeout(makeProblem, timeToRefresh, mcLabel);
+    setTimeout(makeProblem, timeToRefresh, tryCount, mcLabel);
 }
