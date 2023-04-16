@@ -1,15 +1,19 @@
+import createEl from "/helpers/create-el";
+
 export default async function initFormMc(mcEl) {
     console.log("initFormMc(): Running.");
 
-    const mcLabel = mcEl.previousElementSibling;
-    console.log("initFormMc(): mcLabel");
-    console.log(mcLabel);
+    mcEl.setAttribute("disabled", true);
 
-    mcLabel.textContent = "CAPTCHA is loading";
+    const mcLabelEl = createEl("label", { for: mcEl.name });
+    const loaderEl = createEl("div", { class: "spinner", style: "font-size: 1.5rem;" });
 
     try {
         // throw new Error();
-        await makeProblem(0, mcLabel);
+        await makeProblem(0, mcEl, mcLabelEl, loaderEl);
+
+        mcEl.parentElement.insertBefore(mcLabelEl, mcEl);
+        mcEl.removeAttribute("disabled");
 
         return true;
     } catch (error) {
@@ -21,11 +25,13 @@ export default async function initFormMc(mcEl) {
 
 const MAKE_PROBLEM_TIMEOUTS = [3000, 5000, 8000];
 
-async function makeProblem(tryCount, mcLabel) {
+async function makeProblem(tryCount, mcEl, mcLabelEl, loaderEl) {
     console.log("makeProblem(): Running.");
 
     tryCount++;
     console.log(`makeProblem(): tryCount - ${tryCount}`);
+
+    mcEl.parentElement.appendChild(loaderEl);
 
     try {
         const problem = await getMathsProblem();
@@ -34,9 +40,11 @@ async function makeProblem(tryCount, mcLabel) {
             throw new Error(problem.message);
         }
 
-        mcLabel.textContent = `${problem[0]} + ${problem[1]} =`;
+        scheduleMakeProblem(problem[2], 0, mcEl, mcLabelEl, loaderEl);
 
-        scheduleMakeProblem(problem[2], 0, mcLabel);
+        mcLabelEl.textContent = `${problem[0]} + ${problem[1]} =`;
+
+        loaderEl.remove();
     } catch (error) {
         console.error(error);
 
@@ -46,7 +54,7 @@ async function makeProblem(tryCount, mcLabel) {
             return;
         }
 
-        setTimeout(scheduleMakeProblem, MAKE_PROBLEM_TIMEOUTS[tryCount - 1], 0, tryCount, mcLabel);
+        setTimeout(scheduleMakeProblem, MAKE_PROBLEM_TIMEOUTS[tryCount - 1], 0, tryCount, mcEl, mcLabelEl, loaderEl);
     }
 }
 
@@ -77,7 +85,7 @@ async function getMathsProblem() {
 
 const PROBLEM_REFRESH_GRACE_TIME = 500;
 
-function scheduleMakeProblem(invalidAfter, tryCount, mcLabel) {
+function scheduleMakeProblem(invalidAfter, tryCount, mcEl, mcLabelEl, loaderEl) {
     console.log("scheduleMakeProblem(): Running.");
 
     let timeToRefresh = invalidAfter - Date.now() - PROBLEM_REFRESH_GRACE_TIME;
@@ -88,5 +96,5 @@ function scheduleMakeProblem(invalidAfter, tryCount, mcLabel) {
     }
     console.log(`scheduleMakeProblem(): timeToRefresh 2 - ${timeToRefresh}`);
 
-    setTimeout(makeProblem, timeToRefresh, tryCount, mcLabel);
+    setTimeout(makeProblem, timeToRefresh, tryCount, mcEl, mcLabelEl, loaderEl);
 }
