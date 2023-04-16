@@ -1,3 +1,4 @@
+import createEls from "../../helpers/create-els";
 import initFormMc from "../form-mc/form-mc-controller";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
@@ -46,37 +47,6 @@ const FORM_STORED_MSG_EL_SKELETONS = {
         }
     }
 };
-
-function createEl(tagName, attrs) {
-    const el = document.createElement(tagName);
-
-    if (attrs) {
-        for (let [prop, val] of Object.entries(attrs)) {
-            if (prop === "text") {
-                el.innerText = val;
-
-                continue;
-            }
-
-            prop = prop.replace(/[A-Z0-9]/g, letter => `-${letter.toLowerCase()}`);
-            el.setAttribute(prop, val);
-        }
-    }
-
-    return el;
-}
-
-function createEls(elSkeletons) {
-    let els = {};
-
-    for (const [name, skeleton] of Object.entries(elSkeletons)) {
-        const el = createEl(skeleton.el, skeleton.attrs);
-        els[name] = el;
-    }
-
-    console.log(els);
-    return els;
-}
 
 function getMessageByStatusCode(statusMessages, statusCode) {
     const message = statusMessages[statusCode] ?? statusMessages[500];
