@@ -107,7 +107,8 @@ async function submitForm(e, notifier) {
         formDataClearTimeout = setTimeout(clearForm, 3000, formEl);
     }
 
-    if (formSendResponse.status === 502 || formSendResponse instanceof Error) {
+    // DEBUGGING VALUES
+    if ((formSendResponse.status === 502 || formSendResponse instanceof Error) && formSendResponse.data) {
         console.log("submitForm(): Storing form data...");
 
         storeFormData(formEl.name, formSendResponse.data);
@@ -164,7 +165,6 @@ function loadStoredFormData(formEl) {
     const formData = JSON.parse(storageItem);
     console.log(`loadStoredFormData - formData: ${formData}`);
 
-    // :-webkit-any for maximum compatibility.
     const inputElList = document.querySelectorAll(
         `[name=${formEl.name}] input:not([type=button], [type=reset], [type=submit]),
          [name=${formEl.name}] textarea`
@@ -197,7 +197,7 @@ function makeStorageEls(formEl, elSkeletons, notifier) {
 }
 
 function getStoredFormDataElSkeletons(formName, elSkeletons) {
-    const SEARCH_VALUES = {
+    const PROPS_TO_MODIFY = {
         explainer: "id",
         loadStorageButton: "ariaLabelledby",
         clearStorageButton: "ariaLabelledby"
@@ -206,8 +206,8 @@ function getStoredFormDataElSkeletons(formName, elSkeletons) {
     let modifiedSkeletons = {...elSkeletons};
 
     for (const [elName, skeleton] of Object.entries(modifiedSkeletons)) {
-        if (SEARCH_VALUES.hasOwnProperty(elName)) {
-            skeleton.attrs[SEARCH_VALUES[elName]] = `${formName}-${skeleton.attrs[elName]}`;
+        if (PROPS_TO_MODIFY.hasOwnProperty(elName)) {
+            skeleton.attrs[PROPS_TO_MODIFY[elName]] = `${formName}-${skeleton.attrs[elName]}`;
         }
     }
 
