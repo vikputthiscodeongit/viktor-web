@@ -1,5 +1,5 @@
 <?php
-    include "admin/session.php";
+    include "admin/global.php";
 
     include "global-strings.php";
 
