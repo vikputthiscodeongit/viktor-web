@@ -77,6 +77,7 @@ $FORM = array(
                         "el" => "input",
                         "type" => "text",
                         "id" => "cf-mc",
+                        "name" => "cf-mc",
                         "inputmode" => "numeric",
                         "required" => true,
                         "requires-js" => true // Remove in view renderer.

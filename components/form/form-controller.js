@@ -1,5 +1,5 @@
-import createEls from "../../helpers/create-els";
-import initFormMc from "../form-mc/form-mc-controller";
+import createEls from "../../helpers/js/create-els";
+import FormMc from "../form-mc/form-mc-controller";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 const USER_STATUS_MESSAGES = {
@@ -13,7 +13,7 @@ const USER_STATUS_MESSAGES = {
     ]
 };
 
-const FORM_STORED_MSG_EL_SKELETONS = {
+const FORM_MSG_STORED_EL_SKELETONS = {
     fieldset: {
         el: "fieldset"
     },
@@ -62,28 +62,23 @@ export default async function initForm(formEl) {
     const notifier = new SimpleNotifier();
     notifier.init();
 
-    const mcEl = formEl.querySelector("[name=cf-mc]");
-    console.log(mcEl);
+    const formMc = new FormMc({ formEl });
 
     try {
-        const mcInit = await initFormMc(mcEl);
-
-        if (mcInit !== true) {
-            console.warn("form-mc not initiated.");
-        }
-
-        const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
-        elsToEnable.forEach((el) => el.removeAttribute("disabled"));
-
-        if (localStorage.getItem(`${formEl.name}-data`)) {
-            makeStorageEls(formEl, FORM_STORED_MSG_EL_SKELETONS, notifier);
-        }
-
-        const submitInputEl = formEl.querySelector("[type=submit]");
-        submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
+        await formMc.init();
     } catch (error) {
-        return error;
+        throw error instanceof Error ? error : new Error("initForm(): Unknown form-mc initialization error!");
     }
+
+    const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
+    elsToEnable.forEach((el) => el.removeAttribute("disabled"));
+
+    if (localStorage.getItem(`${formEl.name}-data`)) {
+        makeStorageEls(formEl, FORM_MSG_STORED_EL_SKELETONS, notifier);
+    }
+
+    const submitInputEl = formEl.querySelector("[type=submit]");
+    submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
 }
 
 let formDataClearTimeout;
@@ -127,6 +122,8 @@ async function sendForm(formData) {
         });
         console.log(response);
 
+        // TODO: Handle !response.ok.
+
         const contentType = response.headers.get("Content-Type");
 
         if (!contentType.includes("application/json")) {
@@ -140,7 +137,7 @@ async function sendForm(formData) {
 
         return { status: response.status, data };
     } catch (error) {
-        return error;
+        throw error instanceof Error ? error : new Error("sendForm(): Unknown error!");
     }
 }
 
@@ -191,7 +188,7 @@ function makeStorageEls(formEl, elSkeletons, notifier) {
     els.loadStorageButton.addEventListener("click", () => loadStoredFormData(formEl));
     els.clearStorageButton.addEventListener("click", () => {
         localStorage.removeItem(`${formEl.name}-data`);
-        notifier.show("Your locally stored message has been removed.", "info");
+        notifier.show("The stored message has been removed.", "info");
         setTimeout(() => els.fieldset.remove(), 3500);
     });
 }
@@ -206,7 +203,7 @@ function getStoredFormDataElSkeletons(formName, elSkeletons) {
     let modifiedSkeletons = {...elSkeletons};
 
     for (const [elName, skeleton] of Object.entries(modifiedSkeletons)) {
-        if (PROPS_TO_MODIFY.hasOwnProperty(elName)) {
+        if (Object.getOwnPropertyNames(PROPS_TO_MODIFY).includes(elName)) {
             skeleton.attrs[PROPS_TO_MODIFY[elName]] = `${formName}-${skeleton.attrs[elName]}`;
         }
     }

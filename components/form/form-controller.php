@@ -7,21 +7,13 @@
 
 
 
-include __DIR__ . "/../../admin/session.php";
+include __DIR__ . "/../../admin/global.php";
 include __DIR__ . "/../../admin/not-dotenv.php";
 // include __DIR__ . "/../form-mc/form-mc-validator.php";
-include "helpers.php";
+include __DIR__ . "/../../helpers/php/return-http-response.php";
 include "form-content.php";
 
-enum FormSubmitStatusses: int {
-    case SUCCESS = 200;
-    case REQUEST_METHOD_INVALID = 405;
-    case INPUT_INVALID = 422;
-    case UNKNOWN_ERROR = 500;
-    case MAIL_FAILED = 502;
-}
-
-enum FormInputs: string {
+enum FormInput: string {
     case NAME = "cf-name";
     case EMAIL = "cf-email";
     case SUBJECT = "cf-subject";
@@ -30,7 +22,7 @@ enum FormInputs: string {
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    returnStatus(FormSubmitStatusses::REQUEST_METHOD_INVALID);
+    returnHttpResponse(StatusCode::REQUEST_METHOD_INVALID);
 }
 
 $input_array = getInputElArray($FORM["fieldsets"]);
@@ -46,16 +38,16 @@ $invalid_inputs = getInvalidInputs($inputs_and_values, $validation_conditions_pe
 // var_dump($invalid_inputs);
 
 if (!empty($invalid_inputs)) {
-    returnStatus(FormSubmitStatusses::INPUT_INVALID, $invalid_inputs);
+    returnHttpResponse(StatusCode::INPUT_INVALID, ...["data" => $invalid_inputs]);
 }
 
 $mail_sent = sendMail($inputs_and_values);
 
 $status = $mail_sent
-    ? returnStatus(FormSubmitStatusses::SUCCESS)
-    : returnStatus(FormSubmitStatusses::MAIL_FAILED, $inputs_and_values);
+    ? returnHttpResponse(StatusCode::SUCCESS)
+    : returnHttpResponse(StatusCode::MAIL_FAILED, ...["data" => $inputs_and_values]);
 
-returnStatus(FormSubmitStatusses::UNKNOWN_ERROR);
+returnHttpResponse(StatusCode::UNKNOWN_ERROR);
 
 function getInputElArray($fieldsets) {
     $input_array = [];
@@ -88,7 +80,7 @@ function getValidationConditionsOfInputs($input_array) {
                 // TODO: Dit kan beter.
                 if (
                     $input_prop === "type" && $input_prop_value === "email"
-                    // $input_prop === "id" && $input_prop_value === FormInputs::MC->value
+                    // $input_prop === "id" && $input_prop_value === FormInput::MC->value
                 ) {
                     $input_validation_props_and_values[$input_prop_value] = true;
                 }
@@ -106,7 +98,7 @@ function getValidationConditionsOfInputs($input_array) {
 function getSanitizedInputsAndValues() {
     $inputs_and_values = [];
 
-    foreach (FormInputs::cases() as $input_name) {
+    foreach (FormInput::cases() as $input_name) {
         if (!empty($_POST[$input_name->value])) {
             $input_value_sanitized = htmlspecialchars(trim($_POST[$input_name->value]));
             $inputs_and_values[$input_name->value] = $input_value_sanitized;
@@ -175,7 +167,7 @@ function isValidEmailAddress($email) {
 }
 
 function sendMail($values) {
-    $fmt = datefmt_create(
+    $date_formatter_nl = datefmt_create(
         "nl_NL",
         IntlDateFormatter::FULL,
         IntlDateFormatter::FULL,
@@ -185,19 +177,19 @@ function sendMail($values) {
     );
 
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = "Contactformulier inzending van " . $values[FormInputs::EMAIL->value];
+    $mail_subject = "Contactformulier inzending van " . $values[FormInput::EMAIL->value];
     $mail_message = sprintf(
         'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd.' . "\n\n" . '%4$s' . "\n\n" . '%5$s',
-        $values[FormInputs::NAME->value] ?? "een bezoeker",
-        datefmt_format($fmt, time()),
+        $values[FormInput::NAME->value] ?? "een bezoeker",
+        datefmt_format($date_formatter_nl, time()),
         date("H:i:s"),
-        $values[FormInputs::SUBJECT->value],
-        $values[FormInputs::MESSAGE->value]
+        $values[FormInput::SUBJECT->value],
+        $values[FormInput::MESSAGE->value]
     );
     $mail_headers = array(
         "Content-Type" => "text/plain; charset=utf-8",
         "From" => EMAIL_ADDRESS_WEBMASTER,
-        "Reply-To" => $values[FormInputs::EMAIL->value]
+        "Reply-To" => $values[FormInput::EMAIL->value]
     );
 
     mail($mail_to, $mail_subject, $mail_message, $mail_headers);
