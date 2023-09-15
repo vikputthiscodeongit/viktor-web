@@ -1,7 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
+const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     context: path.resolve(__dirname),
@@ -21,7 +22,19 @@ module.exports = {
 
     devtool: "source-map",
 
+    resolve: {
+      extensions: [".ts", ".tsx", ".js"],
+      extensionAlias: {
+       ".js": [".js", ".ts"],
+       ".cjs": [".cjs", ".cts"],
+       ".mjs": [".mjs", ".mts"]
+      }
+    },
+
     plugins: [
+        new ESLintPlugin({
+            files: "index"
+        }),
         new MiniCssExtractPlugin({
             filename: "./style.css"
         })
@@ -29,6 +42,10 @@ module.exports = {
 
     module: {
         rules: [
+            {
+                test: /\.([cm]?ts|tsx)$/,
+                loader: "ts-loader"
+            },
             {
                 test: /\.(sa|sc|c)ss$/i,
                 use: [
