@@ -2,7 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     context: path.resolve(__dirname),
@@ -45,6 +44,16 @@ module.exports = {
                 loader: "ts-loader",
             },
             {
+                test: /\.m?js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"],
+                    },
+                },
+            },
+            {
                 test: /\.(sa|sc|c)ss$/i,
                 use: [
                     { loader: MiniCssExtractPlugin.loader },
@@ -70,17 +79,6 @@ module.exports = {
             },
         ],
     },
-
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    compress: {
-                        drop_console: true,
-                    },
-                },
-            }),
         ],
     },
 };
