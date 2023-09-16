@@ -9,43 +9,43 @@ const USER_STATUS_MESSAGES = {
     500: "An unknown error occurred - your message has not been sent. Please try again at a later time.",
     502: [
         "Messsage failed to send - please try submitting it again in a few minutes.",
-        "The message has been saved to your device, so you may also try again at a later time."
-    ]
+        "The message has been saved to your device, so you may also try again at a later time.",
+    ],
 };
 
 const FORM_MSG_STORED_EL_SKELETONS = {
     fieldset: {
-        el: "fieldset"
+        el: "fieldset",
     },
     field: {
         el: "div",
         attrs: {
-            class: "field"
-        }
+            class: "field",
+        },
     },
     explainer: {
         el: "p",
         attrs: {
             id: `stored-msg-info`,
             text: "Your last message failed to send and was stored.",
-        }
+        },
     },
     loadStorageButton: {
         el: "button",
         attrs: {
             class: "button",
             ariaLabelledby: `stored-msg-info`,
-            text: "Insert message in form"
-        }
+            text: "Insert message in form",
+        },
     },
     clearStorageButton: {
         el: "button",
         attrs: {
             class: "button",
             ariaLabelledby: `stored-msg-info`,
-            text: "Remove message from storage"
-        }
-    }
+            text: "Remove message from storage",
+        },
+    },
 };
 
 function getMessageByStatusCode(statusMessages, statusCode) {
@@ -67,7 +67,9 @@ export default async function initForm(formEl) {
     try {
         await formMc.init();
     } catch (error) {
-        throw error instanceof Error ? error : new Error("initForm(): Unknown form-mc initialization error!");
+        throw error instanceof Error
+            ? error
+            : new Error("initForm(): Unknown form-mc initialization error!");
     }
 
     const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
@@ -103,14 +105,20 @@ async function submitForm(e, notifier) {
     }
 
     // DEBUGGING VALUES
-    if ((formSendResponse.status === 502 || formSendResponse instanceof Error) && formSendResponse.data) {
+    if (
+        (formSendResponse.status === 502 || formSendResponse instanceof Error) &&
+        formSendResponse.data
+    ) {
         console.log("submitForm(): Storing form data...");
 
         storeFormData(formEl.name, formSendResponse.data);
     }
 
     // TODO: Send 2 notifications if alertMessage is an array.
-    const [alertMessage, alertType] = getMessageByStatusCode(USER_STATUS_MESSAGES, formSendResponse.status);
+    const [alertMessage, alertType] = getMessageByStatusCode(
+        USER_STATUS_MESSAGES,
+        formSendResponse.status,
+    );
     notifier.show(alertMessage, alertType);
 }
 
@@ -142,10 +150,12 @@ async function sendForm(formData) {
 }
 
 function clearForm(formEl) {
-    const inputEls = formEl.querySelectorAll("input:not([type=button], [type=reset], [type=submit]), textarea");
+    const inputEls = formEl.querySelectorAll(
+        "input:not([type=button], [type=reset], [type=submit]), textarea",
+    );
     console.log(inputEls);
 
-    inputEls.forEach((input) => input.value = "");
+    inputEls.forEach((input) => (input.value = ""));
 }
 
 function storeFormData(formName, formData) {
@@ -164,14 +174,16 @@ function loadStoredFormData(formEl) {
 
     const inputElList = document.querySelectorAll(
         `[name=${formEl.name}] input:not([type=button], [type=reset], [type=submit]),
-         [name=${formEl.name}] textarea`
+         [name=${formEl.name}] textarea`,
     );
     const inputEls = Array.prototype.slice.call(inputElList);
     console.log(`loadStoredFormData - inputEls:`);
     console.log(inputEls);
 
     Object.keys(formData).map((inputName) => {
-        inputEls.map((input) => input.name === inputName ? input.value = formData[inputName] : false);
+        inputEls.map((input) =>
+            input.name === inputName ? (input.value = formData[inputName]) : false,
+        );
     });
 }
 
@@ -197,10 +209,10 @@ function getStoredFormDataElSkeletons(formName, elSkeletons) {
     const PROPS_TO_MODIFY = {
         explainer: "id",
         loadStorageButton: "ariaLabelledby",
-        clearStorageButton: "ariaLabelledby"
+        clearStorageButton: "ariaLabelledby",
     };
 
-    let modifiedSkeletons = {...elSkeletons};
+    let modifiedSkeletons = { ...elSkeletons };
 
     for (const [elName, skeleton] of Object.entries(modifiedSkeletons)) {
         if (Object.getOwnPropertyNames(PROPS_TO_MODIFY).includes(elName)) {
