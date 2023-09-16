@@ -26,16 +26,7 @@ function makeProblem($reference_time) {
 
 function getProblem() {
     $unix_time = getUnixTime();
-
-    if (
-        $_SESSION["cf_mc_prlm_prev_gen_time_ms"] &&
-        $unix_time < $_SESSION["cf_mc_prlm_prev_gen_time_ms"] + FORM_MC_MIN_GEN_TIME_DELAY_MS
-    ) {
-        returnHttpResponse(StatusCode::TOO_MANY_REQUESTS);
-    }
-
     $problem = makeProblem($unix_time);
-    $_SESSION["cf_mc_prlm_prev_gen_time_ms"] = $unix_time;
 
     returnHttpResponse(StatusCode::SUCCESS, ...["data" => $problem]);
 }

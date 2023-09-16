@@ -3,7 +3,6 @@ enum StatusCode: int {
     case SUCCESS = 200;
     case REQUEST_METHOD_INVALID = 405;
     case INPUT_INVALID = 422;
-    case TOO_MANY_REQUESTS = 429;
     case UNKNOWN_ERROR = 500;
     case MAIL_FAILED = 502;
 }
