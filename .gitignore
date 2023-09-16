@@ -25,11 +25,9 @@ Thumbs.db
 *.vsix
 
 # Track build tooling files
-!.gitattributes
-!.gitignore
-!.eslintignore
-!.prettierrc
-!.prettierignore
+!.git*
+!.eslint*
+!.prettier*
 
 #
 admin/not-dotenv.php
