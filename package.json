@@ -1,14 +1,14 @@
 {
   "name": "viktor-web",
-  "version": "2022.12",
-  "main": "index.js",
+  "version": "2023.09.1",
+  "license": "MPL-2.0",
+  "author": "Viktor Chin",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "dev": "webpack --mode development --config webpack.config.dev.js --watch",
     "prod": "webpack --mode production --config webpack.config.prod.js"
   },
-  "author": "Viktor",
-  "license": "MPL-2.0",
   "dependencies": {
     "@codebundlesbyvik/css-operations": "1.0.1",
     "@codebundlesbyvik/element-operations": "2.0.0",
