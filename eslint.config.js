@@ -6,6 +6,7 @@ import pluginPrettier from "eslint-plugin-prettier";
 const config = [
     js.configs.recommended,
     {
+        ecmaVersion: "es2022",
         languageOptions: {
             parser: parserTsEslint,
         },
