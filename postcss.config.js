@@ -1,6 +1,10 @@
-module.exports = (env) => ({
-    plugins: [
-        require("autoprefixer")(),
-        env === "production" ? require("cssnano")({ preset: "default" })() : false,
-    ],
-});
+module.exports = (env) => {
+    const configBase = {
+        plugins: [require("autoprefixer")()],
+    };
+    const configProd = {
+        plugins: [...configBase.plugins, require("cssnano")({ preset: "default" })],
+    };
+
+    return env === "production" ? configProd : configBase;
+};
