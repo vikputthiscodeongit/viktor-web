@@ -32,9 +32,7 @@ module.exports = {
     },
 
     plugins: [
-        new ESLintPlugin({
-            files: "index"
-        }),
+        new ESLintPlugin({}),
         new MiniCssExtractPlugin({
             filename: "./style.css"
         })
