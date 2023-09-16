@@ -1,5 +1,5 @@
-import createEls from "../../helpers/js/create-els";
-import FormMc from "../form-mc/form-mc-controller";
+import createEls from "../../helpers/js/create-els.ts";
+import FormMc from "../form-mc/form-mc-controller.ts";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 const USER_STATUS_MESSAGES = {

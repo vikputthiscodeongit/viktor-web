@@ -1,9 +1,13 @@
-const path = require("path");
-const webpack = require("webpack");
-const ESLintPlugin = require("eslint-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import path from "path";
+import { fileURLToPath } from "url";
+import ESLintPlugin from "eslint-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-module.exports = {
+// https://stackoverflow.com/a/64383997/6396604
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const config = {
     context: path.resolve(__dirname),
 
     entry: {
@@ -72,3 +76,5 @@ module.exports = {
         ],
     },
 };
+
+export default config;

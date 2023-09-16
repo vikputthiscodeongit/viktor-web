@@ -1,4 +1,6 @@
-module.exports = (env) => {
+const config = (api) => {
+    api.cache.invalidate(() => process.env.NODE_ENV);
+
     const configBase = {
         presets: [["@babel/preset-env"]],
     };
@@ -7,5 +9,7 @@ module.exports = (env) => {
         plugins: ["transform-remove-console"],
     };
 
-    return env === "production" ? configProd : configBase;
+    return process.env.NODE_ENV === "production" ? configProd : configBase;
 };
+
+export default config;
