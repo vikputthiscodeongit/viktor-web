@@ -1,24 +1,24 @@
 const path = require("path");
 const webpack = require("webpack");
-const ESLintPlugin = require('eslint-webpack-plugin');
+const ESLintPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     context: path.resolve(__dirname),
 
     entry: {
-        main: "./index.ts"
+        main: "./index.ts",
     },
 
     output: {
         assetModuleFilename: "[path][name]_[contenthash][ext]",
         clean: true,
         chunkFilename: "bundle-[name]-[id].js",
-        filename: "bundle-[name].js"
+        filename: "bundle-[name].js",
     },
 
     stats: {
-        children: true
+        children: true,
     },
 
     mode: "development",
@@ -26,26 +26,26 @@ module.exports = {
     devtool: "eval",
 
     resolve: {
-      extensions: [".ts", ".tsx", ".js"],
-      extensionAlias: {
-       ".js": [".js", ".ts"],
-       ".cjs": [".cjs", ".cts"],
-       ".mjs": [".mjs", ".mts"]
-      }
+        extensions: [".ts", ".tsx", ".js"],
+        extensionAlias: {
+            ".js": [".js", ".ts"],
+            ".cjs": [".cjs", ".cts"],
+            ".mjs": [".mjs", ".mts"],
+        },
     },
 
     plugins: [
         new ESLintPlugin({}),
         new MiniCssExtractPlugin({
-            filename: "./style.css"
-        })
+            filename: "./style.css",
+        }),
     ],
 
     module: {
         rules: [
             {
                 test: /\.([cm]?ts|tsx)$/,
-                loader: "ts-loader"
+                loader: "ts-loader",
             },
             {
                 test: /\.(sa|sc|c)ss$/i,
@@ -59,20 +59,20 @@ module.exports = {
                             sassOptions: {
                                 indentWidth: 4,
                                 outputStyle: "expanded",
-                                precision: 6
-                            }
-                        }
-                    }
-                ]
+                                precision: 6,
+                            },
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(gif|jpe?g|png|svg)$/i,
-                type: "asset/resource"
+                type: "asset/resource",
             },
             {
                 test: /\.(eot|otf|ttf|woff|woff2)$/i,
-                type: "asset/resource"
-            }
-        ]
-    }
+                type: "asset/resource",
+            },
+        ],
+    },
 };

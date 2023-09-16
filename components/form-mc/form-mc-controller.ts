@@ -23,7 +23,7 @@ NTP:
 interface IFormMcDefaultOptions {
     makeProblemRetryTimesMs: number[];
 }
-interface IFormMcUserOptions extends Partial<IFormMcDefaultOptions>{
+interface IFormMcUserOptions extends Partial<IFormMcDefaultOptions> {
     formEl: HTMLFormElement;
 }
 
@@ -50,17 +50,25 @@ export default class FormMc {
     inputInFocusBeforeRefresh: boolean;
 
     constructor(userOptions: Required<IFormMcUserOptions>) {
-        const mergedOptions: Required<IFormMcUserOptions> =
-            mergeOptions.apply({ ignoreUndefined: true }, [DEFAULT_OPTIONS, userOptions]);
+        const mergedOptions: Required<IFormMcUserOptions> = mergeOptions.apply(
+            { ignoreUndefined: true },
+            [DEFAULT_OPTIONS, userOptions],
+        );
 
         this.makeProblemRetryTimesMs = mergedOptions.makeProblemRetryTimesMs;
 
         this.formEl = mergedOptions.formEl;
-        this.inputElWrapper = null
+        this.inputElWrapper = null;
         this.inputEl = null;
         this.labelEl = createEl("label") as HTMLLabelElement;
-        this.loaderEl = createEl("div", { class: "spinner", style: "font-size: 1.5rem;" }) as HTMLDivElement;
-        this.initButtonEl = createEl("button", { type: "button", text: "Activate" }) as HTMLButtonElement;
+        this.loaderEl = createEl("div", {
+            class: "spinner",
+            style: "font-size: 1.5rem;",
+        }) as HTMLDivElement;
+        this.initButtonEl = createEl("button", {
+            type: "button",
+            text: "Activate",
+        }) as HTMLButtonElement;
 
         this.canLoop = false;
         this.loopTryCountTotal = 0;
@@ -75,16 +83,15 @@ export default class FormMc {
 
     static STATE_MESSAGES_USER = {
         deactivated: "CAPTCHA deactivated.",
-        error: "CAPTCHA error. Please reload the page."
-    }
+        error: "CAPTCHA error. Please reload the page.",
+    };
 
-    showLoader = () => (
+    showLoader = () =>
         this.inputEl && document.body.contains(this.inputEl)
             ? this.inputEl.after(this.loaderEl)
             : this.inputElWrapper
-                ? this.inputElWrapper.appendChild(this.loaderEl)
-                : undefined
-    );
+            ? this.inputElWrapper.appendChild(this.loaderEl)
+            : undefined;
 
     hideLoader = () => this.loaderEl.remove();
 
@@ -103,7 +110,9 @@ export default class FormMc {
             this.canLoop = true;
             await this.problemLoopHandler();
         } catch (error) {
-            throw error instanceof Error ? error : new Error("FormMc init(): Failed to initialize!");
+            throw error instanceof Error
+                ? error
+                : new Error("FormMc init(): Failed to initialize!");
         }
     }
 
@@ -113,7 +122,9 @@ export default class FormMc {
         // Return if already deactivated.
         if (!this.canLoop) return;
 
-        console.log(`FormMc deactivate(): CAPTCHA ${reactivatable ? "may be" : "may NOT be"} reactivated.`);
+        console.log(
+            `FormMc deactivate(): CAPTCHA ${reactivatable ? "may be" : "may NOT be"} reactivated.`,
+        );
 
         this.canLoop = false;
 
@@ -149,8 +160,9 @@ export default class FormMc {
         } catch (error) {
             this.deactivate(false);
 
-            throw error instanceof Error ? error : new Error("FormMc assignInputEl(): Unknown error!");
-
+            throw error instanceof Error
+                ? error
+                : new Error("FormMc assignInputEl(): Unknown error!");
         }
     }
 
@@ -158,12 +170,15 @@ export default class FormMc {
         console.log("FormMc getProblem(): Running...");
 
         try {
-            const response =
-                await fetchWithTimeout({ resource: "./components/form-mc/form-mc-generator.php" });
+            const response = await fetchWithTimeout({
+                resource: "./components/form-mc/form-mc-generator.php",
+            });
             console.log(response);
 
             if (!response.ok) {
-                throw new Error(`FormMc getProblem() - fetch failed: ${response.status} ${response.statusText}`);
+                throw new Error(
+                    `FormMc getProblem() - fetch failed: ${response.status} ${response.statusText}`,
+                );
             }
 
             const problem: [number, number, number] = await response.json();
@@ -192,7 +207,9 @@ export default class FormMc {
 
             return problemData;
         } catch (error) {
-            throw error instanceof Error ? error : new Error("FormMc makeProblem(): Unknown error!");
+            throw error instanceof Error
+                ? error
+                : new Error("FormMc makeProblem(): Unknown error!");
         }
     }
 
@@ -218,7 +235,9 @@ export default class FormMc {
         } catch (error) {
             this.deactivate(false);
 
-            throw error instanceof Error ? error : new Error("FormMc insertProblem(): Unknown error!");
+            throw error instanceof Error
+                ? error
+                : new Error("FormMc insertProblem(): Unknown error!");
         }
     }
 
@@ -228,9 +247,13 @@ export default class FormMc {
                 this.showLoader();
 
                 this.loopConcurrentTryCount++;
-                console.log(`FormMc problemLoopHandler() - loopConcurrentTryCount: ${this.loopConcurrentTryCount}`);
+                console.log(
+                    `FormMc problemLoopHandler() - loopConcurrentTryCount: ${this.loopConcurrentTryCount}`,
+                );
                 this.loopTryCountTotal++;
-                console.log(`FormMc problemLoopHandler() - loopTryCountTotal: ${this.loopTryCountTotal}`);
+                console.log(
+                    `FormMc problemLoopHandler() - loopTryCountTotal: ${this.loopTryCountTotal}`,
+                );
 
                 if (!this.inputEl) {
                     throw new Error("FormMc problemLoopHandler(): <input> not found!");
@@ -247,24 +270,27 @@ export default class FormMc {
 
                 this.loopConcurrentTryCount = 0;
 
-                this.hideLoader(),
-
-                await timeout(timeToRefresh);
+                this.hideLoader(), await timeout(timeToRefresh);
             } catch (error) {
                 console.error(error);
 
                 if (this.loopConcurrentTryCount > this.makeProblemRetryTimesMs.length) {
-                    const errorCause = error instanceof Error && error.cause instanceof Error
-                        ? error.cause.name
-                        : false;
+                    const errorCause =
+                        error instanceof Error && error.cause instanceof Error
+                            ? error.cause.name
+                            : false;
                     this.deactivate(!!errorCause);
 
                     this.hideLoader();
 
-                    throw new Error(`FormMc problemLoopHandler(): deactivated because generation failed ${this.loopConcurrentTryCount} concurrent times!`);
+                    throw new Error(
+                        `FormMc problemLoopHandler(): deactivated because generation failed ${this.loopConcurrentTryCount} concurrent times!`,
+                    );
                 }
 
-                await timeout(this.makeProblemRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)]);
+                await timeout(
+                    this.makeProblemRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)],
+                );
             }
         }
     }
