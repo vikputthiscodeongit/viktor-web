@@ -1,16 +1,16 @@
-# ignore all files starting with . or ~
+# Ignore all files starting with . or ~
 .*
 ~*
 
-# ignore dependency directories
+# Ignore dependency directories
 node_modules/
 vendor/
 
-# ignore OS generated files
+# Ignore OS generated files
 ehthumbs.db
 Thumbs.db
 
-# ignore editor files
+# Ignore editor files
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -23,6 +23,13 @@ Thumbs.db
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Track build tooling files
+!.gitattributes
+!.gitignore
+!.eslintignore
+!.prettierrc
+!.prettierignore
 
 #
 admin/not-dotenv.php
