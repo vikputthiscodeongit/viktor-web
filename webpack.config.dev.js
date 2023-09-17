@@ -30,11 +30,9 @@ const config = {
     devtool: "eval",
 
     resolve: {
-        extensions: [".ts", ".tsx", ".js"],
+        extensions: [".ts", ".js"],
         extensionAlias: {
-            ".js": [".js", ".ts"],
-            ".cjs": [".cjs", ".cts"],
-            ".mjs": [".mjs", ".mts"],
+            ".ts": [".ts", ".tsx"],
         },
     },
 
@@ -47,14 +45,8 @@ const config = {
 
     module: {
         rules: [
-            // {
-            //     test: /\.([cm]?ts|tsx)$/,
-            //     loader: "ts-loader",
-            // },
             {
-                // test: /\.m?js$/,
-                // test: /\.([cm]?ts|tsx)$/,
-                test: /\.(m?js|m?ts|tsx)$/,
+                test: /\.([cm]?ts|tsx|[cm]?js)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
@@ -65,11 +57,11 @@ const config = {
                                 "@babel/preset-env",
                                 {
                                     useBuiltIns: "usage",
-                                    corejs: { version: "3.22", proposals: true }
-                                }
+                                    corejs: { version: "3.22", proposals: true },
+                                },
                             ],
                         ],
-                    }
+                    },
                 },
             },
             {

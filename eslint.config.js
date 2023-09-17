@@ -1,5 +1,4 @@
 import js from "@eslint/js";
-// import parserTsEslint from "@typescript-eslint/parser";
 import parserBabel from "@babel/eslint-parser";
 import pluginTsEslint from "@typescript-eslint/eslint-plugin";
 import pluginPrettier from "eslint-plugin-prettier";
@@ -14,7 +13,6 @@ const config = [
                 ...globals.browser,
                 ...globals.es2021,
             },
-            // parser: parserTsEslint,
             parser: parserBabel,
             parserOptions: {
                 requireConfigFile: false,
