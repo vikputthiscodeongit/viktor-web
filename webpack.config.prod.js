@@ -53,8 +53,24 @@ const config = {
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"],
-                    },
+                        presets: [
+                            "@babel/preset-typescript",
+                            [
+                                "@babel/preset-env",
+                                {
+                                    useBuiltIns: "usage",
+                                    corejs: { version: "3.22", proposals: true }
+                                }
+                            ],
+                            [
+                                "minify", {
+                                    builtIns: false,
+                                    removeConsole: true
+                                }
+                            ]
+                        ],
+                        plugins: ["transform-remove-console"],
+                    }
                 },
             },
             {

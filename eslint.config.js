@@ -16,6 +16,9 @@ const config = [
             },
             // parser: parserTsEslint,
             parser: parserBabel,
+            parserOptions: {
+                requireConfigFile: false,
+            },
         },
         plugins: {
             "@typescript-eslint": pluginTsEslint,
