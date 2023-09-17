@@ -1,8 +1,17 @@
 const config = (api) => {
-    api.cache.invalidate(() => process.env.NODE_ENV);
+    api.cache.forever();
 
     const configBase = {
-        presets: [["@babel/preset-env"]],
+        presets: [
+            "@babel/preset-typescript",
+            [
+                "@babel/preset-env",
+                {
+                    useBuiltIns: "usage",
+                    corejs: { version: "3.22", proposals: true }
+                }
+            ],
+        ],
     };
     const configProd = {
         presets: [...configBase.presets, ["minify", { removeConsole: true }]],

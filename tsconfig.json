@@ -1,8 +1,16 @@
 {
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
-      "target": "ES2022",
-      "lib": ["ES2022", "DOM"]
+      "target": "es2022",
+      "lib": ["ES2022", "DOM"],
+      "module": "es2022",
+      "moduleResolution": "bundler",
+      "allowJs": true,
+      "declaration": true,
+      "emitDeclarationOnly": true,
+      "esModuleInterop": true,
+      "isolatedModules": true
+
     },
     "exclude": [
         "dist",

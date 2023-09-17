@@ -1,14 +1,21 @@
 import js from "@eslint/js";
-import parserTsEslint from "@typescript-eslint/parser";
+// import parserTsEslint from "@typescript-eslint/parser";
+import parserBabel from "@babel/eslint-parser";
 import pluginTsEslint from "@typescript-eslint/eslint-plugin";
 import pluginPrettier from "eslint-plugin-prettier";
+import globals from "globals";
 
 const config = [
     js.configs.recommended,
     {
-        ecmaVersion: "es2022",
         languageOptions: {
-            parser: parserTsEslint,
+            ecmaVersion: 2022,
+            globals: {
+                ...globals.browser,
+                ...globals.es2021,
+            },
+            // parser: parserTsEslint,
+            parser: parserBabel,
         },
         plugins: {
             "@typescript-eslint": pluginTsEslint,

@@ -47,19 +47,16 @@ const config = {
 
     module: {
         rules: [
+            // {
+            //     test: /\.([cm]?ts|tsx)$/,
+            //     loader: "ts-loader",
+            // },
             {
-                test: /\.([cm]?ts|tsx)$/,
-                loader: "ts-loader",
-            },
-            {
-                test: /\.m?js$/,
+                // test: /\.m?js$/,
+                // test: /\.([cm]?ts|tsx)$/,
+                test: /\.(m?js|m?ts|tsx)$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env"],
-                    },
-                },
+                use: { loader: "babel-loader" },
             },
             {
                 test: /\.(sa|sc|c)ss$/i,
