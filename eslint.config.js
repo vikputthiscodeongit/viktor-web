@@ -15,7 +15,7 @@ const config = [
             },
             parser: parserBabel,
             parserOptions: {
-                requireConfigFile: false,
+                sourceType: "module",
             },
         },
         plugins: {
