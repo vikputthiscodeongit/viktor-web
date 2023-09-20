@@ -3,7 +3,6 @@ const config = (api) => {
     api.cache.invalidate(() => process.env.NODE_ENV);
 
     const configBase = {
-        sourceMaps: "inline",
         presets: [
             "@babel/preset-typescript",
             [
@@ -16,7 +15,6 @@ const config = (api) => {
         ],
     };
     const configProd = {
-        sourceMaps: false,
         ...configBase,
         presets: [...configBase.presets, ["minify", { builtIns: false, removeConsole: true }]],
         plugins: ["transform-remove-console"],

@@ -27,7 +27,7 @@ const config = {
 
     mode: "development",
 
-    devtool: "eval",
+    devtool: "eval-source-map",
 
     resolve: {
         extensions: [".ts", ".js"],
