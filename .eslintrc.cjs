@@ -10,9 +10,6 @@ const config = {
         "plugin:prettier/recommended",
     ],
     parser: "@babel/eslint-parser",
-    parserOptions: {
-        sourceType: "module",
-    },
     plugins: ["@typescript-eslint", "prettier"],
 };
 
