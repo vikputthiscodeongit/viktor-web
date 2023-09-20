@@ -3,6 +3,7 @@ const config = (api) => {
     api.cache.invalidate(() => process.env.NODE_ENV);
 
     const configBase = {
+        sourceMaps: true,
         presets: [
             "@babel/preset-typescript",
             [
