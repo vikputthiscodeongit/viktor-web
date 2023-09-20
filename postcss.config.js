@@ -7,10 +7,12 @@ const config = () => {
         plugins: [autoprefixer],
     };
     const configProd = {
+        ...configBase,
         plugins: [...configBase.plugins, cssnano({ preset: "default" })],
     };
+    const activeConfig = process.env.NODE_ENV === "production" ? configProd : configBase;
 
-    return process.env.NODE_ENV === "production" ? configProd : configBase;
+    return activeConfig;
 };
 
 export default config;
