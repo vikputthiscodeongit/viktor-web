@@ -48,21 +48,7 @@ const config = {
             {
                 test: /\.([cm]?ts|tsx|[cm]?js)$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: [
-                            "@babel/preset-typescript",
-                            [
-                                "@babel/preset-env",
-                                {
-                                    useBuiltIns: "usage",
-                                    corejs: { version: "3.22", proposals: true },
-                                },
-                            ],
-                        ],
-                    },
-                },
+                use: { loader: "babel-loader" },
             },
             {
                 test: /\.(sa|sc|c)ss$/i,

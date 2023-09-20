@@ -1,10 +1,20 @@
-module.exports = (api) => {
+/* eslint-disable no-undef */
+const config = (api) => {
     api.cache(true);
 
     const configBase = {
         sourceType: "module",
         sourceMaps: "inline",
-        presets: [["@babel/preset-env"]],
+        presets: [
+            "@babel/preset-typescript",
+            [
+                "@babel/preset-env",
+                {
+                    useBuiltIns: "usage",
+                    corejs: { version: "3.22", proposals: true },
+                },
+            ],
+        ],
     };
     const configProd = {
         sourceMaps: false,
@@ -12,6 +22,7 @@ module.exports = (api) => {
         plugins: ["transform-remove-console"],
     };
 
-    // eslint-disable-next-line no-undef
     return process.env.NODE_ENV === "production" ? configProd : configBase;
 };
+
+module.exports = config;
