@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const config = (api) => {
-    api.cache(true);
+    api.cache.invalidate(() => process.env.NODE_ENV);
 
     const configBase = {
         sourceType: "module",
@@ -19,10 +19,12 @@ const config = (api) => {
     const configProd = {
         sourceMaps: false,
         presets: [...configBase.presets, ["minify", { removeConsole: true }]],
+        ...configBase,
         plugins: ["transform-remove-console"],
     };
+    const activeConfig = api.env("production") ? configProd : configBase;
 
-    return process.env.NODE_ENV === "production" ? configProd : configBase;
+    return activeConfig;
 };
 
 module.exports = config;
