@@ -18,8 +18,8 @@ const config = (api) => {
     };
     const configProd = {
         sourceMaps: false,
-        presets: [...configBase.presets, ["minify", { removeConsole: true }]],
         ...configBase,
+        presets: [...configBase.presets, ["minify", { builtIns: false, removeConsole: true }]],
         plugins: ["transform-remove-console"],
     };
     const activeConfig = api.env("production") ? configProd : configBase;
