@@ -1,5 +1,5 @@
 <?php
-$ICON_GRID_LABEL = "Platforms I use";
+$ICON_GRID_LABEL = "You can find me on";
 
 $ICON_GRID_ITEMS = array(
     "item_instagram" => array(
