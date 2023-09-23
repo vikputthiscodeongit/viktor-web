@@ -1,7 +1,7 @@
 <?php
-include __DIR__ . "/../../admin/global.php";
-include __DIR__ . "/../../helpers/php/get-unix-time.php";
-include __DIR__ . "/../../helpers/php/return-http-response.php";
+include __DIR__ . "/../../../_not_public/global.php";
+include __DIR__ . "/../../../../helpers/php/get-unix-time-micro.php";
+include __DIR__ . "/../../../../helpers/php/return-http-response.php";
 
 // TODO: These should be user definable.
 define("FORM_MC_REFRESH_TIME_MS", DEBUG ? 5000: 15000);
@@ -25,7 +25,7 @@ function makeProblem($reference_time) {
 }
 
 function getProblem() {
-    $unix_time = getUnixTime();
+    $unix_time = getUnixTimeMicro();
     $problem = makeProblem($unix_time);
 
     returnHttpResponse(StatusCode::SUCCESS, ...["data" => $problem]);

@@ -1,6 +1,6 @@
-import fetchWithTimeout from "../../helpers/js/fetch-with-timeout";
-import getNumberArrayAverage from "../../helpers/js/get-number-array-average";
-import timeout from "../../helpers/js/set-timeout-promise";
+import fetchWithTimeout from "../../../../helpers/js/fetch-with-timeout";
+import getNumberArrayAverage from "../../../../helpers/js/get-number-array-average";
+import timeout from "../../../../helpers/js/set-timeout-promise";
 
 // https://stackoverflow.com/a/22969338/6396604
 //
@@ -23,7 +23,7 @@ async function getNtpValues() {
         const t0ReqTransmitTime = new Date().valueOf();
 
         const response = await fetchWithTimeout({
-            resource: "./components/time-sync/ntp.php",
+            resource: "./components/sections/contact/time-sync/ntp.php",
             fetchOptions: {
                 method: "GET"
             }

@@ -5,12 +5,12 @@
         <div class="section-content">
             <h2 class="section-title">Find me on</h2>
 
-            <?php include __DIR__ . "/../../components/icon-grid/icon-grid-view.php"; ?>
+            <?php include __DIR__ . "/../../../components/sections/contact/icon-grid/icon-grid-view.php"; ?>
         </div>
 
         <div class="section-content">
             <h2 class="section-title">Shoot me a message</h2>
 
-            <?php include __DIR__ . "/../../components/form/form-view.php"; ?>
+            <?php include __DIR__ . "/../../../components/sections/contact/form/form-view.php"; ?>
         </div>
 </section>

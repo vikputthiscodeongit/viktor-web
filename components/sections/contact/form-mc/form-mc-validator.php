@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../../helpers/php/get-unix-time.php";
+include __DIR__ . "/../../../../helpers/php/get-unix-time-micro.php";
 
 define("VALIDATION_SLACK_TIME_MS", 1500);
 
@@ -14,7 +14,7 @@ function isValidProblem($problem) {
         return false;
     }
 
-    $unix_time = getUnixTime();
+    $unix_time = getUnixTimeMicro();
     // Validate that each individual digit matches, that the user's answer is correct
     // and that the problem was solved within the set time.
     $answer_valid =

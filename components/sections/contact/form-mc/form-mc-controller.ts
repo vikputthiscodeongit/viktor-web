@@ -1,8 +1,8 @@
 import mergeOptions from "merge-options";
-import createEl from "../../helpers/js/create-el";
-import fetchWithTimeout from "../../helpers/js/fetch-with-timeout";
+import createEl from "../../../../helpers/js/create-el";
+import fetchWithTimeout from "../../../../helpers/js/fetch-with-timeout";
 import getDateSyncValues from "../time-sync/time-sync";
-import timeout from "../../helpers/js/set-timeout-promise";
+import timeout from "../../../../helpers/js/set-timeout-promise";
 
 /*
 FORM-MC REGELS
@@ -171,7 +171,7 @@ export default class FormMc {
 
         try {
             const response = await fetchWithTimeout({
-                resource: "./components/form-mc/form-mc-generator.php",
+                resource: "./components/sections/contact/form-mc/form-mc-generator.php",
             });
             console.log(response);
 

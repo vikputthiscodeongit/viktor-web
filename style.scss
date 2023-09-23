@@ -5,7 +5,7 @@
 // Bootstrap
 // Configuration
 @import "bootstrap/scss/functions";
-@import "vars/bootstrap";
+@import "lib/sass/vars/bootstrap";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";
 @import "bootstrap/scss/maps";
@@ -59,7 +59,7 @@
 
 // Project
 // Variables
-@import "vars/custom";
+@import "lib/sass/vars/custom";
 
 
 // Other modules
@@ -68,24 +68,24 @@
 
 // Project
 // Mixins
-// @import "mixins/aspect-ratio";
-@import "mixins/breakpoints";
-@import "mixins/browserhacks";
+// @import "helpers/sass/mixins/aspect-ratio";
+@import "helpers/sass/mixins/breakpoints";
+@import "helpers/sass/mixins/browserhacks";
 
 // Utilities
-// @import "utilities/display";
+@import "helpers/sass/utilities/animation";
+// @import "helpers/sass/utilities/display";
 
 // Global
-@import "global";
+@import "components/shared/global/global";
 
 // Sections
-@import "sections/home/home";
+@import "components/sections/home/home";
 
 // Components
-@import "components/input/input";
-@import "components/animation/animation";
-@import "components/spinner/spinner";
-@import "components/icon-grid/icon-grid";
-@import "components/blob/blob";
-@import "components/nav/nav";
-@import "components/about-me/about-me";
+@import "components/sections/contact/input/input";
+@import "components/sections/contact/spinner/spinner";
+@import "components/sections/contact/icon-grid/icon-grid";
+@import "components/sections/home/nav/home-nav";
+@import "components/sections/home/about-me/about-me";
+@import "components/sections/home/blob/blob";

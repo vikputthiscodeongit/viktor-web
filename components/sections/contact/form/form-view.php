@@ -3,7 +3,7 @@
 // * Abstract view into render function.
 ?>
 
-<?php include "form-content.php"; ?>
+<?php include __DIR__ . "/../../../../content/sections/contact/form-content.php"; ?>
 
 <form
     action="<?php if (isset($FORM['action'])) echo $FORM['action']; ?>"

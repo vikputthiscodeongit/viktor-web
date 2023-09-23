@@ -1,4 +1,4 @@
-import createEls from "../../../helpers/js/create-els.js";
+import createEls from "../../../../helpers/js/create-els.ts";
 import FormMc from "../form-mc/form-mc-controller.ts";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 

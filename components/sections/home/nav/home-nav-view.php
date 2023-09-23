@@ -1,4 +1,4 @@
-<?php include "home-nav-content.php"; ?>
+<?php include __DIR__ . "/../../../../content/sections/home/home-nav-content.php"; ?>
 
 <nav class="home-nav">
     <ul class="home-nav__items">
