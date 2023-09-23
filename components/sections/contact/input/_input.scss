@@ -218,7 +218,8 @@ textarea {
     width: auto;
     padding: rem(14px) rem(22px);
     text-decoration: none;
-    font: $font-weight-base $font-size-base/1 $headings-font-family;
+    line-height: 1;
+    font: $font-weight-base $font-size-base $headings-font-family;
     color: $white;
     background-color: $blue;
     border: none;
