@@ -21,18 +21,18 @@ NTP:
 */
 
 interface IFormMcDefaultOptions {
-    makeProblemRetryTimesMs: number[];
+    loopRetryTimesMs: number[];
 }
 interface IFormMcUserOptions extends Partial<IFormMcDefaultOptions> {
     formEl: HTMLFormElement;
 }
 
 const DEFAULT_OPTIONS: IFormMcDefaultOptions = {
-    makeProblemRetryTimesMs: [3000, 5000, 8000],
+    loopRetryTimesMs: [3000, 6000],
 };
 
 export default class FormMc {
-    makeProblemRetryTimesMs: number[];
+    loopRetryTimesMs: number[];
 
     formEl: HTMLFormElement;
     inputElWrapper: HTMLElement | null;
@@ -55,7 +55,7 @@ export default class FormMc {
             [DEFAULT_OPTIONS, userOptions],
         );
 
-        this.makeProblemRetryTimesMs = mergedOptions.makeProblemRetryTimesMs;
+        this.loopRetryTimesMs = mergedOptions.loopRetryTimesMs;
 
         this.formEl = mergedOptions.formEl;
         this.inputElWrapper = null;
@@ -274,7 +274,7 @@ export default class FormMc {
             } catch (error) {
                 console.error(error);
 
-                if (this.loopConcurrentTryCount > this.makeProblemRetryTimesMs.length) {
+                if (this.loopConcurrentTryCount > this.loopRetryTimesMs.length) {
                     const errorCause =
                         error instanceof Error && error.cause instanceof Error
                             ? error.cause.name
@@ -289,7 +289,7 @@ export default class FormMc {
                 }
 
                 await timeout(
-                    this.makeProblemRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)],
+                    this.loopRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)],
                 );
             }
         }

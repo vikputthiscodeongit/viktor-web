@@ -107,6 +107,5 @@ const configProd = {
 
 const configActive = process.env.NODE_ENV === "production" ? configProd : configDev;
 const mergedConfig = merge(configBase, configActive);
-console.log(mergedConfig);
 
 export default mergedConfig;
