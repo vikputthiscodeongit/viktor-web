@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . "/../../../_not_public/global.php";
+include __DIR__ . "/../../../global.php";
 include __DIR__ . "/../../../helpers/php/get-unix-time-micro.php";
 include __DIR__ . "/../../../helpers/php/return-http-response.php";
 

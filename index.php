@@ -1,5 +1,5 @@
 <?php
-    include "_not_public/global.php";
+    include "global.php";
 
     include "content/shared/global-strings.php";
 
