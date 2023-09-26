@@ -9,7 +9,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const configBase = {
+const baseConfig = {
     context: path.resolve(__dirname),
     entry: {
         main: "./index.ts",
@@ -59,7 +59,7 @@ const configBase = {
     },
 };
 
-const configDev = {
+const devConfig = {
     mode: "development",
     devtool: "eval-source-map",
     module: {
@@ -83,7 +83,7 @@ const configDev = {
     },
 };
 
-const configProd = {
+const prodConfig = {
     mode: "production",
     devtool: "source-map",
     module: {
@@ -105,7 +105,7 @@ const configProd = {
     },
 };
 
-const configActive = process.env.NODE_ENV === "production" ? configProd : configDev;
-const mergedConfig = merge(configBase, configActive);
+const activeConfig = process.env.NODE_ENV === "production" ? prodConfig : devConfig;
+const mergedConfig = merge(baseConfig, activeConfig);
 
 export default mergedConfig;

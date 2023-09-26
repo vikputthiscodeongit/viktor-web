@@ -2,7 +2,7 @@
 const config = (api) => {
     api.cache.invalidate(() => process.env.NODE_ENV);
 
-    const configBase = {
+    const baseConfig = {
         sourceMaps: true,
         presets: [
             "@babel/preset-typescript",
@@ -15,12 +15,12 @@ const config = (api) => {
             ],
         ],
     };
-    const configProd = {
-        ...configBase,
-        presets: [...configBase.presets, ["minify", { builtIns: false, removeConsole: true }]],
+    const prodConfig = {
+        ...baseConfig,
+        presets: [...baseConfig.presets, ["minify", { builtIns: false, removeConsole: true }]],
         plugins: ["transform-remove-console"],
     };
-    const activeConfig = api.env("production") ? configProd : configBase;
+    const activeConfig = api.env("production") ? prodConfig : baseConfig;
 
     return activeConfig;
 };

@@ -3,14 +3,14 @@ import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 
 const config = () => {
-    const configBase = {
+    const baseConfig = {
         plugins: [autoprefixer],
     };
-    const configProd = {
-        ...configBase,
-        plugins: [...configBase.plugins, cssnano({ preset: "default" })],
+    const prodConfig = {
+        ...baseConfig,
+        plugins: [...baseConfig.plugins, cssnano({ preset: "default" })],
     };
-    const activeConfig = process.env.NODE_ENV === "production" ? configProd : configBase;
+    const activeConfig = process.env.NODE_ENV === "production" ? prodConfig : baseConfig;
 
     return activeConfig;
 };
