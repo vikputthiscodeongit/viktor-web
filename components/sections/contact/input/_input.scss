@@ -1,29 +1,29 @@
-.wpcf7 {
-    form {
-        .wpcf7-response-output {
-            margin: 2em 0 0;
-            padding: 0.25em 0.75em;
+// .wpcf7 {
+//     form {
+//         .wpcf7-response-output {
+//             margin: 2em 0 0;
+//             padding: 0.25em 0.75em;
 
-            .has-js & {
-                display: none;
-            }
-        }
-    }
+//             .js-enabled & {
+//                 display: none;
+//             }
+//         }
+//     }
 
-    &-not-valid-tip {
-        margin-top: 0.5em;
+//     &-not-valid-tip {
+//         margin-top: 0.5em;
 
-        .has-js & {
-            display: none;
-        }
-    }
+//         .js-enabled & {
+//             display: none;
+//         }
+//     }
 
-    &-spinner {
-        vertical-align: middle;
-        margin-left: rem(12px);
-        margin-right: 0;
-    }
-}
+//     &-spinner {
+//         vertical-align: middle;
+//         margin-left: rem(12px);
+//         margin-right: 0;
+//     }
+// }
 
 .form {
     max-width: rem(640px);
@@ -82,7 +82,7 @@ label {
     }
 
     .field--ifl & {
-        .has-js & {
+        // .js-enabled & {
             position: absolute;
             top: rem(2px);
             left: rem(2px);
@@ -101,7 +101,7 @@ label {
             @media (prefers-contrast: more) {
                 background-color: $white;
             }
-        }
+        // }
     }
 
     .field--inline & {
@@ -138,11 +138,11 @@ textarea {
     }
 
     &[aria-invalid="true"] {
-        //
-        // TODO: Improve these ridiculously terrible selectors
-        //
-        .form.invalid &.wpcf7-validates-as-required,
-        .form.invalid &:not(.wpcf7-validates-as-required):not(:empty),
+        // //
+        // // TODO: Improve these ridiculously terrible selectors
+        // //
+        // .form.invalid &.wpcf7-validates-as-required,
+        // .form.invalid &:not(.wpcf7-validates-as-required):not(:empty),
         &[data-had-input="true"]:not(:focus),
         &[data-input-was-valid="true"] {
             border-color: $warning;
@@ -150,10 +150,10 @@ textarea {
     }
 
     .field--ifl & {
-        .has-js & {
+        // .js-enabled & {
             padding-top: rem(31px);
             padding-bottom: rem(8px);
-        }
+        // }
     }
 
     //
@@ -196,9 +196,9 @@ input {
     }
 
     .field--ifl & {
-        .has-js & {
+        // .js-enabled & {
             height: rem(69px); // Setting a fixed height is sadly the only way to guarantee consistent appearance across browsers.
-        }
+        // }
     }
 
     .field--inline & {

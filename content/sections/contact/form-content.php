@@ -2,10 +2,11 @@
 $FORM = array(
     // "action" => "/components/form/form-controller.php",
     "method" => "POST",
-    "class" => "form form--contact requires-js", // Voeg .has-overlay toe in view renderer, verwijder met JS.
+    "class" => "form form--contact js-required",
     "name" => "contact-form",
-    "fieldsets" => array( // Voeg .disabled toe in view renderer, verwijder met JS.
+    "fieldsets" => array(
         "fs_personal" => array(
+            "class" => "js-auto-enable",
             "fields" => array(
                 "field_name" => array(
                     "class" => "field field--ifl",
@@ -37,6 +38,7 @@ $FORM = array(
             )
         ),
         "fs_message" => array(
+            "class" => "js-auto-enable",
             "fields" => array(
                 "field_subject" => array(
                     "class" => "field field--ifl",
@@ -72,7 +74,7 @@ $FORM = array(
         "fs_submit" => array(
             "fields" => array(
                 "field_mc" => array(
-                    "class" => "field field--inline",
+                    "class" => "field field--inline js-required",
                     "input" => array(
                         "el" => "input",
                         "type" => "text",
@@ -80,7 +82,7 @@ $FORM = array(
                         "name" => "cf-mc",
                         "inputmode" => "numeric",
                         "required" => true,
-                        "requires-js" => true // Remove in view renderer.
+                        "disabled" => true
                     )
                 ),
                 "field_submit" => array(

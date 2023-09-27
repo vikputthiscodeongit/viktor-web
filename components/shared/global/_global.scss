@@ -109,8 +109,14 @@ img {
         }
     }
 
-    &.js-disabled::after {
-        content: "This feature requires JavaScript.";
+    &.js-required::after {
+        .js-disabled & {
+            content: "This feature requires JavaScript.";
+        }
+
+        .js-enabled & {
+            content: "Feature initialization failed.";
+        }
     }
 }
 

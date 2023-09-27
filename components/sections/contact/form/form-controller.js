@@ -62,25 +62,26 @@ export default async function initForm(formEl) {
     const notifier = new SimpleNotifier();
     notifier.init();
 
-    const formMc = new FormMc({ formEl });
-
     try {
+        const formMc = new FormMc({ formEl });
         await formMc.init();
+
+        // Listen for formMcInitialized event.
+        const elsToEnable = formEl.querySelectorAll(".js-auto-enable:disabled");
+        elsToEnable.forEach((el) => el.removeAttribute("disabled"));
+        formEl.classList.remove("has-overlay");
+
+        if (localStorage.getItem(`${formEl.name}-data`)) {
+            makeStorageEls(formEl, FORM_MSG_STORED_EL_SKELETONS, notifier);
+        }
+
+        const submitInputEl = formEl.querySelector("[type=submit]");
+        submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
     } catch (error) {
         throw error instanceof Error
             ? error
             : new Error("initForm(): Unknown form-mc initialization error!");
     }
-
-    const elsToEnable = formEl.querySelectorAll(".js-enable:disabled");
-    elsToEnable.forEach((el) => el.removeAttribute("disabled"));
-
-    if (localStorage.getItem(`${formEl.name}-data`)) {
-        makeStorageEls(formEl, FORM_MSG_STORED_EL_SKELETONS, notifier);
-    }
-
-    const submitInputEl = formEl.querySelector("[type=submit]");
-    submitInputEl.addEventListener("click", (e) => submitForm(e, notifier));
 }
 
 let formDataClearTimeout;
