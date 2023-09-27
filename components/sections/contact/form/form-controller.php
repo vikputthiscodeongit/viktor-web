@@ -7,8 +7,8 @@
 
 
 
-include __DIR__ . "/../../../global.php";
-include __DIR__ . "/../../../_not_public/not-dotenv.php";
+include __DIR__ . "/../../../../global.php";
+include __DIR__ . "/../../../../_not_public/not-dotenv.php";
 // include __DIR__ . "/../form-mc/form-mc-validator.php";
 include __DIR__ . "/../../../../helpers/php/return-http-response.php";
 include __DIR__ . "/../../../../content/sections/contact/form-content.php";
