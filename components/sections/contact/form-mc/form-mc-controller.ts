@@ -180,7 +180,6 @@ export default class FormMc {
             const response = await fetchWithTimeout({
                 resource: "./components/sections/contact/form-mc/form-mc-generator.php",
             });
-            console.log(response);
 
             if (!response.ok) {
                 throw new Error(
@@ -277,7 +276,9 @@ export default class FormMc {
 
                 this.loopConcurrentTryCount = 0;
 
-                this.hideLoader(), await timeout(timeToRefresh);
+                this.hideLoader();
+
+                await timeout(timeToRefresh);
 
                 if (this.loopTryCountTotal === 1) {
                     // Fire formMcInitialized event.
