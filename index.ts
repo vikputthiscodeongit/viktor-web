@@ -12,4 +12,8 @@ htmlDevLabel();
 
 initTypeItAboutMe(document.querySelector(".viktor-about--typeit > span"));
 
-initForm(document.querySelector(".form--contact"));
+try {
+    await initForm(document.querySelector(".form--contact"));
+} catch (error) {
+    console.log(error);
+}

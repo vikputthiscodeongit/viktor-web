@@ -5,6 +5,13 @@ import getDateSyncValues from "../time-sync/time-sync";
 import timeout from "../../../../helpers/js/set-timeout-promise";
 
 /*
+Events:
+formMcInitialized
+formMcDeactivated
+formMcProblemRefreshed
+*/
+
+/*
 FORM-MC REGELS
 
 Gebruik:
@@ -271,6 +278,10 @@ export default class FormMc {
                 this.loopConcurrentTryCount = 0;
 
                 this.hideLoader(), await timeout(timeToRefresh);
+
+                if (this.loopTryCountTotal === 1) {
+                    // Fire formMcInitialized event.
+                }
             } catch (error) {
                 console.error(error);
 
