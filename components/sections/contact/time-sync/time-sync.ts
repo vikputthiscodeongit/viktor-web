@@ -1,6 +1,4 @@
-import fetchWithTimeout from "../../../../helpers/js/fetch-with-timeout";
-import getNumberArrayAverage from "../../../../helpers/js/get-number-array-average";
-import timeout from "../../../../helpers/js/set-timeout-promise";
+import { fetchWithTimeout, getAverage, sleep } from "@codebundlesbyvik/js-helpers";
 
 // https://stackoverflow.com/a/22969338/6396604
 //
@@ -71,7 +69,7 @@ function getAverageClientOffset(offsets: number[]) {
         offsetsFiltered = offsets.filter((offset) => offset !== offsetsMin && offset !== offsetsMax);
     }
 
-    const averageClientOffset = getNumberArrayAverage(offsetsFiltered, "floor");
+    const averageClientOffset = getAverage(offsetsFiltered, "floor");
     console.log(`getAverageClientOffset() - averageClientOffset: ${averageClientOffset}`);
 
     return averageClientOffset;
@@ -94,7 +92,7 @@ async function getClientOffsetMs(syncAttempts: number, requiredSuccesses: number
 
             try {
                 if (runIndex > requiredSuccesses - 1) {
-                    await timeout(1000);
+                    await sleep(1000);
                 }
 
                 const ntpValues = await getNtpValues();

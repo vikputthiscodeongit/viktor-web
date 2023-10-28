@@ -1,8 +1,6 @@
 import mergeOptions from "merge-options";
-import createEl from "../../../../helpers/js/create-el";
-import fetchWithTimeout from "../../../../helpers/js/fetch-with-timeout";
+import { createEl, fetchWithTimeout, sleep } from "@codebundlesbyvik/js-helpers";
 import getDateSyncValues from "../time-sync/time-sync";
-import timeout from "../../../../helpers/js/set-timeout-promise";
 
 /*
 Events:
@@ -278,7 +276,7 @@ export default class FormMc {
 
                 this.hideLoader();
 
-                await timeout(timeToRefresh);
+                await sleep(timeToRefresh);
 
                 if (this.loopTryCountTotal === 1) {
                     // Fire formMcInitialized event.
@@ -300,7 +298,7 @@ export default class FormMc {
                     );
                 }
 
-                await timeout(
+                await sleep(
                     this.loopRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)],
                 );
             }
