@@ -1,4 +1,4 @@
-import { fetchWithTimeout, getAverage, sleep } from "@codebundlesbyvik/js-helpers";
+import { fetchWithTimeout, getAverage, wait } from "@codebundlesbyvik/js-helpers";
 
 // https://stackoverflow.com/a/22969338/6396604
 //
@@ -20,11 +20,8 @@ async function getNtpValues() {
     try {
         const t0ReqTransmitTime = new Date().valueOf();
 
-        const response = await fetchWithTimeout({
-            resource: "./components/sections/contact/time-sync/ntp.php",
-            fetchOptions: {
-                method: "GET"
-            }
+        const response = await fetchWithTimeout("./components/sections/contact/time-sync/ntp.php", {
+            method: "GET",
         });
 
         if (!response.ok) {
@@ -92,7 +89,7 @@ async function getClientOffsetMs(syncAttempts: number, requiredSuccesses: number
 
             try {
                 if (runIndex > requiredSuccesses - 1) {
-                    await sleep(1000);
+                    await wait(1000);
                 }
 
                 const ntpValues = await getNtpValues();

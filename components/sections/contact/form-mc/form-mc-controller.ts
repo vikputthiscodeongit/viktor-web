@@ -1,5 +1,5 @@
 import mergeOptions from "merge-options";
-import { createEl, fetchWithTimeout, sleep } from "@codebundlesbyvik/js-helpers";
+import { createEl, fetchWithTimeout, wait } from "@codebundlesbyvik/js-helpers";
 import getDateSyncValues from "../time-sync/time-sync";
 
 /*
@@ -175,9 +175,9 @@ export default class FormMc {
         console.log("FormMc getProblem(): Running...");
 
         try {
-            const response = await fetchWithTimeout({
-                resource: "./components/sections/contact/form-mc/form-mc-generator.php",
-            });
+            const response = await fetchWithTimeout(
+                "./components/sections/contact/form-mc/form-mc-generator.php",
+            );
 
             if (!response.ok) {
                 throw new Error(
@@ -276,7 +276,7 @@ export default class FormMc {
 
                 this.hideLoader();
 
-                await sleep(timeToRefresh);
+                await wait(timeToRefresh);
 
                 if (this.loopTryCountTotal === 1) {
                     // Fire formMcInitialized event.
@@ -298,9 +298,7 @@ export default class FormMc {
                     );
                 }
 
-                await sleep(
-                    this.loopRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)],
-                );
+                await wait(this.loopRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)]);
             }
         }
     }
