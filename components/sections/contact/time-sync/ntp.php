@@ -1,8 +1,12 @@
 <?php
-include __DIR__ . "/../../../../helpers/php/return-http-response.php";
+include __DIR__ . "/../../../../global.php";
+include ROOT_DIR . "/helpers/php/return-http-response.php";
 
 $options = [
-    "data" => round($_SERVER["REQUEST_TIME_FLOAT"] * 1000),
-    "content_type" => "text/plain"
+    "status" => StatusCode::OK,
+    "data" => $_SERVER["REQUEST_TIME_FLOAT"],
+    "headers" => [
+        "Content-Type" => "text/plain; charset=utf-8"
+    ]
 ];
-returnHttpResponse(StatusCode::SUCCESS, ...$options);
+returnHttpResponse(...$options);

@@ -1,27 +1,29 @@
 <?php
-include __DIR__ . "/../../../../helpers/php/get-unix-time-micro.php";
+// TODO: For improved clarity, include session?
+include ROOT_DIR . "/components/sections/contact/form-mc/helpers/get-unix-time-micro.php";
 
 define("VALIDATION_SLACK_TIME_MS", 1500);
 
-function isValidProblem($problem) {
-    // Both the user input $problem and $_SESSION should contain the problem digits
-    // and the unix time after which the problem is invalidated.
-    // The user input should of course also contain the answer to the problem.
+function isValidProblem($answer, $digit_1, $digit_2)
+{
     if (
-        empty($problem) || count($problem) !== 4 ||
-        empty($_SESSION["cf_mc_prlm"]) || count($_SESSION["cf_mc_prlm"]) !== 3
+        $answer === "" || $digit_1 === "" || $digit_2 === "" ||
+        // $_SESSION contains the problem digits and the unix time after which the problem is invalidated.
+        empty($_SESSION["form_mc_cf"]) || count($_SESSION["form_mc_cf"]) !== 3
     ) {
         return false;
     }
 
     $unix_time = getUnixTimeMicro();
-    // Validate that each individual digit matches, that the user's answer is correct
-    // and that the problem was solved within the set time.
     $answer_valid =
-        $problem[1] === $_SESSION["cf_mc_prlm"][0] &&
-        $problem[2] === $_SESSION["cf_mc_prlm"][1] &&
-        $problem[0] === $_SESSION["cf_mc_prlm"][0] + $_SESSION["cf_mc_prlm"][1] &&
-        $unix_time < (($_SESSION["cf_mc_prlm"][2]) + VALIDATION_SLACK_TIME_MS);
+        // Digit 1 returned by user matches digit 1 created by generator.
+        (int) $digit_1 === $_SESSION["form_mc_cf"][0] &&
+        // Digit 2 returned by user matches digit 2 created by generator.
+        (int) $digit_2 === $_SESSION["form_mc_cf"][1] &&
+        // Answer to the problem is correct (checked against digits created by generator).
+        (int) $answer === $_SESSION["form_mc_cf"][0] + $_SESSION["form_mc_cf"][1] &&
+        // Answer was provided within the allowed time.
+        $unix_time < (($_SESSION["form_mc_cf"][2]) + VALIDATION_SLACK_TIME_MS);
 
     return $answer_valid;
 }

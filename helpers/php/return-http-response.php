@@ -1,31 +1,43 @@
 <?php
-enum StatusCode: int {
-    case SUCCESS = 200;
-    case REQUEST_METHOD_INVALID = 405;
-    case INPUT_INVALID = 422;
-    case UNKNOWN_ERROR = 500;
-    case MAIL_FAILED = 502;
+enum StatusCode: int
+{
+    case OK = 200;
+    case NO_CONTENT = 204;
+    case METHOD_NOT_ALLOWED = 405;
+    case UNPROCESSABLE_CONTENT = 422;
+    case INTERNAL_SERVER_ERROR = 500;
+    case BAD_GATEWAY = 502;
 }
 
 function returnHttpResponse(
     StatusCode $status,
-    array|string $headers = [],
     mixed $data = [],
-    string $content_type = "application/json"
+    array $headers = []
 ) {
     http_response_code($status->value);
 
-    if ($headers) {
-        $headers = is_string($headers) ? [$headers] : $headers;
+    $header_content_type = null;
 
-        foreach($headers as $header) {
+    if (!empty($headers)) {
+        foreach ($headers as $header => $value) {
+            if ($header === "Content-Type") {
+                $header_content_type = $value;
+
+                continue;
+            }
+
             header($header);
         }
     }
 
-    if ($data) {
-        header("Content-Type: " . $content_type . "; charset=utf-8");
-        echo str_contains($content_type, "application/json")
+    if (!empty($data)) {
+        if ($header_content_type === null) {
+            $header_content_type = "application/json; charset=utf-8";
+        }
+
+        header("Content-Type:" . $header_content_type);
+
+        echo str_contains($header_content_type, "application/json")
             ? json_encode($data)
             : $data;
     }

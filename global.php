@@ -1,6 +1,3 @@
 <?php
 define("DEBUG", true);
-
-if (!session_id()) {
-    session_start();
-}
+define("ROOT_DIR", __DIR__);

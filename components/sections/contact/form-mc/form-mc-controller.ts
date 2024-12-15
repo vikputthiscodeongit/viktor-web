@@ -1,305 +1,373 @@
-import mergeOptions from "merge-options";
-import { createEl, fetchWithTimeout, wait } from "@codebundlesbyvik/js-helpers";
-import getDateSyncValues from "../time-sync/time-sync";
+// import { createEl, fetchWithTimeout, wait } from "@codebundlesbyvik/js-helpers";
+import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
+import { NtpSyncData, smartNtpSync } from "../time-sync/time-sync";
 
 /*
-Events:
-formMcInitialized
-formMcDeactivated
-formMcProblemRefreshed
-*/
+ * Wanneer dit een library wordt moet de NTP sync functie user definable zijn.
+ *
+ * De huidige implementatie met mijn NTP sync library zou kunnen zijn:
+ * const ntpSync = new NtpSync()
+ * const formMc = new FormMc({ inputEl, ntpSyncFn: ntpSync.smartSync()}
+ *   > ntpPlugin moet een object return met daarin ten minste een veld 'correctedDate'.
+ *   > ntpPlugin returned data wordt binnen de FormMc instance opgeslagen.
+ */
 
-/*
-FORM-MC REGELS
+// Requirements:
+// * An <input> to be used for inserting the solution to the problem
 
-Gebruik:
-* form-mc wordt altijd gebruikt met form-controller (dus: geen support voor third party form controllers).
-* <input name="cf-mc"> wordt automatisch geselecteerd.
-  > Overige elementen worden gegenereerd.
-
-NTP:
-* 5x on load.
-  > Sla resultaat op.
-* 1x on problem refresh.
-  > Indien afwijking < 250ms, gebruik en behoud oude waarde.
-  > Indien afwijking > 250ms, volg 'load' routine.
-*/
-
-interface IFormMcDefaultOptions {
-    loopRetryTimesMs: number[];
+interface DefaultOptions {
+    creationAttemptsDelays: number[];
 }
-interface IFormMcUserOptions extends Partial<IFormMcDefaultOptions> {
-    formEl: HTMLFormElement;
+interface Options extends Partial<DefaultOptions> {
+    inputEl: HTMLInputElement;
 }
 
-const DEFAULT_OPTIONS: IFormMcDefaultOptions = {
-    loopRetryTimesMs: [3000, 6000],
+const DEFAULT_INSTANCE_OPTIONS: DefaultOptions = {
+    creationAttemptsDelays: [3000, 6000],
 };
 
 export default class FormMc {
-    loopRetryTimesMs: number[];
-
     formEl: HTMLFormElement;
-    inputElWrapper: HTMLElement | null;
-    inputEl: HTMLInputElement | null;
+    fieldEl: HTMLElement;
+    inputEl: HTMLInputElement;
+    inputDigit1El: HTMLInputElement;
+    inputDigit2El: HTMLInputElement;
     labelEl: HTMLLabelElement;
     loaderEl: HTMLDivElement;
-    initButtonEl: HTMLButtonElement;
+    reinitializeButtonEl: HTMLButtonElement;
 
-    canLoop: boolean;
-    loopTryCountTotal: number;
-    loopConcurrentTryCount: number;
-
-    prevClientOffsetMs: number | null;
-
-    inputInFocusBeforeRefresh: boolean;
-
-    constructor(userOptions: Required<IFormMcUserOptions>) {
-        const mergedOptions: Required<IFormMcUserOptions> = mergeOptions.apply(
-            { ignoreUndefined: true },
-            [DEFAULT_OPTIONS, userOptions],
-        );
-
-        this.loopRetryTimesMs = mergedOptions.loopRetryTimesMs;
-
-        this.formEl = mergedOptions.formEl;
-        this.inputElWrapper = null;
-        this.inputEl = null;
-        this.labelEl = createEl("label") as HTMLLabelElement;
-        this.loaderEl = createEl("div", {
-            class: "spinner",
-            style: "font-size: 1.5rem;",
-        }) as HTMLDivElement;
-        this.initButtonEl = createEl("button", {
-            type: "button",
-            text: "Activate",
-        }) as HTMLButtonElement;
-
-        this.canLoop = false;
-        this.loopTryCountTotal = 0;
-        this.loopConcurrentTryCount = 0;
-
-        this.prevClientOffsetMs = null;
-
-        this.inputInFocusBeforeRefresh = false;
-
-        this.initButtonEl.addEventListener("click", this.handleInitButtonPress.bind(this));
-    }
-
-    static STATE_MESSAGES_USER = {
-        deactivated: "CAPTCHA deactivated.",
-        error: "CAPTCHA error. Please reload the page.",
+    events: {
+        initialized: CustomEvent;
+        deactivated: CustomEvent;
+        problemCreated: CustomEvent;
     };
 
-    showLoader = () =>
-        this.inputEl && document.body.contains(this.inputEl)
-            ? this.inputEl.after(this.loaderEl)
-            : this.inputElWrapper
-            ? this.inputElWrapper.appendChild(this.loaderEl)
-            : undefined;
+    creationAttemptsDelays: number[];
 
-    hideLoader = () => this.loaderEl.remove();
+    // canLoop: boolean;
+    totalProblemCreationAttempts: number;
+    attemptsSinceSuccessfulCreation: number;
+    timerId: ReturnType<typeof setTimeout> | null;
 
-    async handleInitButtonPress() {
-        this.initButtonEl.remove();
+    ntp: NtpSyncData;
 
-        await this.init();
-    }
-
-    async init() {
-        console.log("FormMc init(): Running...");
-
+    constructor(options: Options) {
         try {
-            this.assignInputEl();
+            const mergedOptions = {
+                ...DEFAULT_INSTANCE_OPTIONS,
+                ...options,
+            };
 
-            this.canLoop = true;
-            await this.problemLoopHandler();
+            this.inputEl = mergedOptions.inputEl;
+
+            const fieldEl = this.inputEl.parentElement;
+            const formEl = this.inputEl.closest("form");
+
+            if (!fieldEl || !formEl) {
+                throw new Error(
+                    "Initialization error - missing one or more required DOM elements.",
+                );
+            }
+
+            this.formEl = formEl;
+            this.fieldEl = fieldEl;
+            this.labelEl = createEl("label", {
+                for: this.inputEl.id,
+            }) as HTMLLabelElement;
+            this.inputDigit1El = createEl("input", {
+                type: "hidden",
+                name: "cf-form-mc-d1",
+            }) as HTMLInputElement;
+            this.inputDigit2El = createEl("input", {
+                type: "hidden",
+                name: "cf-form-mc-d2",
+            }) as HTMLInputElement;
+            this.loaderEl = createEl("div", {
+                class: "spinner",
+                style: "font-size: 1.5rem;",
+            }) as HTMLDivElement;
+            this.reinitializeButtonEl = createEl("button", {
+                type: "button",
+                text: "Activate",
+            }) as HTMLButtonElement;
+
+            this.events = {
+                initialized: new CustomEvent("formMcInitialized"),
+                deactivated: new CustomEvent("formMcDeactivated"),
+                problemCreated: new CustomEvent("formMcProblemCreated"),
+            };
+
+            this.creationAttemptsDelays = mergedOptions.creationAttemptsDelays;
+
+            // this.canLoop = false;
+            this.totalProblemCreationAttempts = 0;
+            this.attemptsSinceSuccessfulCreation = 0;
+            this.timerId = null;
+
+            this.ntp = {
+                roundTripDelay: 0,
+                clientOffset: 0,
+                correctedDate: 0,
+            };
+
+            this.reinitializeButtonEl.addEventListener("click", () => {
+                const fn = async () => {
+                    this.reinitializeButtonEl.remove();
+                    await this.activate();
+                };
+                fn().catch((reason) => console.error(reason));
+            });
         } catch (error) {
             throw error instanceof Error
                 ? error
-                : new Error("FormMc init(): Failed to initialize!");
+                : new Error("Unknown error during initialization!");
         }
     }
 
-    deactivate(reactivatable: boolean) {
-        console.log("FormMc deactivate(): Running...");
+    async activate() {
+        // console.log("activate(): Running...");
+
+        try {
+            this.fieldEl.append(this.inputEl);
+            this.fieldEl.append(this.inputDigit1El);
+            this.fieldEl.append(this.inputDigit2El);
+            // this.canLoop = true;
+            await this.createProblem();
+        } catch (error) {
+            throw error instanceof Error
+                ? error
+                : new Error("Unknown error during CAPTCHA activation!");
+        }
+    }
+
+    deactivate(recoverable?: boolean) {
+        console.log("deactivate(): Running...");
 
         // Return if already deactivated.
-        if (!this.canLoop) return;
+        // if (!this.canLoop) return;
+        if (this.timerId) clearTimeout(this.timerId);
 
-        console.log(
-            `FormMc deactivate(): CAPTCHA ${reactivatable ? "may be" : "may NOT be"} reactivated.`,
-        );
+        console.log(`deactivate() - recoverable: ${recoverable}`);
 
-        this.canLoop = false;
+        // this.canLoop = false;
 
-        if (this.inputEl) {
-            this.inputEl.remove();
+        this.inputEl.remove();
+        this.inputDigit1El.remove();
+        this.inputDigit2El.remove();
+
+        // Should only occur if #makeProblemData() failed directly after initialization or if labelEl
+        // has been manually removed from the DOM.
+        if (!this.fieldEl.contains(this.labelEl)) {
+            this.fieldEl.prepend(this.labelEl);
         }
 
-        if (!document.body.contains(this.labelEl) && this.inputElWrapper) {
-            this.inputElWrapper.insertBefore(this.labelEl, this.inputElWrapper.firstChild);
-        }
-
-        if (!document.body.contains(this.labelEl)) return;
-
-        if (reactivatable) {
-            this.labelEl.textContent = FormMc.STATE_MESSAGES_USER.deactivated;
-            this.labelEl.after(this.initButtonEl);
+        if (recoverable) {
+            this.labelEl.textContent = "CAPTCHA deactivated.";
+            this.labelEl.after(this.reinitializeButtonEl);
         } else {
-            this.labelEl.textContent = FormMc.STATE_MESSAGES_USER.error;
+            this.labelEl.textContent = "CAPTCHA error. Please reload the page.";
+        }
+
+        this.formEl.dispatchEvent(this.events.deactivated);
+    }
+
+    clearTimer() {
+        console.log("clearTimer(): Running...");
+
+        if (this.timerId) {
+            clearTimeout(this.timerId);
+            console.log("clearTimer(): Timeout cleared.");
         }
     }
 
-    assignInputEl() {
-        try {
-            if (!this.inputEl) {
-                this.inputEl = this.formEl.querySelector("[name=cf-mc]");
-
-                if (!this.inputEl) {
-                    throw new Error("FormMc init(): <input> not found!");
-                }
-
-                this.inputElWrapper = this.inputEl.parentElement;
-            }
-        } catch (error) {
-            this.deactivate(false);
-
-            throw error instanceof Error
-                ? error
-                : new Error("FormMc assignInputEl(): Unknown error!");
-        }
-    }
-
-    async getProblem() {
-        console.log("FormMc getProblem(): Running...");
+    async #makeProblemData() {
+        // console.log("#makeProblemData(): Running...");
 
         try {
+            // TODO: Validate that fetchWithTimeout abort is properly handled.
             const response = await fetchWithTimeout(
                 "./components/sections/contact/form-mc/form-mc-generator.php",
             );
 
             if (!response.ok) {
                 throw new Error(
-                    `FormMc getProblem() - fetch failed: ${response.status} ${response.statusText}`,
+                    `Problem fetch failed: ${response.status} - ${response.statusText}`,
                 );
             }
 
-            const problem: [number, number, number] = await response.json();
-            console.log(`FormMc getProblem() - problem: ${problem}`);
+            const fetchedData = (await response.json()) as [number, number, number];
+            // console.log(`#makeProblemData() - fetchedData: ${fetchedData}`);
+            const [digit1, digit2, invalidAfterTime] = fetchedData;
 
-            return problem;
-        } catch (error) {
-            throw error instanceof Error ? error : new Error("FormMc getProblem(): Unknown error!");
-        }
-    }
-
-    async makeProblem() {
-        console.log("FormMc makeProblem(): Running...");
-
-        try {
-            const dateSyncValues = await getDateSyncValues(this.prevClientOffsetMs, 8, 5);
-            this.prevClientOffsetMs = dateSyncValues.clientOffsetMs;
-            const correctedDateMs = dateSyncValues.correctedDateMs;
-
-            const [digit1, digit2, invalidAfterTime] = await this.getProblem();
-
-            const timeToRefresh = Math.ceil(Math.max(invalidAfterTime - correctedDateMs, 0));
-
-            const problemData: [number, number, number] = [digit1, digit2, timeToRefresh];
-            console.log(`FormMc makeProblem() - problemData: ${problemData}`);
+            const timeToRefresh = Math.ceil(Math.max(invalidAfterTime - this.ntp.correctedDate, 0));
+            const problemData = [digit1, digit2, timeToRefresh];
+            // console.log(`#makeProblemData() - problemData: ${problemData}`);
 
             return problemData;
         } catch (error) {
-            throw error instanceof Error
-                ? error
-                : new Error("FormMc makeProblem(): Unknown error!");
+            throw error instanceof Error ? error : new Error("Unknown error during problem fetch!");
         }
     }
 
-    insertProblem(digit1: number, digit2: number) {
-        console.log("FormMc insertProblem(): Running...");
+    #insertProblem(digit1: number, digit2: number) {
+        // console.log("#insertProblem(): Running...");
 
         try {
-            if (!this.inputEl) {
-                throw new Error("FormMc insertProblem(): <input> not found!");
+            if (!this.formEl || !this.fieldEl || !this.fieldEl.contains(this.inputEl)) {
+                throw new Error("Required element not in DOM.");
             }
 
-            const labelString = `${digit1} + ${digit2} =`;
-
-            if (document.body.contains(this.inputEl) && !document.body.contains(this.labelEl)) {
+            if (!this.fieldEl.contains(this.labelEl)) {
                 this.inputEl.before(this.labelEl);
             }
 
-            if (document.body.contains(this.labelEl) && !document.body.contains(this.inputEl)) {
-                this.labelEl.after(this.inputEl);
-            }
+            this.inputDigit1El.value = digit1.toString();
+            this.inputDigit2El.value = digit2.toString();
 
+            const labelString = `${digit1} + ${digit2} =`;
             this.labelEl.textContent = labelString;
         } catch (error) {
             this.deactivate(false);
 
             throw error instanceof Error
                 ? error
-                : new Error("FormMc insertProblem(): Unknown error!");
+                : new Error("Unknown error during insertion of CAPTCHA elements into DOM!");
         }
     }
 
-    async problemLoopHandler() {
-        while (this.canLoop) {
-            try {
-                this.showLoader();
+    async createProblem() {
+        try {
+            this.fieldEl.append(this.loaderEl);
 
-                this.loopConcurrentTryCount++;
-                console.log(
-                    `FormMc problemLoopHandler() - loopConcurrentTryCount: ${this.loopConcurrentTryCount}`,
-                );
-                this.loopTryCountTotal++;
-                console.log(
-                    `FormMc problemLoopHandler() - loopTryCountTotal: ${this.loopTryCountTotal}`,
-                );
+            this.attemptsSinceSuccessfulCreation++;
+            this.totalProblemCreationAttempts++;
+            console.log(
+                `createProblem() - attemptsSinceSuccessfulCreation: ${this.attemptsSinceSuccessfulCreation}`,
+            );
+            // console.log(
+            //     `createProblem() - totalProblemCreationAttempts: ${this.totalProblemCreationAttempts}`,
+            // );
 
-                if (!this.inputEl) {
-                    throw new Error("FormMc problemLoopHandler(): <input> not found!");
-                }
+            const inputInFocusBeforeRefresh = this.inputEl === document.activeElement;
 
-                this.inputInFocusBeforeRefresh = this.inputEl === document.activeElement;
-                this.inputEl.disabled = true;
+            this.inputEl.disabled = true;
 
-                const [digit1, digit2, timeToRefresh] = await this.makeProblem();
-                this.insertProblem(digit1, digit2);
+            this.ntp = await smartNtpSync({ prevNtpSyncData: this.ntp });
+            const [digit1, digit2, timeToRefresh] = await this.#makeProblemData();
+            this.#insertProblem(digit1, digit2);
 
-                this.inputEl.disabled = false;
-                if (this.inputInFocusBeforeRefresh) this.inputEl.focus();
+            this.inputEl.disabled = false;
 
-                this.loopConcurrentTryCount = 0;
-
-                this.hideLoader();
-
-                await wait(timeToRefresh);
-
-                if (this.loopTryCountTotal === 1) {
-                    // Fire formMcInitialized event.
-                }
-            } catch (error) {
-                console.error(error);
-
-                if (this.loopConcurrentTryCount > this.loopRetryTimesMs.length) {
-                    const errorCause =
-                        error instanceof Error && error.cause instanceof Error
-                            ? error.cause.name
-                            : false;
-                    this.deactivate(!!errorCause);
-
-                    this.hideLoader();
-
-                    throw new Error(
-                        `FormMc problemLoopHandler(): deactivated because generation failed ${this.loopConcurrentTryCount} concurrent times!`,
-                    );
-                }
-
-                await wait(this.loopRetryTimesMs[Math.max(this.loopConcurrentTryCount - 1, 0)]);
+            if (inputInFocusBeforeRefresh) {
+                this.inputEl.focus();
             }
+
+            this.loaderEl.remove();
+
+            this.attemptsSinceSuccessfulCreation = 0;
+
+            this.formEl.dispatchEvent(this.events.problemCreated);
+
+            this.timerId = setTimeout(() => {
+                const fn = async () => await this.createProblem();
+                fn().catch((error) => console.error(error));
+            }, timeToRefresh);
+
+            if (this.totalProblemCreationAttempts === 1) {
+                this.formEl.dispatchEvent(this.events.initialized);
+            }
+        } catch (error) {
+            console.error(error);
+
+            if (this.attemptsSinceSuccessfulCreation > this.creationAttemptsDelays.length) {
+                // TODO: Debug because this does not work. Also, maybe check for TypeError too
+                // since that seems to be the error thrown when going offline.
+                const recoverable =
+                    error instanceof Error &&
+                    error.cause instanceof Error &&
+                    (error.cause.name === "AbortError" || error.cause.name === "NetworkError");
+                this.deactivate(recoverable);
+
+                this.loaderEl.remove();
+
+                throw new Error(
+                    `CAPTCHA deactivated because problem generation failed ${this.attemptsSinceSuccessfulCreation} concurrent times!`,
+                );
+            }
+
+            const delay =
+                this.creationAttemptsDelays[Math.max(this.attemptsSinceSuccessfulCreation - 1, 0)];
+            this.timerId = setTimeout(() => {
+                const fn = async () => await this.createProblem();
+                fn().catch((error) => console.error(error));
+            }, delay);
         }
     }
+
+    // async #problemLoopHandlerOld() {
+    //     while (this.canLoop) {
+    //         try {
+    //             this.fieldEl.append(this.loaderEl);
+
+    //             this.attemptsSinceSuccessfulCreation++;
+    //             this.totalProblemCreationAttempts++;
+    //             // console.log(
+    //             //     `createProblem() - attemptsSinceSuccessfulCreation: ${this.attemptsSinceSuccessfulCreation}`,
+    //             // );
+    //             // console.log(
+    //             //     `createProblem() - totalProblemCreationAttempts: ${this.totalProblemCreationAttempts}`,
+    //             // );
+
+    //             const inputInFocusBeforeRefresh = this.inputEl === document.activeElement;
+
+    //             this.inputEl.disabled = true;
+
+    //             this.ntp = await smartNtpSync({ prevNtpSyncData: this.ntp });
+    //             const [digit1, digit2, timeToRefresh] = await this.#makeProblemData();
+    //             this.#insertProblem(digit1, digit2);
+
+    //             this.inputEl.disabled = false;
+
+    //             if (inputInFocusBeforeRefresh) {
+    //                 this.inputEl.focus();
+    //             }
+
+    //             this.loaderEl.remove();
+
+    //             this.attemptsSinceSuccessfulCreation = 0;
+
+    //             this.formEl.dispatchEvent(this.events.problemCreated);
+
+    //             if (this.totalProblemCreationAttempts === 1) {
+    //                 this.formEl.dispatchEvent(this.events.initialized);
+    //             }
+
+    //             await wait(timeToRefresh);
+    //         } catch (error) {
+    //             console.error(error);
+
+    //             if (this.attemptsSinceSuccessfulCreation > this.creationAttemptsDelays.length) {
+    //                 // TODO: Debug because this does not work. Also, maybe check for TypeError too
+    //                 // since that seems to be the error thrown when going offline.
+    //                 const recoverable =
+    //                     error instanceof Error &&
+    //                     error.cause instanceof Error &&
+    //                     (error.cause.name === "AbortError" || error.cause.name === "NetworkError");
+    //                 this.deactivate(recoverable);
+
+    //                 this.loaderEl.remove();
+
+    //                 throw new Error(
+    //                     `CAPTCHA deactivated because problem generation failed ${this.attemptsSinceSuccessfulCreation} concurrent times!`,
+    //                 );
+    //             }
+
+    //             await wait(
+    //                 this.creationAttemptsDelays[
+    //                     Math.max(this.attemptsSinceSuccessfulCreation - 1, 0)
+    //                 ],
+    //             );
+    //         }
+    //     }
+    // }
 }
