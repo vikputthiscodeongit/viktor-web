@@ -1,14 +1,15 @@
 <?php
-    include "global.php";
+include "global.php";
 
-    include "content/shared/global-strings.php";
 // TODO: Re-evaluate - include may be unnecessary.
 include ROOT_DIR . "/session.php";
 
-    include "header.php";
+include ROOT_DIR . "/content/shared/global-strings.php";
 
-    include "components/sections/home/home-view.php";
+include ROOT_DIR . "/header.php";
 
-    include "components/sections/contact/contact-view.php";
+include ROOT_DIR . "/components/sections/home/home-view.php";
 
-    include "footer.php";
+include ROOT_DIR . "/components/sections/contact/contact-view.php";
+
+include ROOT_DIR . "/footer.php";

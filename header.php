@@ -2,7 +2,7 @@
 
 <html class="js-disabled" lang="en">
     <head>
-        <?php include "content/shared/header-strings.php"; ?>
+        <?php include ROOT_DIR . "/content/shared/header-strings.php"; ?>
 
         <meta charset="UTF-8">
 

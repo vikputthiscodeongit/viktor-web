@@ -1,4 +1,4 @@
-<?php include __DIR__ . "/../../../../content/sections/contact/icon-grid-content.php"; ?>
+<?php include ROOT_DIR . "/content/sections/contact/icon-grid-content.php"; ?>
 
 <ul class="icon-grid" aria-label="<?php echo $ICON_GRID_LABEL; ?>">
     <?php
