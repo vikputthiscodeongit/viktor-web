@@ -8,10 +8,10 @@
     }
 
     &--shift-right {
-        margin-left: rem(40px);
+        margin-left: rem(50px);
 
         @include respond-above(lg) {
-            margin-left: rem(60px);
+            margin-left: rem(75x);
         }
     }
 
