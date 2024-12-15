@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const config = (api) => {
     api.cache.invalidate(() => process.env.NODE_ENV);
 
@@ -9,17 +8,30 @@ const config = (api) => {
             [
                 "@babel/preset-env",
                 {
+                    modules: false,
                     useBuiltIns: "usage",
-                    corejs: { version: "3.22", proposals: true },
+                    corejs: { version: "3.37" },
                 },
             ],
         ],
+        parserOpts: { strictMode: true },
     };
+
     const prodConfig = {
         ...baseConfig,
-        presets: [...baseConfig.presets, ["minify", { builtIns: false, removeConsole: true }]],
+        presets: [
+            ...baseConfig.presets,
+            [
+                "minify",
+                {
+                    builtIns: false,
+                    removeConsole: true,
+                },
+            ],
+        ],
         plugins: ["transform-remove-console"],
     };
+
     const activeConfig = api.env("production") ? prodConfig : baseConfig;
 
     return activeConfig;

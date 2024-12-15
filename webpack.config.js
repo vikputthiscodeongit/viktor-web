@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import path from "path";
 import { fileURLToPath } from "url";
 import { merge } from "webpack-merge";
@@ -30,7 +29,9 @@ const baseConfig = {
         },
     },
     plugins: [
-        new ESLintPlugin({}),
+        new ESLintPlugin({
+            configType: "flat",
+        }),
         new MiniCssExtractPlugin({
             filename: "./style.css",
         }),
@@ -38,14 +39,14 @@ const baseConfig = {
     module: {
         rules: [
             {
-                test: /\.([cm]?ts|tsx|[cm]?js)$/,
-                exclude: /node_modules/,
-                use: { loader: "babel-loader" },
-            },
-            {
                 test: /\.js$/,
                 enforce: "pre",
                 use: ["source-map-loader"],
+            },
+            {
+                test: /\.([cm]?ts|tsx|[cm]?js)$/,
+                exclude: /node_modules/,
+                use: { loader: "babel-loader" },
             },
             {
                 test: /\.(sa|sc|c)ss$/i,

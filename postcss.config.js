@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 

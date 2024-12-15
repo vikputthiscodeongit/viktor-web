@@ -30,4 +30,4 @@ Thumbs.db
 !.prettier*
 
 #
-_not_public/not-dotenv.php
+_folder/values.php
