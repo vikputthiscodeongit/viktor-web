@@ -15,10 +15,10 @@
 
         <div class="viktor-about viktor-about--static visually-hidden">
             <?php
-                foreach($MY_PROPERTIES as $PROPERTY) {
-                    echo "<span>" . $PROPERTY . "</span>\n";
-                }
+            foreach ($MY_PROPERTIES as $PROPERTY) {
+                echo "<span>" . $PROPERTY . "</span>\n";
+            }
             ?>
-		</div>
+        </div>
     </div>
 </div>

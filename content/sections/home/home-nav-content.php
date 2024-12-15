@@ -1,5 +1,5 @@
 <?php
-$CONTACT = array(
+$CONTACT = [
     "string" => "Contact",
     "uri" => "#contact"
-);
+];

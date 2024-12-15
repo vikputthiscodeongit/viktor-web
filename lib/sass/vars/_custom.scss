@@ -2,25 +2,33 @@
 $min-vw: rem(320px);
 $min-vh: rem(480px);
 
-
 // Grid breakpoints
 $grid-breakpoints: (
     xxs: 0,
-    xs: 28em, // 448
-    sm: 36em, // 576
-    md: 48em, // 768
-    lg: 62em, // 992
-    xl: 80em, // 1280
-    xxl: 90em // 1440
+    // 448
+    xs: 28em,
+    // 576
+    sm: 36em,
+    // 768
+    md: 48em,
+    // 992
+    lg: 62em,
+    // 1280
+    xl: 80em,
+    // 1440
+    xxl: 90em,
 );
 
 $grid-height-breakpoints: (
-    md: 40em, // 640
-    lg: 45em, // 720
-    xl: 50em, // 800
-    xxl: 56em // 896
+    // 640
+    md: 40em,
+    // 720
+    lg: 45em,
+    // 800
+    xl: 50em,
+    // 896
+    xxl: 56em
 );
-
 
 // Grid containers
 $container-max-widths: (
@@ -30,9 +38,8 @@ $container-max-widths: (
     md: rem(720px),
     lg: rem(960px),
     xl: rem(1200px),
-    xxl: rem(1366px)
+    xxl: rem(1366px),
 );
-
 
 //
 $transition-base: 0.1s linear;

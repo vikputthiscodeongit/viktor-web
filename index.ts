@@ -1,8 +1,9 @@
+import "./style.scss";
+
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import initTypeItAboutMe from "./components/sections/home/about-me/typeit";
 import initForm from "./components/sections/contact/form/form-controller";
-import "./style.scss";
 
 void (async function () {
     document.documentElement.classList.replace("js-disabled", "js-enabled");
