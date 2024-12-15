@@ -36,9 +36,3 @@ $container-max-widths: (
 
 //
 $transition-base: 0.1s linear;
-
-
-// Variable export to JavaScript
-:export {
-    mdBreakpoint: map-get($grid-breakpoints, md);
-}
