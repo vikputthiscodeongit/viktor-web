@@ -1,95 +1,142 @@
 <?php
-// TODO: Use RFC-compliant RegEx for email input pattern.
 $FORM = [
-    "method" => "POST",
-    "class" => "form form--contact js-required js-auto-enable",
-    "name" => "contact-form",
-    "fieldsets" => [
-        "fs_personal" => [
-            "fields" => [
-                "field_name" => [
-                    "class" => "field field--ifl",
-                    "label" => [
-                        "label" => "My name is"
+    "el" => "form",
+    "attrs" => [
+        "method" => "POST",
+        "class" => "form form--contact js-required js-auto-enable",
+        "name" => "contact-form",
+    ],
+    "children" => [
+        "personal" => [
+            "el" => "fieldset",
+            "children" => [
+                "name" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field field--ifl",
                     ],
-                    "input" => [
-                        "el" => "input",
-                        "type" => "text",
-                        "id" => "cf-name",
-                        "minlength" => "2",
-                        "maxlength" => "128",
-                        // "placeholder" => "Jason Green"
+                    "children" => [
+                        "label" => [
+                            "el" => "label",
+                            "text_content" => "My name is"
+                        ],
+                        "input" => [
+                            "el" => "input",
+                            "attrs" => [
+                                "type" => "text",
+                                "id" => "name",
+                                "minlength" => "2",
+                                "maxlength" => "128",
+                            ]
+                        ]
                     ]
                 ],
-                "field_email" => [
-                    "class" => "field field--ifl",
-                    "label" => [
-                        "label" => "My email address is"
+                "email" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field field--ifl",
                     ],
-                    "input" => [
-                        "el" => "input",
-                        "type" => "email",
-                        "id" => "cf-email",
-                        // "placeholder" => "j.green@example.com",
-                        "required" => true
+                    "children" => [
+                        "label" => [
+                            "el" => "label",
+                            "text_content" => "My email address is"
+                        ],
+                        "input" => [
+                            "el" => "input",
+                            "attrs" => [
+                                "type" => "email",
+                                "id" => "email",
+                                "required" => true
+                            ]
+                        ]
                     ]
                 ]
             ]
         ],
-        "fs_message" => [
-            "fields" => [
-                "field_subject" => [
-                    "class" => "field field--ifl",
-                    "label" => [
-                        "label" => "I want to talk about"
+        "message" => [
+            "el" => "fieldset",
+            "children" => [
+                "subject" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field field--ifl",
                     ],
-                    "input" => [
-                        "el" => "input",
-                        "type" => "text",
-                        "id" => "cf-subject",
-                        "minlength" => "4",
-                        "maxlength" => "128",
-                        // "placeholder" => "Some work of yours that I came across",
-                        "required" => true
+                    "children" => [
+                        "label" => [
+                            "el" => "label",
+                            "text_content" => "I want to talk about"
+                        ],
+                        "input" => [
+                            "el" => "input",
+                            "attrs" => [
+                                "type" => "text",
+                                "id" => "subject",
+                                "minlength" => "4",
+                                "maxlength" => "128",
+                                "required" => true
+                            ]
+                        ]
                     ]
                 ],
-                "field_message" => [
-                    "class" => "field field--ifl",
-                    "label" => [
-                        "label" => "Message"
+                "message" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field field--ifl",
                     ],
-                    "input" => [
-                        "el" => "textarea",
-                        "id" => "cf-message",
-                        "rows" => "8",
-                        "minlength" => "12",
-                        // "placeholder" => "Hey man, how are you doing? Last week I was browsing the web when ...",
-                        "required" => true
+                    "children" => [
+                        "label" => [
+                            "el" => "label",
+                            "text_content" => "Message"
+                        ],
+                        "input" => [
+                            "el" => "textarea",
+                            "attrs" => [
+                                "id" => "message",
+                                "rows" => "8",
+                                "minlength" => "12",
+                                "required" => true
+                            ]
+                        ]
                     ]
                 ]
-            ]
+
+            ],
         ],
-        "fs_submit" => [
-            "fields" => [
-                "field_mc" => [
-                    "class" => "field field--inline js-required",
-                    "input" => [
-                        "el" => "input",
-                        "type" => "text",
-                        "id" => "cf-form-mc",
-                        // TODO: Remove this property - all other inputs have their ID assigned as name.
-                        "name" => "cf-form-mc",
-                        "inputmode" => "numeric",
-                        "required" => true,
+        "submit" => [
+            "el" => "fieldset",
+            "children" => [
+                "simple-maths-captcha" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field field--inline js-required",
+                    ],
+                    "children" => [
+                        "input" => [
+                            "el" => "input",
+                            "attrs" => [
+                                "type" => "text",
+                                "id" => "simple-maths-captcha",
+                                "inputmode" => "numeric",
+                                "required" => true,
+                            ]
+                        ]
                     ]
                 ],
-                "field_submit" => [
-                    "input" => [
-                        "el" => "button",
-                        "type" => "submit",
-                        "id" => "cf-submit",
-                        "class" => "btn btn--submit",
-                        "text_content" => "Send"
+                "submit" => [
+                    "el" => "div",
+                    "attrs" => [
+                        "class" => "field",
+                    ],
+                    "children" => [
+                        "button" => [
+                            "el" => "button",
+                            "attrs" => [
+                                "type" => "submit",
+                                "id" => "submit",
+                                "class" => "btn btn--submit",
+                            ],
+                            "text_content" => "Send"
+                        ]
                     ]
                 ]
             ]

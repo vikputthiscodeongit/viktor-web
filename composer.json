@@ -1,5 +1,8 @@
 {
     "require": {
+        "spatie/html-element": "^1.1"
+    },
+    "require-dev": {
         "bartlett/php-compatinfo": "6.5"
     }
 }
