@@ -1,25 +1,3 @@
-.viktor-name {
-    h1 {
-        font-size: rem(40px);
-
-        @include respond-above(lg) {
-            font-size: rem(48px);
-        }
-
-        @include respond-above(xxl) {
-            font-size: rem(56px);
-        }
-
-        span {
-            display: block;
-
-            &:nth-child(2) {
-                margin-left: 0.75em;
-            }
-        }
-    }
-}
-
 .viktor {
     &-info {
         grid-column: 1 / span 3;
@@ -27,21 +5,43 @@
         align-self: center;
     }
 
+    &-name {
+        h1 {
+            font-size: rem(40px);
+
+            @include respond-above(lg) {
+                font-size: rem(48px);
+            }
+
+            @include respond-above(xxl) {
+                font-size: rem(56px);
+            }
+
+            span {
+                display: block;
+
+                &:nth-child(2) {
+                    margin-left: 0.75em;
+                }
+            }
+        }
+    }
+
     &-about {
         position: relative;
         top: 1em;
         left: 1.75em;
         width: calc(100% - 1.75em);
-		white-space: nowrap;
-		line-height: 1.4;
-		font-size: rem(24px);
+        white-space: nowrap;
+        line-height: 1.4;
+        font-size: rem(24px);
 
-		@include respond-above(lg) {
-			font-size: rem(28px);
-		}
+        @include respond-above(lg) {
+            font-size: rem(28px);
+        }
 
-		@include respond-above(xxl) {
-			font-size: rem(32px);
-		}
+        @include respond-above(xxl) {
+            font-size: rem(32px);
+        }
     }
 }
