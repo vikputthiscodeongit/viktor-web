@@ -83,6 +83,7 @@ label {
         background-color: $off-white-dark;
         border-top-left-radius: rem(4px);
         border-top-right-radius: rem(4px);
+        user-select: none;
 
         @media (prefers-contrast: more) {
             background-color: $white;
