@@ -84,6 +84,7 @@ img {
 
 .has-overlay {
     position: relative;
+    user-select: none;
 
     &::after {
         content: "";
