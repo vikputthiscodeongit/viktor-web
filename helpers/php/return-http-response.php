@@ -16,7 +16,7 @@ function returnHttpResponse(
 ) {
     http_response_code($status_code->value);
 
-    $header_content_type = null;
+    $header_content_type = "application/json; charset=utf-8";
 
     if (!empty($headers)) {
         foreach ($headers as $header => $value) {
@@ -31,10 +31,6 @@ function returnHttpResponse(
     }
 
     if (!empty($data)) {
-        if ($header_content_type === null) {
-            $header_content_type = "application/json; charset=utf-8";
-        }
-
         header("Content-Type:" . $header_content_type);
 
         echo str_contains($header_content_type, "application/json")
