@@ -30,7 +30,7 @@ function getProblem()
     $unix_time = getUnixTimeMicro();
     $problem = makeProblem($unix_time);
 
-    returnHttpResponse(StatusCode::OK, $problem);
+    returnHttpResponse(HttpStatus::OK, $problem);
 }
 
 getProblem();

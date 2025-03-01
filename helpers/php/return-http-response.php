@@ -1,5 +1,5 @@
 <?php
-enum StatusCode: int
+enum HttpStatus: int
 {
     case OK = 200;
     case NO_CONTENT = 204;
@@ -10,11 +10,11 @@ enum StatusCode: int
 }
 
 function returnHttpResponse(
-    StatusCode $status,
+    HttpStatus $status_code,
     mixed $data = [],
     array $headers = []
 ) {
-    http_response_code($status->value);
+    http_response_code($status_code->value);
 
     $header_content_type = null;
 
