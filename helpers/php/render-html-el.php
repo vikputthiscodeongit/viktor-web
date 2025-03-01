@@ -1,7 +1,7 @@
 <?php
 require ROOT_DIR . '/vendor/autoload.php';
 
-function renderHtmlEl(string $tag, array|string $attributes = null, array|string $content = null): string
+function renderHtmlEl(string $tag, array|string|null $attributes, array|string|null $content): string
 {
     return \Spatie\HtmlElement\HtmlElement::render($tag, $attributes, $content);
 }
@@ -12,7 +12,7 @@ function renderHtmlFromArray(array $data): string
 
     if (isset($data['el'])) {
         $attributes = $data['attrs'] ?? [];
-        $content = $data['children'] ?? $data['text_content'] ?? '';
+        $content = $data['children'] ?? $data['text'] ?? '';
 
         if (is_array($content)) {
             $children_html = '';
@@ -24,7 +24,7 @@ function renderHtmlFromArray(array $data): string
             $content = $children_html;
         }
 
-        $html = renderHtmlEl($data['el'], $attributes, $content);
+        $html = renderHtmlEl($data['el'], $attributes ?? null, $content ?? null);
     }
 
     return $html;

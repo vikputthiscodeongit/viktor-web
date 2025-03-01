@@ -7,8 +7,8 @@ include ROOT_DIR . "/content/sections/home/about-me-content.php";
     <div class="viktor-name">
         <h1>
             <?php
-            foreach ($MY_NAME_CONTENT as $item) {
-                echo renderHtmlFromArray($item);
+            foreach ($MY_NAMES as $NAME) {
+                echo "<span>" . $NAME . "</span>";
             }
             ?>
         </h1>
@@ -20,8 +20,8 @@ include ROOT_DIR . "/content/sections/home/about-me-content.php";
 
     <div class="viktor-about viktor-about--static visually-hidden">
         <?php
-        foreach ($MY_PROPERTIES_CONTENT as $item) {
-            echo renderHtmlFromArray($item);
+        foreach ($MY_PROPERTIES_ITEMS as $PROPERTY) {
+            echo "<span>" . $PROPERTY . "</span>";
         }
         ?>
     </div>
