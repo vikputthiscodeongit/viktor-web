@@ -1,15 +1,15 @@
 <?php
 include "global.php";
 
-// TODO: Re-evaluate - include may be unnecessary.
+// TODO: Re-evaluate - this include may be unnecessary.
 include ROOT_DIR . "/session.php";
 
-include ROOT_DIR . "/content/shared/global-content.php";
+include ROOT_DIR . "/content/global-content.php";
 
-include ROOT_DIR . "/components/layout/header.php";
+include ROOT_DIR . "/components/header/header-view.php";
 
-include ROOT_DIR . "/components/sections/home/home-view.php";
+include ROOT_DIR . "/components/home/home-view.php";
 
-include ROOT_DIR . "/components/sections/contact/contact-view.php";
+include ROOT_DIR . "/components/contact/contact-view.php";
 
-include ROOT_DIR . "/components/layout/footer.php";
+include ROOT_DIR . "/components/footer/footer-view.php";

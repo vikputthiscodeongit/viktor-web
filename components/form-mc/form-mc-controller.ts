@@ -185,9 +185,7 @@ export default class FormMc {
 
         try {
             // TODO: Validate that fetchWithTimeout abort is properly handled.
-            const response = await fetchWithTimeout(
-                "./components/sections/contact/form-mc/form-mc-generator.php",
-            );
+            const response = await fetchWithTimeout("./components/form-mc/form-mc-generator.php");
 
             if (!response.ok) {
                 throw new Error(

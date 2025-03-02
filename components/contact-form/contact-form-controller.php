@@ -3,13 +3,13 @@
 // * Set $_SESSION variable with form data hash on succesful submit.
 //   Compare on next submit. If equal > reject.
 
-include __DIR__ . "/../../../../global.php";
+include __DIR__ . "/../../global.php";
 include ROOT_DIR . "/session.php";
 include ROOT_DIR . "/_folder/values.php";
 include ROOT_DIR . "/helpers/php/return-http-response.php";
-include ROOT_DIR . "/components/sections/contact/form/helpers/email-address-validator.php";
-// include ROOT_DIR . "/components/sections/contact/form-mc/form-mc-validator.php";
-include ROOT_DIR . "/content/sections/contact/form-content.php";
+include ROOT_DIR . "/components/contact-form/helpers/email-address-validator.php";
+// include ROOT_DIR . "/components/form-mc/form-mc-validator.php";
+include ROOT_DIR . "/content/form-content.php";
 
 function sanitizeFormData($form_data)
 {

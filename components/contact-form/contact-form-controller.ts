@@ -323,7 +323,7 @@ async function submitForm(formEl: HTMLFormElement, notifier: SimpleNotifier) {
         // }
 
         const submitResponse = await fetchWithTimeout(
-            "./components/sections/contact/form/form-controller.php",
+            "./components/contact-form/contact-form-controller.php",
             {
                 method: "POST",
                 body: formData,

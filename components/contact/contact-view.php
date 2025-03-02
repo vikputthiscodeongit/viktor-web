@@ -5,12 +5,12 @@
         <div class="section-content">
             <h2 class="section-title">Find me on</h2>
 
-            <?php include ROOT_DIR . "/components/sections/contact/icon-grid/icon-grid-view.php"; ?>
+            <?php include ROOT_DIR . "/components/icon-grid/icon-grid-view.php"; ?>
         </div>
 
         <div class="section-content">
             <h2 class="section-title">Shoot me a message</h2>
 
-            <?php include ROOT_DIR . "/components/sections/contact/form/form-view.php"; ?>
+            <?php include ROOT_DIR . "/components/contact-form/contact-form-view.php"; ?>
         </div>
 </section>

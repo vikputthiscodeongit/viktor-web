@@ -3,7 +3,7 @@
 <html class="js-disabled" lang="en">
 
 <head>
-    <?php include ROOT_DIR . "/content/layout/header-content.php"; ?>
+    <?php include ROOT_DIR . "/content/header-content.php"; ?>
 
     <meta charset="UTF-8">
 

@@ -1,6 +1,6 @@
 <?php
 include_once ROOT_DIR . "/helpers/php/render-html-el.php";
-include ROOT_DIR . "/content/sections/contact/icon-grid-content.php";
+include ROOT_DIR . "/content/icon-grid-content.php";
 
 $icon_grid_el = [
     "el" => "ul",

@@ -2,7 +2,7 @@
 include __DIR__ . "/../../../../global.php";
 include ROOT_DIR . "/session.php";
 include ROOT_DIR . "/helpers/php/return-http-response.php";
-include ROOT_DIR . "/components/sections/contact/form-mc/helpers/get-unix-time-micro.php";
+include ROOT_DIR . "/components/form-mc/helpers/get-unix-time-micro.php";
 
 // TODO: These should be user definable.
 define("FORM_MC_REFRESH_TIME_MS", DEBUG ? 5000 : 15000);

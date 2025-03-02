@@ -1,6 +1,6 @@
 <?php
 include_once ROOT_DIR . "/helpers/php/render-html-el.php";
-include ROOT_DIR . "/content/sections/home/home-nav-content.php";
+include ROOT_DIR . "/content/home-nav-content.php";
 
 $navigation_el = [
     "el" => "nav",

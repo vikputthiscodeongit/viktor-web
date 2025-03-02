@@ -58,7 +58,7 @@ async function generateNtpData(): Promise<NtpData> {
         console.log(`generateNtpData() - t0ReqTransmitTime:`, t0ReqTransmitTime);
 
         // TODO: Validate that fetchWithTimeout abort is properly handled.
-        const response = await fetchWithTimeout("./components/sections/contact/time-sync/ntp.php", {
+        const response = await fetchWithTimeout("./components/time-sync/ntp.php", {
             method: "GET",
         });
 

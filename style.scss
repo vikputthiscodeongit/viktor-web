@@ -72,15 +72,15 @@
 // @import "helpers/sass/utilities/display";
 
 // Global
-@import "components/shared/global";
+@import "components/global/global";
 
 // Sections
-@import "components/sections/home/home";
+@import "components/home/home";
 
 // Components
-@import "components/sections/contact/form/form";
-@import "components/sections/contact/form/spinner";
-@import "components/sections/contact/icon-grid/icon-grid";
-@import "components/sections/home/nav/home-nav";
-@import "components/sections/home/about-me/about-me";
-@import "components/sections/home/blob/blob";
+@import "components/contact-form/form";
+@import "components/contact-form/spinner";
+@import "components/icon-grid/icon-grid";
+@import "components/nav/home-nav";
+@import "components/about-me/about-me";
+@import "components/blob/blob";

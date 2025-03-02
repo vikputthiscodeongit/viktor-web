@@ -1,6 +1,6 @@
 <?php
 // TODO: For improved clarity, include session?
-include ROOT_DIR . "/components/sections/contact/form-mc/helpers/get-unix-time-micro.php";
+include ROOT_DIR . "/components/form-mc/helpers/get-unix-time-micro.php";
 
 define("VALIDATION_SLACK_TIME_MS", 1500);
 

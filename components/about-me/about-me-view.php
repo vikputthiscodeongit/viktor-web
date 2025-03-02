@@ -1,6 +1,6 @@
 <?php
 include_once ROOT_DIR . "/helpers/php/render-html-el.php";
-include ROOT_DIR . "/content/sections/home/about-me-content.php";
+include ROOT_DIR . "/content/about-me-content.php";
 ?>
 
 <div class="viktor-info">
