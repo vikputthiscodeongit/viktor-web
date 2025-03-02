@@ -19,7 +19,9 @@ void (async function () {
         initTypeItAboutMe(typeItContainerEl);
     }
 
-    const notifier = new SimpleNotifier();
+    const notifier = new SimpleNotifier({
+        hideOlder: true,
+    });
 
     try {
         const formEl = document.querySelector<HTMLFormElement>(".form--contact");

@@ -63,6 +63,8 @@ foreach ($FORM_ITEMS as $FIELDSET) {
                 return $attr !== "el";
             }),
         ];
+        $input_el["attrs"]["id"] = $form_el["attrs"]["name"] . "-" . $input_el["attrs"]["id"];
+        $input_el["attrs"]["name"] = $form_el["attrs"]["name"] . "-" . $FIELD["control"]["id"];
 
         if (isset($FIELD["control"]["text"])) {
             $input_el["text"] = $FIELD["control"]["text"];

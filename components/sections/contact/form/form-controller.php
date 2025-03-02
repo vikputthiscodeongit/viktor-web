@@ -8,147 +8,142 @@ include ROOT_DIR . "/session.php";
 include ROOT_DIR . "/_folder/values.php";
 include ROOT_DIR . "/helpers/php/return-http-response.php";
 include ROOT_DIR . "/components/sections/contact/form/helpers/email-address-validator.php";
-include ROOT_DIR . "/components/sections/contact/form-mc/form-mc-validator.php";
+// include ROOT_DIR . "/components/sections/contact/form-mc/form-mc-validator.php";
 include ROOT_DIR . "/content/sections/contact/form-content.php";
 
-enum FormInput: string
+function sanitizeFormData($form_data)
 {
-    case EMAIL = "cf-email";
-    case MC = "cf-form-mc";
-    case MESSAGE = "cf-message";
-    case NAME = "cf-name";
-    case SUBJECT = "cf-subject";
-}
+    $clean_form_data = [];
 
-function sanitizeInputsValues($inputs_values)
-{
-    $clean_inputs_values = [];
-
-    foreach ($inputs_values as $input_name => $input_value) {
-        $input_post_value_trimmed = trim($input_value);
-        $clean_inputs_values[$input_name] = $input_post_value_trimmed !== "" ? htmlspecialchars($input_post_value_trimmed) : "";
+    foreach ($form_data as $form_control_name => $form_control_value) {
+        $form_control_value_trimmed = trim($form_control_value);
+        $clean_form_data[$form_control_name] = $form_control_value_trimmed !== ""
+            ? htmlspecialchars($form_control_value_trimmed)
+            : "";
     }
 
-    return $clean_inputs_values;
+    return $clean_form_data;
 }
 
-function getInputsSkeletons($fieldsets)
+function getFormControlsAttributes($form_items)
 {
-    $inputs_skeletons = [];
+    $form_items_flat = array_merge([], ...$form_items);
+    $form_controls_attrs = [];
+    $form_control_id_prefix = "contact-form-";
 
-    foreach (array_values($fieldsets) as $fieldset) {
-        foreach ($fieldset as $key => $fields) {
-            // Skip other attributes such as HTML class name.
-            if ($key !== "fields") continue;
-
-            foreach ($fields as $field_type => $fields_skeleton) {
-                if ($field_type === "submit" || str_ends_with($field_type, "_submit")) continue;
-
-                array_push($inputs_skeletons, $fields_skeleton["input"]);
-            }
+    foreach ($form_items_flat as $field_items) {
+        if (
+            !isset($field_items["control"]) ||
+            (isset($field_items["control"]["el"]) && $field_items["control"]["el"] === "button")
+        ) {
+            continue;
         }
+
+        $form_control_attrs = array_filter(
+            $field_items["control"],
+            function ($value, $attr) {
+                if (in_array($attr, ["id", "type", "minlength", "maxlength", "pattern", "required"])) {
+                    return $attr;
+                }
+            },
+            1
+        );
+        $form_control_attrs["id"] = $form_control_id_prefix . $form_control_attrs["id"];
+        array_push($form_controls_attrs, $form_control_attrs);
     }
 
-    return $inputs_skeletons;
+    return $form_controls_attrs;
 }
 
-function filterInputsAndProps($inputs_skeletons, $props_to_retain)
+function validateFormData($form_controls_attrs, $form_data)
 {
-    $filtered_input_props = [];
+    $validated_form_data = [];
 
-    foreach ($inputs_skeletons as $input_skeleton) {
-        $input_props_filtered = array_filter($input_skeleton, function ($key) use ($props_to_retain) {
-            return in_array($key, $props_to_retain);
-        }, ARRAY_FILTER_USE_KEY);
-
-        array_push($filtered_input_props, $input_props_filtered);
-    }
-
-    return $filtered_input_props;
-}
-
-function validateInputs($inputs_props, $inputs_data_values)
-{
-    $validated_inputs_props = [];
-
-    foreach ($inputs_props as $input_props) {
-        $input_data_value = $inputs_data_values[$input_props["id"]];
-
-        $validation_errors = [];
+    foreach ($form_controls_attrs as $form_control_attrs) {
+        $form_control_value = $form_data[$form_control_attrs["id"]];
 
         // An input that isn't required may be empty.
-        if ($input_data_value !== "" || $input_data_value === "" && in_array("required", $input_props)) {
-            foreach ($input_props as $input_prop => $input_prop_value) {
-                if ($input_prop === "required") continue;
+        if (
+            $form_control_value === "" &&
+            (!isset($form_control_attrs["required"]) ||
+                (isset($form_control_attrs["required"]) &&
+                    $form_control_attrs["required"] === "false"))
+        ) {
+            array_push($validated_form_data, [
+                "id" => $form_control_attrs["id"],
+                "validation_errors" => []
+            ]);
 
-                $condition_name = $input_prop;
-                $input_value_valid = false;
+            continue;
+        }
 
-                switch ($input_prop) {
-                    case "id":
-                        if ($input_prop_value !== FormInput::MC->value) continue 2;
+        $form_control_valiation_result = [
+            "id" => $form_control_attrs["id"],
+            "validation_errors" => []
+        ];
 
-                        $condition_name = "form-mc";
+        foreach ($form_control_attrs as $attr => $attr_value) {
+            if ($attr === "id" || $attr === "required") continue;
 
-                        // TODO: Come up wih something better.
-                        if (
-                            !array_key_exists($input_prop_value . "-d1", $inputs_data_values) ||
-                            !array_key_exists($input_prop_value . "-d2", $inputs_data_values)
-                        ) {
-                            break;
-                        }
+            $condition_name = $attr;
+            $form_control_value_valid = false;
 
-                        $input_value_valid = isValidProblem(
-                            $input_data_value,
-                            $inputs_data_values[$input_prop_value . "-d1"],
-                            $inputs_data_values[$input_prop_value . "-d2"]
-                        );
-                        break;
+            switch ($attr) {
+                // case "id":
+                //     if ($attr_value !== FormInput::MC->value) continue 2;
 
-                    case "type":
-                        if ($input_prop_value !== "email") continue 2;
+                //     $condition_name = "form-mc";
 
-                        $condition_name = "email";
-                        $input_value_valid = isValidEmailAddress($input_data_value);
-                        break;
+                //     // TODO: Come up wih something better.
+                //     if (
+                //         !array_key_exists($attr_value . "-d1", $form_data) ||
+                //         !array_key_exists($attr_value . "-d2", $form_data)
+                //     ) {
+                //         break;
+                //     }
 
-                    case "minlength";
-                        $input_value_valid = strlen($input_data_value) >= (int) $input_prop_value;
-                        break;
+                //     $form_control_value_valid = isValidProblem(
+                //         $form_control_value,
+                //         $form_data[$attr_value . "-d1"],
+                //         $form_data[$attr_value . "-d2"]
+                //     );
+                //     break;
 
-                    case "maxlength";
-                        $input_value_valid = strlen($input_data_value) <= (int) $input_prop_value;
-                        break;
+                case "type":
+                    // Continue with next attribute.
+                    if ($attr_value !== "email") continue 2;
 
-                    default:
-                        break;
-                }
+                    $condition_name = "email";
+                    $form_control_value_valid = isValidEmailAddress($form_control_value);
+                    break;
 
-                if (!$input_value_valid) {
-                    array_push($validation_errors, $condition_name);
-                }
+                case "minlength";
+                    $form_control_value_valid = strlen($form_control_value) >= (int) $attr_value;
+                    break;
+
+                case "maxlength";
+                    $form_control_value_valid = strlen($form_control_value) <= (int) $attr_value;
+                    break;
+            }
+
+            if ($form_control_value_valid === false) {
+                array_push($form_control_valiation_result["validation_errors"], $condition_name);
             }
         }
 
-        $input_props_with_validation_errors = $input_props;
-        $input_props_with_validation_errors["validation_errors"] = $validation_errors;
-        array_push($validated_inputs_props, $input_props_with_validation_errors);
+        array_push($validated_form_data, $form_control_valiation_result);
     }
 
-    return $validated_inputs_props;
+    return $validated_form_data;
 }
 
-function getInvalidInputs($validated_inputs_props)
+function getInvalidFormControls($form_data)
 {
-    $invalid_inputs = [];
+    $invalid_form_controls = array_filter($form_data, function ($form_control_data, $key) {
+        return count($form_control_data["validation_errors"]) > 0;
+    }, 1);
 
-    foreach ($validated_inputs_props as $input_props) {
-        if (count($input_props["validation_errors"]) > 0) {
-            $invalid_inputs[$input_props["id"]] = $input_props["validation_errors"];
-        }
-    }
-
-    return $invalid_inputs;
+    return $invalid_form_controls;
 }
 
 function sendMail($values)
@@ -163,19 +158,19 @@ function sendMail($values)
     );
 
     $mail_to = EMAIL_ADDRESS_PERSONAL;
-    $mail_subject = "Contactformulier inzending van " . $values[FormInput::EMAIL->value];
+    $mail_subject = "Contactformulier inzending van " . $values["contact-form-email"];
     $mail_message = sprintf(
         'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd.' . "\n\n" . '%4$s' . "\n\n" . '%5$s',
-        $values[FormInput::NAME->value] ?? "een bezoeker",
+        $values["contact-form-name"] ?? "een bezoeker",
         datefmt_format($date_formatter_nl, time()),
         date("H:i:s"),
-        $values[FormInput::SUBJECT->value],
-        $values[FormInput::MESSAGE->value]
+        $values["contact-form-subject"],
+        $values["contact-form-message"]
     );
     $mail_headers = [
         "Content-Type" => "text/plain; charset=utf-8",
         "From" => EMAIL_ADDRESS_WEBMASTER,
-        "Reply-To" => $values[FormInput::EMAIL->value]
+        "Reply-To" => $values["contact-form-email"]
     ];
 
     $mail_sent = mail($mail_to, $mail_subject, $mail_message, $mail_headers);
@@ -183,45 +178,42 @@ function sendMail($values)
     return $mail_sent;
 }
 
-function handleFormSubmit($form_skeleton)
+function handleFormSubmit($form_items)
 {
     try {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            unset($_SESSION["form_mc_cf"]);
-            returnHttpResponse(StatusCode::METHOD_NOT_ALLOWED);
+            // unset($_SESSION["form_mc_cf"]);
+            returnHttpResponse(HttpStatus::METHOD_NOT_ALLOWED);
         }
 
-        $clean_inputs_post_values = sanitizeInputsValues($_POST);
-        // var_dump($clean_inputs_post_values);
+        $clean_form_data = sanitizeFormData($_POST);
+        // var_dump($clean_form_data);
 
-        $inputs_skeletons = getInputsSkeletons($form_skeleton);
-        // var_dump($inputs_skeletons);
+        $form_controls_attrs = getFormControlsAttributes($form_items);
+        // var_dump($form_controls_attrs);
 
-        $inputs_props = filterInputsAndProps($inputs_skeletons, ["id", "type", "minlength", "maxlength", "pattern", "required"]);
-        // var_dump($inputs_props);
+        $validated_form_data = validateFormData($form_controls_attrs, $clean_form_data);
+        // var_dump($validated_form_data);
 
-        $validated_inputs_props = validateInputs($inputs_props, $clean_inputs_post_values);
-        // var_dump($validated_inputs_props);
+        $invalid_form_controls = getInvalidFormControls(($validated_form_data));
+        // var_dump($invalid_form_controls);
 
-        unset($_SESSION["form_mc_cf"]);
+        // unset($_SESSION["form_mc_cf"]);
 
-        $invalid_inputs = getInvalidInputs($validated_inputs_props);
-        // var_dump($invalid_inputs);
-
-        if (!empty($invalid_inputs)) {
-            returnHttpResponse(StatusCode::UNPROCESSABLE_CONTENT, $invalid_inputs);
+        if (count($invalid_form_controls) > 0) {
+            returnHttpResponse(HttpStatus::UNPROCESSABLE_CONTENT, ["validated_form_data" => $validated_form_data]);
         }
 
-        $mail_sent = sendMail($clean_inputs_post_values);
+        $mail_sent = sendMail($clean_form_data);
 
         $mail_sent
-            ? returnHttpResponse(StatusCode::NO_CONTENT)
-            : returnHttpResponse(StatusCode::BAD_GATEWAY);
+            ? returnHttpResponse(HttpStatus::NO_CONTENT)
+            : returnHttpResponse(HttpStatus::BAD_GATEWAY);
     } catch (Exception $exception) {
-        var_dump($exception);
+        // var_dump($exception);
 
-        returnHttpResponse(StatusCode::INTERNAL_SERVER_ERROR);
+        returnHttpResponse(HttpStatus::INTERNAL_SERVER_ERROR);
     }
 }
 
-handleFormSubmit($FORM["fieldsets"]);
+handleFormSubmit($FORM_ITEMS);

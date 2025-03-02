@@ -44,6 +44,10 @@ fieldset {
             font-size: rem(14px);
         }
 
+        [data-show-validation-message="false"] + & {
+            display: none;
+        }
+
         .field:not(.field--inline) & {
             position: absolute;
             top: calc(100% + #{rem(1px)});
@@ -206,7 +210,7 @@ textarea {
     transition: outline-color $transition-base;
 
     &:not(:focus-visible) {
-        &[data-validate-input="true"] {
+        &[data-show-validation-message="true"] {
             &:invalid {
                 outline-color: $warning;
             }
@@ -237,14 +241,14 @@ textarea {
     }
 }
 
-// TODO: Move to seperate file.
-input[id*="form-mc"] {
-    &:not(:focus-visible) {
-        &[data-validate-input="true"][data-has-input="true"] {
-            &:valid {
-                outline-color: $blue;
-            }
-        }
-    }
-}
-//
+// // TODO: Move to seperate file.
+// input[id*="form-mc"] {
+//     &:not(:focus-visible) {
+//         &[data-show-validation-message="true"][data-has-input="true"] {
+//             &:valid {
+//                 outline-color: $blue;
+//             }
+//         }
+//     }
+// }
+// //
