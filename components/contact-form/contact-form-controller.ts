@@ -342,14 +342,19 @@ async function submitForm(formEl: HTMLFormElement, notifier: SimpleNotifier) {
                 submitResponse.status === HttpStatus.UnprocessableContent &&
                 submitResponseData !== null
             ) {
+                const isFormControlEl = (
+                    el: unknown,
+                ): el is HTMLInputElement | HTMLTextAreaElement =>
+                    typeof el === "object" && el !== null && "placeholder" in el;
+
                 for (const formControlData of submitResponseData["validated_form_data"]) {
                     const el = document.getElementById(formControlData.id);
 
-                    if (!el) continue;
+                    if (!isFormControlEl(el)) continue;
 
                     el.removeAttribute("disabled");
 
-                    updateFieldMessage(el as HTMLInputElement | HTMLTextAreaElement);
+                    updateFieldMessage(el);
 
                     el.setAttribute("disabled", "disabled");
                     el.setAttribute("data-show-validation-message", "true");
