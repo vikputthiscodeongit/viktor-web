@@ -1,9 +1,6 @@
 <?php
 include "global.php";
 
-// TODO: Re-evaluate - this include may be unnecessary.
-include ROOT_DIR . "/session.php";
-
 include ROOT_DIR . "/content/global-content.php";
 
 include ROOT_DIR . "/components/header/header-view.php";

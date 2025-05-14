@@ -1,5 +1,5 @@
 <?php
-require ROOT_DIR . '/vendor/autoload.php';
+require_once ROOT_DIR . '/vendor/autoload.php';
 
 function renderHtmlEl(string $tag, array|string|null $attributes, array|string|null $content): string
 {

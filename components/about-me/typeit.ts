@@ -1,14 +1,12 @@
-import { El, Options } from "typeit/dist/types";
+import { El } from "typeit/dist/types";
 import TypeIt from "typeit";
 
 export default function initTypeItAboutMe(targetEl: Element) {
-    const options: Options = {
+    const instance = new TypeIt(targetEl as El, {
         speed: 75,
         deleteSpeed: 40,
         loop: true,
-    };
-
-    const instance = new TypeIt(targetEl as El, options)
+    })
         //
         .type("Photographer", { delay: 1800 })
         .delete(undefined, { delay: 1000 })

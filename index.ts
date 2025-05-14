@@ -4,18 +4,22 @@ import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import initTypeItAboutMe from "./components/about-me/typeit";
 import initContactForm from "./components/contact-form/contact-form-controller";
 
-void (async function () {
+(function () {
     document.documentElement.classList.replace("js-disabled", "js-enabled");
 
     document.body.addEventListener("mousedown", () => document.body.classList.add("using-mouse"));
     document.body.addEventListener("keydown", () => document.body.classList.remove("using-mouse"));
 
-    htmlDevLabel();
+    htmlDevLabel({ hideOnHover: true });
 
-    const typeItContainerEl = document.querySelector(".viktor-about--typeit > span");
+    try {
+        const typeItContainerEl = document.querySelector(".viktor-about--typeit > span");
 
-    if (typeItContainerEl) {
-        initTypeItAboutMe(typeItContainerEl);
+        if (typeItContainerEl) {
+            initTypeItAboutMe(typeItContainerEl);
+        }
+    } catch (error) {
+        console.error(error);
     }
 
     try {
