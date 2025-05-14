@@ -1,9 +1,8 @@
 import "./style.scss";
 
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
-import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import initTypeItAboutMe from "./components/about-me/typeit";
-import initForm from "./components/contact-form/contact-form-controller";
+import initContactForm from "./components/contact-form/contact-form-controller";
 
 void (async function () {
     document.documentElement.classList.replace("js-disabled", "js-enabled");
@@ -19,20 +18,13 @@ void (async function () {
         initTypeItAboutMe(typeItContainerEl);
     }
 
-    const notifier = new SimpleNotifier({
-        hideOlder: true,
-    });
-
     try {
-        const formEl = document.querySelector<HTMLFormElement>(".form--contact");
+        const contactFormEl = document.querySelector<HTMLFormElement>("#contact-form");
 
-        if (!formEl) {
-            throw new Error("formEl not found!");
+        if (contactFormEl) {
+            initContactForm(contactFormEl);
+            console.info("Contact form initialized.");
         }
-
-        await initForm(formEl, notifier);
-
-        console.log("Contact form initialized.");
     } catch (error) {
         console.error(error);
     }

@@ -8,8 +8,8 @@
 
 .spinner {
     position: relative;
-    display: block;
-    font-size: 1em;
+    display: inline-block;
+    font-size: $font-size-base;
     border-top: 0.166667em solid rgba(0, 0, 0, 0.35);
     border-right: 0.166667em solid rgba(0, 0, 0, 0.35);
     border-bottom: 0.166667em solid rgba(0, 0, 0, 0.35);
@@ -19,6 +19,10 @@
 
     &::after {
         content: "";
+    }
+
+    &--lg {
+        font-size: 1.5rem;
     }
 }
 

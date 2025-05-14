@@ -5,7 +5,7 @@ include ROOT_DIR . "/content/icon-grid-content.php";
 $icon_grid_el = [
     "el" => "ul",
     "attrs" => [
-        "class" => "icon-grid",
+        "class" => "item-grid",
     ],
     "children" => []
 ];
@@ -18,10 +18,10 @@ foreach ($ICON_GRID_ITEMS as $ICON_SET) {
     $list_icon_el_group = [];
 
     foreach ($ICON_SET as $ICON) {
-        $el_class = "icon";
+        $el_class = "icon item";
 
         if ($group_index > 0 && $i === 0) {
-            $el_class .= " icon--shift-right";
+            $el_class .= " item--shift-right";
         }
 
         $el = [

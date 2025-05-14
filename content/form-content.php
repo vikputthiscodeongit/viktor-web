@@ -1,4 +1,5 @@
 <?php
+$FORM_ID = "contact-form";
 $FORM_ITEMS = [
     [
         [
@@ -8,7 +9,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "text",
-                "id" => "name",
+                "id" => $FORM_ID . "-name",
                 "minlength" => "2",
                 "maxlength" => "128",
             ]
@@ -20,7 +21,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "email",
-                "id" => "email",
+                "id" => $FORM_ID . "-email",
                 "required" => "true"
             ]
         ],
@@ -33,7 +34,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "text",
-                "id" => "subject",
+                "id" => $FORM_ID . "-subject",
                 "minlength" => "4",
                 "maxlength" => "128",
                 "required" => "true"
@@ -46,7 +47,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "el" => "textarea",
-                "id" => "message",
+                "id" => $FORM_ID . "-message",
                 "rows" => "8",
                 "minlength" => "12",
                 "required" => "true"
@@ -59,19 +60,19 @@ $FORM_ITEMS = [
                 "type" => "inline",
             ],
             "control" => [
-                "type" => "text",
-                "id" => "simple-maths-captcha",
-                "inputmode" => "numeric",
-                "required" => "true",
+                "el" => "button",
+                "type" => "button",
+                "id" => $FORM_ID . "-simple-maths-captcha-activator",
+                "class" => "btn btn--sm",
+                "text" => "Load CAPTCHA",
             ]
         ],
         [
             "control" => [
-                "text" => "Send",
                 "el" => "button",
                 "type" => "submit",
-                "id" => "submit",
-                "class" => "btn btn--submit",
+                "id" => $FORM_ID . "-submit",
+                "text" => "Send",
             ]
         ]
     ]

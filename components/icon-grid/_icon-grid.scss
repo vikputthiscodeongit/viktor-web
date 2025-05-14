@@ -1,22 +1,9 @@
 .icon {
-    &-grid {
-        margin: rem(-12px);
-    }
-
     display: inline-block;
-    margin: rem(6px);
     width: rem(32px);
 
     @include respond-above(lg) {
         width: rem(40px);
-    }
-
-    &--shift-right {
-        margin-left: rem(50px);
-
-        @include respond-above(lg) {
-            margin-left: rem(75px);
-        }
     }
 
     a {

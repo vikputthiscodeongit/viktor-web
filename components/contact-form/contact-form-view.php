@@ -7,7 +7,7 @@ $form_el = [
     "attrs" => [
         "method" => "POST",
         "class" => "form form--contact has-overlay js-required",
-        "name" => "contact-form",
+        "id" => $FORM_ID,
     ],
     "children" => []
 ];
@@ -16,7 +16,7 @@ foreach ($FORM_ITEMS as $FIELDSET) {
     $fieldset_el = [
         "el" => "fieldset",
         "attrs" => [
-            "disabled" => "disabled"
+            "disabled" => "true"
         ],
         "children" => []
     ];
@@ -58,13 +58,13 @@ foreach ($FORM_ITEMS as $FIELDSET) {
         }
 
         $input_el = [
-            "el" => isset($FIELD["control"]["el"]) ? $FIELD["control"]["el"] : "input",
+            "el" => $FIELD["control"]["el"] ?? "input",
             "attrs" => array_filter($FIELD["control"], function ($attr) {
                 return $attr !== "el";
-            }),
+            }, ARRAY_FILTER_USE_KEY),
         ];
-        $input_el["attrs"]["id"] = $form_el["attrs"]["name"] . "-" . $input_el["attrs"]["id"];
-        $input_el["attrs"]["name"] = $form_el["attrs"]["name"] . "-" . $FIELD["control"]["id"];
+        $input_el["attrs"]["id"] = $input_el["attrs"]["id"];
+        $input_el["attrs"]["name"] = $FIELD["control"]["id"];
 
         if (isset($FIELD["control"]["text"])) {
             $input_el["text"] = $FIELD["control"]["text"];
@@ -72,7 +72,7 @@ foreach ($FORM_ITEMS as $FIELDSET) {
 
         array_push($field_el_children, $input_el);
 
-        if ($input_el["el"] !== "button") {
+        if (!isset($FIELD["control"]["type"]) || $FIELD["control"]["type"] !== "submit") {
             $message_el = [
                 "el" => "span",
                 "attrs" => [

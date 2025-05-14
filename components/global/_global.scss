@@ -145,6 +145,24 @@ img {
     }
 }
 
+.item {
+    &-grid {
+        margin: rem(-6px);
+
+        & > * {
+            margin: rem(6px);
+        }
+    }
+
+    &--shift-right {
+        margin-left: rem(50px);
+
+        @include respond-above(lg) {
+            margin-left: rem(75px);
+        }
+    }
+}
+
 .site-section-title {
     margin-bottom: rem(40px);
 

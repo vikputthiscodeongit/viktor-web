@@ -11,31 +11,27 @@ enum HttpStatus: int
 
 function returnHttpResponse(
     HttpStatus $status_code,
-    mixed $data = [],
+    mixed $data = null,
     array $headers = []
 ) {
     http_response_code($status_code->value);
 
-    $header_content_type = "application/json; charset=utf-8";
+    $is_json_data = false;
 
-    if (!empty($headers)) {
-        foreach ($headers as $header => $value) {
-            if ($header === "Content-Type") {
-                $header_content_type = $value;
-
-                continue;
-            }
-
-            header($header);
-        }
+    if (!is_null($data) && !array_key_exists("Content-Type", $headers)) {
+        array_push($headers, ["Content-Type" => "application/json"]);
     }
 
-    if (!empty($data)) {
-        header("Content-Type:" . $header_content_type);
+    foreach ($headers as $header) {
+        if (key($header) === "Content-Type" && strpos(current($header), "/json") !== false) {
+            $is_json_data = true;
+        }
 
-        echo str_contains($header_content_type, "application/json")
-            ? json_encode($data)
-            : $data;
+        header(key($header) . ":" . current($header));
+    }
+
+    if (!is_null($data)) {
+        echo $is_json_data ? json_encode($data) : $data;
     }
 
     exit();

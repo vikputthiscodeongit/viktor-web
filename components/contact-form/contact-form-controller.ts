@@ -1,14 +1,12 @@
+// TODO:
+// * Add border when CAPTCHA :valid.
+// Possible solution: add instance option for answerInputEl data attributes to be
+// added on either input and/or submit. Would solve :invalid border missing when
+// form submit produces HTTP 500 and CAPTCHA is :valid.
+
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
-// import FormMc from "../form-mc/form-mc-controller";
-
-interface CaptchaResponse {
-    valid: boolean;
-}
-
-interface UnprocessableContentSubmitResponse {
-    validated_form_data: { id: string; validation_errors: string[] }[];
-}
+import SimpleMathsCaptcha from "../simple-maths-captcha/simple-maths-captcha-controller";
 
 const HttpStatus = {
     Ok: 200,
@@ -22,46 +20,48 @@ const HttpStatus = {
 const FormControlValidationMessage = {
     default: "Input invalid",
     email: "Email address invalid",
-    // formMc: "Answer incorrect",
     maxlength: "Input must be shorter than %d characters",
     minlength: "Input must contain more than %d characters",
     pattern: "Input format invalid",
     requiredEmpty: "Input required",
 };
 
-const FormSubmitMessageContent = {
-    [HttpStatus.NoContent]: {
+const NotificationContent = {
+    sumbitSuccess: {
         title: "Message sent",
         text: "I'll be in touch soon!",
+        variant: "success",
     },
-    [HttpStatus.MethodNotAllowed]: {
-        text: "Failed to send message. Please try again at a later time.",
+    submitErrorCaptchaInactive: {
+        text: "CAPTCHA is required. Please load it and solve the problem.",
+        variant: "warning",
     },
-    [HttpStatus.UnprocessableContent]: {
+    submitErrorValidationFailed: {
         text: "One or more fields failed validation. Please check and correct them.",
+        variant: "warning",
     },
-    [HttpStatus.InternalServerError]: {
+    submitErrorUnknown: {
         text: "Failed to send message. Please try again at a later time.",
+        variant: "error",
     },
-    [HttpStatus.BadGateway]: {
-        text: "Failed to send message. Please try again at a later time.",
-    },
-};
-
-const FormDataInStorageMessageContent = {
-    currentlyInStorage: {
+    msgInStorage: {
         text: "A previously unsent message was stored.",
+        variant: "info",
     },
-    pushedToStorage: {
-        text: "The message has been stored locally on your device.",
+    msgPushedToStorage: {
+        text: "Your message has been stored on your device. You may close this page and come back at a later time to retry sending it.",
+        variant: "info",
+        hideAfterTime: 8000,
     },
-    removedFromStorage: {
+    msgRemovedFromStorage: {
         text: "Message removed from storage.",
+        variant: "info",
     },
 };
 
-function getFormControlValidationMessage(el: HTMLInputElement | HTMLTextAreaElement) {
-    // if (!el.id.includes("form-mc") && el.validity.valid) {
+function getFormControlValidationMessage(
+    el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement,
+) {
     if (el.validity.valid === true) {
         return null;
     }
@@ -98,14 +98,12 @@ function getFormControlValidationMessage(el: HTMLInputElement | HTMLTextAreaElem
         return message;
     }
 
-    // if (el.id.includes("form-mc")) {
-    //     return FormControlValidationMessage.formMc;
-    // }
-
     return FormControlValidationMessage.default;
 }
 
-function updateFieldMessage(el: HTMLInputElement | HTMLTextAreaElement) {
+function updateFieldMessage(el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement) {
+    console.info("updateFieldMessage: Running...");
+
     if (!el.parentElement) return;
 
     const messageEl = el.parentElement.querySelector(".field__message");
@@ -117,42 +115,23 @@ function updateFieldMessage(el: HTMLInputElement | HTMLTextAreaElement) {
     return;
 }
 
-function getFormSubmitNotificationContent(statusCode: number) {
-    const content = {
-        ...FormSubmitMessageContent[
-            Object.keys(FormSubmitMessageContent).includes(statusCode.toString()) ? statusCode : 500
-        ],
-        variant:
-            statusCode >= 200 && statusCode <= 299
-                ? "success"
-                : statusCode === HttpStatus.UnprocessableContent
-                  ? "warning"
-                  : "error",
-    };
-
-    return content;
-}
-
-function getFormDataInStorageNotificationContent(
-    state: keyof typeof FormDataInStorageMessageContent,
-) {
-    return {
-        ...FormDataInStorageMessageContent[state],
-        variant: "info",
-    };
-}
-
 function loadStoredFormData(formDataFromLocalStorage: string, formEl: HTMLFormElement) {
+    console.info("loadStoredFormData: Running...");
+
     try {
-        const formControlEls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-            "input:not([type=button], [type=reset], [type=submit]), textarea",
-        );
-        const formData = JSON.parse(formDataFromLocalStorage) as { [inputName: string]: string };
+        const formControlElsWithoutButtons = formEl.querySelectorAll<
+            HTMLInputElement | HTMLTextAreaElement
+        >("input:not([type=button], [type=reset], [type=submit]), textarea");
+        const formData = JSON.parse(formDataFromLocalStorage) as { [name: string]: string };
         const formControlElsWithFormData = Object.keys(formData);
 
-        formControlEls.forEach((el) => {
+        formControlElsWithoutButtons.forEach((el) => {
             if (formControlElsWithFormData.includes(el.id)) {
                 el.value = formData[el.id];
+                updateFieldMessage(el);
+                el.setAttribute("data-has-input", "true");
+                el.setAttribute("data-had-interaction", "true");
+                el.setAttribute("data-show-validation-message", "true");
             }
         });
 
@@ -164,18 +143,21 @@ function loadStoredFormData(formDataFromLocalStorage: string, formEl: HTMLFormEl
     }
 }
 
-function prepareStoredFormData(
+function initStoredFormDataLoader(
     formDataFromLocalStorage: string,
     formEl: HTMLFormElement,
     notifier: SimpleNotifier,
 ) {
-    const fieldsetEl = createEl("fieldset");
+    console.info("initStoredFormDataLoader: Running...");
 
+    const fieldsetEl = createEl("fieldset");
     const fieldEl = createEl("div", { class: "field" });
+    const legendEl = createEl("legend", { textContent: "A previously unsent message was stored." });
+    const buttonContainerEl = createEl("div", { class: "item-grid" });
 
     const loadButtonEl = createEl("button", {
         type: "button",
-        class: "btn",
+        class: "btn btn--sm",
         textContent: "Load",
     });
     loadButtonEl.addEventListener(
@@ -183,199 +165,119 @@ function prepareStoredFormData(
         () => {
             loadStoredFormData(formDataFromLocalStorage, formEl);
             fieldsetEl.remove();
+
+            return;
         },
         { once: true },
     );
-    fieldEl.appendChild(loadButtonEl);
+    buttonContainerEl.append(loadButtonEl);
 
     const clearButtonEl = createEl("button", {
         type: "button",
-        class: "btn",
+        class: "btn btn--sm",
         textContent: "Remove",
     });
     clearButtonEl.addEventListener(
         "click",
         () => {
-            localStorage.removeItem(`${formEl.name}-data`);
+            localStorage.removeItem(`${formEl.id}-data`);
             fieldsetEl.remove();
 
-            notifier.show(getFormDataInStorageNotificationContent("removedFromStorage"));
+            notifier.show(NotificationContent.msgRemovedFromStorage);
+
+            return;
         },
         { once: true },
     );
-    fieldEl.appendChild(clearButtonEl);
+    buttonContainerEl.append(clearButtonEl);
 
-    fieldsetEl.appendChild(fieldEl);
+    fieldEl.append(legendEl, buttonContainerEl);
+    fieldsetEl.append(fieldEl);
     formEl.insertBefore(fieldsetEl, formEl.firstElementChild);
-
-    notifier.show({
-        ...getFormDataInStorageNotificationContent("currentlyInStorage"),
-        hideAfterTime: 0,
-        dismissable: true,
-    });
 
     return;
 }
 
-// TODO: Do after form interaction.
-export default async function initForm(formEl: HTMLFormElement, notifier: SimpleNotifier) {
-    try {
-        const submitTriggerEl = formEl.querySelector("[type=submit]");
+async function submitForm(
+    formEl: HTMLFormElement,
+    mathsCaptcha: SimpleMathsCaptcha,
+    notifier: SimpleNotifier,
+) {
+    console.info("submitForm: Running...");
 
-        if (!submitTriggerEl) {
-            throw new Error("submitTriggerEl not found!");
-        }
-
-        // const formMcInputEl = formEl.querySelector<HTMLInputElement>("input[name=cf-form-mc]");
-
-        // if (!formMcInputEl) {
-        //     throw new Error("formMcInputEl not found!");
-        // }
-
-        // const formMc = new FormMc({ inputEl: formMcInputEl });
-
-        const pushedToStorageFormData = localStorage.getItem(`${formEl.name}-data`);
-
-        if (pushedToStorageFormData) {
-            prepareStoredFormData(pushedToStorageFormData, formEl, notifier);
-        }
-
-        const formControlEls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-            "input:not([type=button], [type=reset], [type=submit]), textarea",
-        );
-
-        formControlEls.forEach((el) => {
-            el.setAttribute("data-show-validation-message", "false");
-
-            el.addEventListener("input", () => el.setAttribute("data-had-interaction", "true"), {
-                once: true,
-            });
-
-            // TODO: Debounce.
-            el.addEventListener("input", () => {
-                updateFieldMessage(el);
-
-                if (el.value !== "") {
-                    el.setAttribute("data-has-input", "true");
-                } else {
-                    el.removeAttribute("data-has-input");
-                }
-            });
-
-            el.addEventListener("blur", () => {
-                if (el.hasAttribute("data-has-input") && el.hasAttribute("data-had-interaction")) {
-                    el.setAttribute("data-show-validation-message", "true");
-                }
-            });
-        });
-
-        // formEl.addEventListener("formMcInitialized", () => {
-        // TODO: Mogelijke edge case: FormMc wordt verwijderd uit het formulier wanneer deze input heeft, en later weer toegevoegd. Attribute is dan set. Oplossen in FormMc? InputEl moet altijd props reset bij verwijdering uit DOM?
-        submitTriggerEl.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            // const fn = async () => await submitForm(formEl, formMc, notifier);
-            const fn = async () => await submitForm(formEl, notifier);
-            fn().catch((reason) => console.error(reason));
-        });
-
-        formEl
-            .querySelectorAll("fieldset:disabled")
-            .forEach((el) => el.removeAttribute("disabled"));
-
-        formEl.classList.remove("has-overlay");
-        // });
-
-        // TODO: Add event listener on formMc activated & return to caller.
-        // await formMc.activate();
-
-        return;
-    } catch (error) {
-        throw error instanceof Error
-            ? error
-            : new Error("initForm(): Unknown form initialization error!");
-    }
-}
-
-// TODO:
-// * Validate that fetchWithTimeout abort is properly handled.
-// * Immediately refresh CAPTCHA after submit.
-// async function submitForm(formEl: HTMLFormElement, formMc: FormMc, notifier: SimpleNotifier) {
-async function submitForm(formEl: HTMLFormElement, notifier: SimpleNotifier) {
-    const formControlEls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-        "input, textarea",
-    );
+    let submitSuccessful = false;
+    const formFieldsets = formEl.querySelectorAll<HTMLFieldSetElement>("fieldset");
 
     try {
-        // formMc.clearTimer();
-
-        const formData = new FormData(formEl);
-
-        formControlEls.forEach((el) => el.setAttribute("disabled", "disabled"));
-
-        // const captchaResponse = await fetchWithTimeout();
-        // const captchaResponseData = (await captchaResponse.json()) as CaptchaResponse;
-
-        // if (!captchaResponse.ok || !captchaResponseData.valid) {
-        //     notifier.show(getFormSubmitNotificationContent(captchaResponse.status));
-
-        //     return;
-        // }
-
-        const submitResponse = await fetchWithTimeout(
-            "./components/contact-form/contact-form-controller.php",
-            {
-                method: "POST",
-                body: formData,
-            },
-        );
-        const submitResponseData = submitResponse.body
-            ? ((await submitResponse.json()) as UnprocessableContentSubmitResponse)
-            : null;
+        formFieldsets.forEach((el) => {
+            el.setAttribute("disabled", "true");
+        });
 
         const formControlElsWithoutButtons = formEl.querySelectorAll<
             HTMLInputElement | HTMLTextAreaElement
         >("input:not([type=button], [type=reset], [type=submit]), textarea");
+        const formData = new FormData();
+
+        formControlElsWithoutButtons.forEach((el) => {
+            formData.set(el.name, el.value);
+        });
+
+        const submitResponse = await fetchWithTimeout("./api/contact-form/submit-form.php", {
+            method: "POST",
+            body: formData,
+        });
 
         if (!submitResponse.ok) {
-            if (
-                submitResponse.status === HttpStatus.UnprocessableContent &&
-                submitResponseData !== null
-            ) {
-                const isFormControlEl = (
-                    el: unknown,
-                ): el is HTMLInputElement | HTMLTextAreaElement =>
-                    typeof el === "object" && el !== null && "placeholder" in el;
+            if (submitResponse.status === HttpStatus.UnprocessableContent) {
+                const responseData = (await submitResponse.json()) as {
+                    message: string;
+                    invalid_form_controls: {
+                        id: string;
+                        validation_errors: [string | true];
+                    }[];
+                };
 
-                for (const formControlData of submitResponseData["validated_form_data"]) {
-                    const el = document.getElementById(formControlData.id);
+                let notificationOptions = NotificationContent.submitErrorValidationFailed;
 
-                    if (!isFormControlEl(el)) continue;
+                if (
+                    responseData.invalid_form_controls.find((control) =>
+                        control.id.includes(mathsCaptcha.answerInputEl.id),
+                    )
+                ) {
+                    mathsCaptcha.setIsValidState(false);
 
-                    el.removeAttribute("disabled");
-
-                    updateFieldMessage(el);
-
-                    el.setAttribute("disabled", "disabled");
-                    el.setAttribute("data-show-validation-message", "true");
-                }
-            }
-
-            notifier.show(getFormSubmitNotificationContent(submitResponse.status));
-
-            if (submitResponse.status !== HttpStatus.UnprocessableContent) {
-                const formData: { [inputName: string]: string } = {};
-
-                for (const el of Array.from(formControlElsWithoutButtons)) {
-                    // if (el.name.includes("form-mc")) continue;
-
-                    formData[el.name] = el.value;
+                    if (
+                        responseData.invalid_form_controls.length === 1 &&
+                        responseData.invalid_form_controls[0].validation_errors.includes(true)
+                    ) {
+                        notificationOptions = NotificationContent.submitErrorCaptchaInactive;
+                    }
+                } else {
+                    mathsCaptcha.setIsValidState(true);
                 }
 
-                localStorage.setItem(`${formEl.name}-data`, JSON.stringify(formData));
+                notifier.show(notificationOptions);
+            } else {
+                notifier.show(NotificationContent.submitErrorUnknown);
+
+                mathsCaptcha.setIsValidState(true);
+
+                const formDataObj: { [name: string]: string } = {};
+
+                // TODO: Fix TypeScript error.
+                for (const [name, value] of formData.entries()) {
+                    if (mathsCaptcha.isCaptchaInputEl(name)) continue;
+
+                    // This form has no input of type "file".
+                    if (typeof value !== "string" || value.trim() === "") continue;
+
+                    formDataObj[name] = value;
+                }
+
+                localStorage.setItem(`${formEl.id}-data`, JSON.stringify(formDataObj));
 
                 notifier.show({
-                    ...getFormDataInStorageNotificationContent("pushedToStorage"),
+                    ...NotificationContent.msgPushedToStorage,
                     hideOlder: false,
                 });
             }
@@ -383,19 +285,128 @@ async function submitForm(formEl: HTMLFormElement, notifier: SimpleNotifier) {
             return;
         }
 
-        notifier.show(getFormSubmitNotificationContent(submitResponse.status));
+        submitSuccessful = true;
 
-        localStorage.removeItem(`${formEl.name}-data`);
+        notifier.show(NotificationContent.sumbitSuccess);
+
+        localStorage.removeItem(`${formEl.id}-data`);
         formControlElsWithoutButtons.forEach((el) => (el.value = ""));
 
         return;
     } catch (error) {
-        notifier.show(getFormSubmitNotificationContent(500));
+        notifier.show(NotificationContent.submitErrorUnknown);
 
         throw error instanceof Error ? error : new Error("Unknown error during form submission!");
     } finally {
-        formControlEls.forEach((el) => el.removeAttribute("disabled"));
+        formFieldsets.forEach((el) => el.removeAttribute("disabled"));
 
-        // await formMc.createProblem();
+        const formControlElsWithButtonButtonsWithId = formEl.querySelectorAll<
+            HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement
+        >(
+            "button[id]:not([type=reset], [type=submit]), input:not([type=reset], [type=submit]), textarea",
+        );
+        formControlElsWithButtonButtonsWithId.forEach((el) => {
+            updateFieldMessage(el);
+            el.setAttribute("data-show-validation-message", !submitSuccessful ? "true" : "false");
+        });
+    }
+}
+
+export default function initContactForm(formEl: HTMLFormElement) {
+    console.info("initContactForm: Running...");
+
+    try {
+        const submitButtonEl = formEl.querySelector("[type=submit]");
+
+        if (!submitButtonEl) {
+            throw new Error("submitButtonEl not found!");
+        }
+
+        const mathsCaptchaActivatorButtonEl = formEl.querySelector<HTMLButtonElement>(
+            `#${formEl.id}-simple-maths-captcha-activator`,
+        );
+
+        if (!mathsCaptchaActivatorButtonEl) {
+            throw new Error("mathsCaptchaActivatorButtonEl not found!");
+        }
+
+        const mathsCaptcha = new SimpleMathsCaptcha({
+            activatorButtonEl: mathsCaptchaActivatorButtonEl,
+            baseId: `${formEl.id}-simple-maths-captcha`,
+        });
+        const notifier = new SimpleNotifier({ hideOlder: true });
+
+        const storedFormData = localStorage.getItem(`${formEl.id}-data`);
+
+        if (storedFormData) {
+            initStoredFormDataLoader(storedFormData, formEl, notifier);
+        }
+
+        const formControlElsWithoutButtons = formEl.querySelectorAll<
+            HTMLInputElement | HTMLTextAreaElement
+        >("input:not([type=button], [type=reset], [type=submit]), textarea");
+
+        formControlElsWithoutButtons.forEach((el) => {
+            el.setAttribute("data-show-validation-message", "false");
+
+            el.addEventListener(
+                "input",
+                () => {
+                    console.debug(
+                        "initContactForm: `input` event fired for first time on form control.",
+                    );
+
+                    el.setAttribute("data-had-interaction", "true");
+
+                    return;
+                },
+                { once: true },
+            );
+
+            // TODO: Debounce
+            el.addEventListener("input", () => {
+                console.debug("initContactForm: `input` event fired on form control.");
+
+                updateFieldMessage(el);
+
+                if (el.value !== "") {
+                    el.setAttribute("data-has-input", "true");
+                } else {
+                    el.removeAttribute("data-has-input");
+                }
+
+                return;
+            });
+
+            el.addEventListener("blur", () => {
+                console.debug("initContactForm: `blur` event fired on form control.");
+
+                if (el.hasAttribute("data-has-input") && el.hasAttribute("data-had-interaction")) {
+                    el.setAttribute("data-show-validation-message", "true");
+                }
+
+                return;
+            });
+        });
+
+        submitButtonEl.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            submitForm(formEl, mathsCaptcha, notifier).catch((error) => console.error(error));
+
+            return;
+        });
+
+        formEl
+            .querySelectorAll("fieldset:disabled")
+            .forEach((el) => el.removeAttribute("disabled"));
+
+        formEl.classList.remove("has-overlay");
+
+        return;
+    } catch (error) {
+        throw error instanceof Error
+            ? error
+            : new Error("Unknown error during form initialization!");
     }
 }

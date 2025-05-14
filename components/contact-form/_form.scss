@@ -3,7 +3,7 @@
 }
 
 fieldset {
-    margin-bottom: rem(30px);
+    margin-bottom: rem(36px);
 
     @include respond-above(md) {
         margin-bottom: rem(45px);
@@ -15,18 +15,16 @@ fieldset {
     }
 }
 
+legend {
+    margin-bottom: rem(4px);
+    font-size: $font-size-base;
+}
+
 .field {
     position: relative;
 
-    &--inline {
-        display: flex;
-        gap: rem(16px);
-        justify-content: flex-start;
-        align-items: center;
-    }
-
     fieldset & {
-        margin-bottom: rem(20px);
+        margin-bottom: rem(24px);
 
         @include respond-above(md) {
             margin-bottom: rem(30px);
@@ -37,18 +35,25 @@ fieldset {
         }
     }
 
+    &--inline > * {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: rem(16px);
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
     &__message {
-        font-size: rem(12px);
+        display: none;
+        font-size: rem(13px);
 
-        @include respond-above(md) {
-            font-size: rem(14px);
+        [data-show-validation-message="true"] ~ & {
+            display: block;
         }
 
-        [data-show-validation-message="false"] + & {
-            display: none;
-        }
-
-        .field:not(.field--inline) & {
+        .field & {
             position: absolute;
             top: calc(100% + #{rem(1px)});
             left: 0;
@@ -127,17 +132,17 @@ input[type="submit"] {
     display: inline-flex;
     align-items: center;
     width: auto;
-    padding: rem(14px) rem(22px);
+    padding: rem(8px) rem(16px);
     text-decoration: none;
     line-height: 1;
     font: $font-weight-base $font-size-base $headings-font-family;
     color: $white;
     background-color: $blue;
     border: rem(2px) solid $blue;
-    border-radius: rem(100px);
+    border-radius: rem(1.25em);
     outline: rem(2px) solid transparent;
     outline-offset: rem(4px);
-    // TODO: Align animation with input animation?
+    // TODO: Use $transition-base for all animations?
     transition:
         background-color 0.2s ease-in-out,
         border-color 0.2s ease-in-out,
@@ -168,6 +173,13 @@ input[type="submit"] {
     }
 }
 
+.btn {
+    &--sm {
+        padding: rem(6px) rem(12px);
+        font-size: rem(12px);
+    }
+}
+
 input[type="text"] {
     .field--inline & {
         &[inputmode="numeric"] {
@@ -181,7 +193,7 @@ input[type="text"] {
     // WebKit-based browsers
     &:-webkit-autofill,
     &:-internal-autofill-selected {
-        // TODO: Check if equalling <input> height suffices?
+        // TODO: Check if still required.
         box-shadow: 0 0 0 1000px $off-white-dark inset;
 
         @media (prefers-contrast: more) {
@@ -240,15 +252,3 @@ textarea {
         color: $gray;
     }
 }
-
-// // TODO: Move to seperate file.
-// input[id*="form-mc"] {
-//     &:not(:focus-visible) {
-//         &[data-show-validation-message="true"][data-has-input="true"] {
-//             &:valid {
-//                 outline-color: $blue;
-//             }
-//         }
-//     }
-// }
-// //
