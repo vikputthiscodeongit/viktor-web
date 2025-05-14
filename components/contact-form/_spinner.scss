@@ -1,0 +1,37 @@
+// https://projects.lukehaas.me/css-loaders/ - number 8 with some improvements
+.spinner,
+.spinner::after {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+.spinner {
+    position: relative;
+    display: inline-block;
+    font-size: $font-size-base;
+    border-top: 0.166667em solid rgba(0, 0, 0, 0.35);
+    border-right: 0.166667em solid rgba(0, 0, 0, 0.35);
+    border-bottom: 0.166667em solid rgba(0, 0, 0, 0.35);
+    border-left: 0.166667em solid rgba(0, 0, 0, 0.175);
+    transform: translateZ(0);
+    animation: spin 1s infinite linear;
+
+    &::after {
+        content: "";
+    }
+
+    &--lg {
+        font-size: 1.5rem;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

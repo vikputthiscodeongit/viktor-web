@@ -1,111 +1,33 @@
-# -----------------------------------------------------------------
-# .gitignore for WordPress @salcode
-# ver 20180808
-#
-# From the root of your project run
-# curl -O https://gist.githubusercontent.com/salcode/b515f520d3f8207ecd04/raw/.gitignore
-# to download this file
-#
-# By default all files are ignored.  You'll need to whitelist
-# any mu-plugins, plugins, or themes you want to include in the repo.
-#
-# To ignore uncommitted changes in a file that is already tracked, use
-# git update-index --assume-unchanged
-#
-# To stop tracking a file that is currently tracked, use
-# git rm --cached
-#
-# Change Log:
-# 20180808 unignore site.webmanifest
-# 20180714 unignore .phpcs.xml.dist
-# 20160309 Added favicon files as whitelisted files
-# 20150302 Added composer.json as a whitelisted file
-# 20150227 Created as fork of https://gist.github.com/salcode/9940509,
-#   this version ignores all files by default
-# -----------------------------------------------------------------
-
-# ignore everything in the root except the "wp-content" directory.
-/*
-!wp-content/
-
-# ignore everything in the "wp-content" directory, except:
-# mu-plugins, plugins, and themes directories
-wp-content/*
-!wp-content/mu-plugins/
-!wp-content/plugins/
-!wp-content/themes/
-
-# ignore all mu-plugins, plugins, and themes
-# unless explicitly whitelisted at the end of this file
-wp-content/mu-plugins/*
-wp-content/plugins/*
-wp-content/themes/*
-
-# ignore all files starting with . or ~
+# Ignore all files starting with . or ~
 .*
 ~*
 
-# ignore node dependency directories (used by grunt)
+# Ignore dependency directories
 node_modules/
+vendor/
 
-# ignore OS generated files
+# Ignore OS generated files
 ehthumbs.db
 Thumbs.db
 
-# ignore Editor files
-*.sublime-project
-*.sublime-workspace
-*.komodoproject
+# Ignore editor files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
-# ignore log files and databases
-*.log
-*.sql
-*.sqlite
+# Local History for Visual Studio Code
+.history/
 
-# ignore compiled files
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
+# Built Visual Studio Code Extensions
+*.vsix
 
-# ignore packaged files
-*.7z
-*.dmg
-*.gz
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
+# Track build tooling files
+!.git*
+!.eslint*
+!.prettier*
 
-# ignore theme distributables
-wp-content/themes/viktor-web/dist/
-
-# -------------------------
-# BEGIN Whitelisted Files
-# -------------------------
-
-# track these files, if they exist
-!.gitignore
-!.editorconfig
-!.phpcs.xml.dist
-!README.md
-!CHANGELOG.md
-!composer.json
-
-# track favicon files, if they exist
-!android-chrome-*.png
-!apple-touch-icon*.png
-!browserconfig.xml
-!favicon*.png
-!favicon*.ico
-!manifest.json
-!mstile-*.png
-!safari-pinned-tab.svg
-!site.webmanifest
-
-# track these mu-plugins, plugins, and themes
-# add your own entries here
-!wp-content/themes/viktor-web/
+#
+_folder/values.php

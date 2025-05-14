@@ -1,0 +1,45 @@
+// Viewport
+$min-vw: rem(320px);
+$min-vh: rem(480px);
+
+// Grid breakpoints
+$grid-breakpoints: (
+    xxs: 0,
+    // 448
+    xs: 28em,
+    // 576
+    sm: 36em,
+    // 768
+    md: 48em,
+    // 992
+    lg: 62em,
+    // 1280
+    xl: 80em,
+    // 1440
+    xxl: 90em,
+);
+
+$grid-height-breakpoints: (
+    // 640
+    md: 40em,
+    // 720
+    lg: 45em,
+    // 800
+    xl: 50em,
+    // 896
+    xxl: 56em
+);
+
+// Grid containers
+$container-max-widths: (
+    xxs: rem(360px),
+    xs: rem(400px),
+    sm: rem(540px),
+    md: rem(720px),
+    lg: rem(960px),
+    xl: rem(1200px),
+    xxl: rem(1366px),
+);
+
+//
+$transition-base: 0.1s linear;

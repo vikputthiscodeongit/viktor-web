@@ -1,0 +1,254 @@
+.form {
+    max-width: rem(640px);
+}
+
+fieldset {
+    margin-bottom: rem(36px);
+
+    @include respond-above(md) {
+        margin-bottom: rem(45px);
+    }
+
+    &:last-child,
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+legend {
+    margin-bottom: rem(4px);
+    font-size: $font-size-base;
+}
+
+.field {
+    position: relative;
+
+    fieldset & {
+        margin-bottom: rem(24px);
+
+        @include respond-above(md) {
+            margin-bottom: rem(30px);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &--inline > * {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: rem(16px);
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &__message {
+        display: none;
+        font-size: rem(13px);
+
+        [data-show-validation-message="true"] ~ & {
+            display: block;
+        }
+
+        .field & {
+            position: absolute;
+            top: calc(100% + #{rem(1px)});
+            left: 0;
+
+            @include respond-above(md) {
+                top: calc(100% + #{rem(2px)});
+            }
+        }
+    }
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: rem(8px);
+    margin-bottom: rem(4px);
+    font-family: $headings-font-family;
+    font-weight: 500;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .field--ifl & {
+        position: absolute;
+        top: rem(2px);
+        left: rem(2px);
+        right: rem(2px);
+        z-index: 1;
+        margin-bottom: 0;
+        padding: rem(13px) rem(12px) rem(5px);
+        line-height: 1;
+        font-size: rem(13px);
+        font-weight: $font-weight-base;
+        color: $blue;
+        background-color: $off-white-dark;
+        border-top-left-radius: rem(4px);
+        border-top-right-radius: rem(4px);
+        user-select: none;
+
+        @media (prefers-contrast: more) {
+            background-color: $white;
+        }
+
+        > span:nth-child(2) {
+            color: $gray;
+        }
+    }
+
+    .field--inline & {
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
+
+    > span:nth-child(2) {
+        flex-shrink: 0;
+        margin-left: auto;
+        font-size: rem(10px);
+    }
+}
+
+input {
+    // Gecko
+    &:-moz-ui-invalid {
+        box-shadow: none;
+    }
+}
+
+textarea {
+    display: block;
+}
+
+button,
+input[type="button"],
+input[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    padding: rem(8px) rem(16px);
+    text-decoration: none;
+    line-height: 1;
+    font: $font-weight-base $font-size-base $headings-font-family;
+    color: $white;
+    background-color: $blue;
+    border: rem(2px) solid $blue;
+    border-radius: rem(1.25em);
+    outline: rem(2px) solid transparent;
+    outline-offset: rem(4px);
+    // TODO: Use $transition-base for all animations?
+    transition:
+        background-color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out,
+        outline-color $transition-base;
+
+    &:hover {
+        &:not(:disabled) {
+            background-color: darken($blue, 10%);
+            border-color: darken($blue, 10%);
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    &:focus-visible {
+        outline-color: $blue;
+
+        @media (prefers-contrast: more) {
+            outline-color: $black;
+        }
+    }
+
+    &:disabled {
+        background-color: $gray;
+        border-color: $gray;
+    }
+}
+
+.btn {
+    &--sm {
+        padding: rem(6px) rem(12px);
+        font-size: rem(12px);
+    }
+}
+
+input[type="text"] {
+    .field--inline & {
+        &[inputmode="numeric"] {
+            width: rem(64px);
+        }
+    }
+}
+
+input[type="email"],
+input[type="text"] {
+    // WebKit-based browsers
+    &:-webkit-autofill,
+    &:-internal-autofill-selected {
+        // TODO: Check if still required.
+        box-shadow: 0 0 0 1000px $off-white-dark inset;
+
+        @media (prefers-contrast: more) {
+            box-shadow: 0 0 0 1000px $white inset;
+        }
+    }
+
+    // .field--ifl & {
+    //     // TODO: Check if still required.
+    //     // Setting a fixed height is sadly the only way to guarantee consistent appearance across browsers.
+    //     height: rem(69px);
+    // }
+}
+
+input[type="email"],
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: rem(12px);
+    line-height: $line-height-base;
+    font-size: $font-size-base;
+    background-color: $off-white-dark;
+    border: rem(2px) solid transparent;
+    border-radius: rem(4px);
+    outline: rem(2px) solid transparent;
+    transition: outline-color $transition-base;
+
+    &:not(:focus-visible) {
+        &[data-show-validation-message="true"] {
+            &:invalid {
+                outline-color: $warning;
+            }
+
+            &[data-has-input="true"] {
+                &:valid {
+                    outline-color: $success;
+                }
+            }
+        }
+    }
+
+    &:focus-visible {
+        outline-color: $blue;
+
+        @media (prefers-contrast: more) {
+            outline-color: $black;
+        }
+    }
+
+    .field--ifl & {
+        padding-top: rem(31px);
+        padding-bottom: rem(8px);
+    }
+
+    &::placeholder {
+        color: $gray;
+    }
+}
