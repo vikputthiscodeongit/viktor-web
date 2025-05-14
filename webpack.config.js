@@ -1,3 +1,5 @@
+// TODO: Optimize build targets.
+
 import path from "path";
 import { fileURLToPath } from "url";
 import { merge } from "webpack-merge";
@@ -49,7 +51,7 @@ const baseConfig = {
                 use: { loader: "babel-loader" },
             },
             {
-                test: /\.(sa|sc|c)ss$/i,
+                test: /\.(sa|sc|c)ss$/,
                 use: [
                     { loader: MiniCssExtractPlugin.loader },
                     { loader: "css-loader" },
