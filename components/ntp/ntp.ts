@@ -22,6 +22,31 @@ function filterOutliers(values: number[]) {
     return values.sort((a, b) => a - b).slice(1, values.length - 2);
 }
 
+function t2CalcFn(resHeaders: Headers) {
+    const header = resHeaders.get("Response-Timing");
+
+    if (!header) {
+        return null;
+    }
+
+    // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
+    const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
+    const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
+
+    if (!reqReceivedTime || !reqProcessingTime) {
+        return null;
+    }
+
+    const resTransmitTime =
+        Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
+
+    if (Number.isNaN(resTransmitTime)) {
+        return null;
+    }
+
+    return convertUnixTimeFormatToMs(resTransmitTime);
+}
+
 // https://stackoverflow.com/a/22969338/6396604
 //
 // NTP
@@ -32,8 +57,8 @@ function filterOutliers(values: number[]) {
 async function generateNtpData() {
     console.info("generateNtpData: Running...");
 
-    const t0ReqTransmitTime = new Date().valueOf();
-    console.debug(`generateNtpData - t0ReqTransmitTime:`, t0ReqTransmitTime);
+    const t0 = new Date().valueOf();
+    console.debug(`generateNtpData - t0:`, t0);
 
     const response = await fetchWithTimeout("./api/ntp/get-server-time.php", {
         method: "GET",
@@ -44,39 +69,35 @@ async function generateNtpData() {
     }
 
     const data = (await response.json()) as { request_time: number };
-    const t1ReqReceivedTime = convertUnixTimeFormatToMs(data.request_time);
-    console.debug(`generateNtpData - t1ReqReceivedTime:`, t1ReqReceivedTime);
+    const t1 = convertUnixTimeFormatToMs(data.request_time);
+    console.debug(`generateNtpData - t1:`, t1);
 
-    let t2RespTransmitTime = t1ReqReceivedTime;
-    const t2RespDateMicroHeader = response.headers.get("Date-Micro");
+    let t2 = t1;
 
-    // If available, use HTTP header with date in miliseconds.
-    if (
-        t2RespDateMicroHeader &&
-        t2RespDateMicroHeader.length > t2RespTransmitTime.toString().length
-    ) {
-        console.info("generateNtpData: Using custom HTTP header for better t2 accuracy.");
+    // if (t2CalcFn) {
+    //     console.debug("generateNtpData: Custom t2 calculation function provided.");
 
-        t2RespTransmitTime = convertUnixTimeFormatToMs(t2RespTransmitTime);
+    const t2CalcFnResult = t2CalcFn(response.headers);
+    console.debug("generateNtpData - t2CalcFnResult:", t2CalcFnResult);
+
+    if (t2CalcFnResult !== null && t2CalcFnResult > t1) {
+        console.debug("generateNtpData: Using t2CalcFnResult.");
+
+        t2 = t2CalcFnResult;
     }
+    // }
 
-    console.debug(`generateNtpData - t2RespTransmitTime:`, t2RespTransmitTime);
+    console.debug(`generateNtpData - t2:`, t2);
 
-    const t3RespReceivedTime = new Date().valueOf();
-    console.debug(`generateNtpData - t3RespReceivedTime:`, t3RespReceivedTime);
+    const t3 = new Date().valueOf();
+    console.debug(`generateNtpData - t3:`, t3);
 
-    if (
-        [t0ReqTransmitTime, t1ReqReceivedTime, t2RespTransmitTime, t3RespReceivedTime].some(
-            (time) => Number.isNaN(time),
-        )
-    ) {
+    if ([t0, t1, t2, t3].some((time) => Number.isNaN(time))) {
         throw new Error("Some of the generated time values aren't of type `number`.");
     }
 
-    const roundTripDelay =
-        t3RespReceivedTime - t0ReqTransmitTime - (t2RespTransmitTime - t1ReqReceivedTime);
-    const clientOffset =
-        (t1ReqReceivedTime - t0ReqTransmitTime + (t2RespTransmitTime - t3RespReceivedTime)) / 2; // client > server
+    const roundTripDelay = t3 - t0 - (t2 - t1);
+    const clientOffset = (t1 - t0 + (t2 - t3)) / 2; // client > server
     console.debug(`generateNtpData: RTL / CO:`, [roundTripDelay, clientOffset]);
 
     return { roundTripDelay, clientOffset };
