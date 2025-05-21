@@ -3,9 +3,19 @@ require_once __DIR__ . "/../../global.php";
 require_once ROOT_DIR . "/session.php";
 require_once ROOT_DIR . "/components/simple-maths-captcha/simple-maths-captcha-global.php";
 
-function isFormControlSimpleMathsCaptchaActivator($form_control_id)
+function isSimpleMathsCaptchaFormControl($form_control_id)
 {
-    return str_ends_with($form_control_id, SIMPLE_MATHS_CATPCHA_BASE_ID . "-activator");
+    return strpos($form_control_id, SIMPLE_MATHS_CATPCHA_BASE_ID) !== false;
+}
+
+function getSimpleMathsCaptchaActivatorButtonElId()
+{
+    return SIMPLE_MATHS_CATPCHA_BASE_ID . "-activator";
+}
+
+function getSimpleMathsCaptchaAnswerInputElId()
+{
+    return SIMPLE_MATHS_CATPCHA_BASE_ID . "-answer";
 }
 
 function isSimpleMathsCaptchaAnswerValid($digit_1, $digit_2, $answer)
@@ -35,7 +45,7 @@ function isSimpleMathsCaptchaAnswerValid($digit_1, $digit_2, $answer)
 
 function getSimpleMathsCaptchaValidationState($form_data)
 {
-    $state = "empty";
+    $state = "inactive";
 
     if (
         array_key_exists(SIMPLE_MATHS_CATPCHA_BASE_ID . "-digit-1", $form_data) &&
