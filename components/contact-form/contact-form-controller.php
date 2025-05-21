@@ -60,11 +60,12 @@ function validateFormData($form_controls_attrs, $form_data)
         ];
 
         // Simple Maths CAPTCHA
-        if (isFormControlSimpleMathsCaptchaActivator($form_control_attrs["id"])) {
+        if (isSimpleMathsCaptchaFormControl($form_control_attrs["id"])) {
             $validation_result = getSimpleMathsCaptchaValidationState($form_data);
 
-            if ($validation_result === "empty" || $validation_result === "invalid") {
-                $form_control_validation_result["validation_errors"] = $validation_result === "empty" ? [true] : [$validation_result];
+            if ($validation_result === "inactive" || $validation_result === "invalid") {
+                $form_control_validation_result["id"] = $validation_result === "inactive" ? getSimpleMathsCaptchaActivatorButtonElId() : getSimpleMathsCaptchaAnswerInputElId();
+                $form_control_validation_result["validation_errors"] = [true];
             }
 
             array_push($validated_form_data, $form_control_validation_result);
