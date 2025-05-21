@@ -122,10 +122,6 @@ input {
     }
 }
 
-textarea {
-    display: block;
-}
-
 button,
 input[type="button"],
 input[type="submit"] {
@@ -180,34 +176,6 @@ input[type="submit"] {
     }
 }
 
-input[type="text"] {
-    .field--inline & {
-        &[inputmode="numeric"] {
-            width: rem(64px);
-        }
-    }
-}
-
-input[type="email"],
-input[type="text"] {
-    // WebKit-based browsers
-    &:-webkit-autofill,
-    &:-internal-autofill-selected {
-        // TODO: Check if still required.
-        box-shadow: 0 0 0 1000px $off-white-dark inset;
-
-        @media (prefers-contrast: more) {
-            box-shadow: 0 0 0 1000px $white inset;
-        }
-    }
-
-    // .field--ifl & {
-    //     // TODO: Check if still required.
-    //     // Setting a fixed height is sadly the only way to guarantee consistent appearance across browsers.
-    //     height: rem(69px);
-    // }
-}
-
 input[type="email"],
 input[type="text"],
 textarea {
@@ -251,4 +219,36 @@ textarea {
     &::placeholder {
         color: $gray;
     }
+}
+
+input[type="email"],
+input[type="text"] {
+    // WebKit-based browsers
+    &:-webkit-autofill,
+    &:-internal-autofill-selected {
+        // TODO: Check if still required.
+        box-shadow: 0 0 0 1000px $off-white-dark inset;
+
+        @media (prefers-contrast: more) {
+            box-shadow: 0 0 0 1000px $white inset;
+        }
+    }
+
+    // .field--ifl & {
+    //     // TODO: Check if still required.
+    //     // Setting a fixed height is sadly the only way to guarantee consistent appearance across browsers.
+    //     height: rem(69px);
+    // }
+}
+
+input[type="text"] {
+    .field--inline & {
+        &[inputmode="numeric"] {
+            width: rem(64px);
+        }
+    }
+}
+
+textarea {
+    display: block;
 }
