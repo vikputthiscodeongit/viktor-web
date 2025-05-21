@@ -13,7 +13,9 @@ import initContactForm from "./components/contact-form/contact-form-controller";
     htmlDevLabel({ hideOnHover: true });
 
     try {
-        const typeItContainerEl = document.querySelector(".viktor-about--typeit > span");
+        const typeItContainerEl = document.querySelector<HTMLElement>(
+            ".viktor-about--typeit > span",
+        );
 
         if (typeItContainerEl) {
             initTypeItAboutMe(typeItContainerEl);
