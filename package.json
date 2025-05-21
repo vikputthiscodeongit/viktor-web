@@ -13,6 +13,7 @@
         "@codebundlesbyvik/html-dev-label": "3.2.0",
         "@codebundlesbyvik/js-helpers": "2.1.2",
         "@codebundlesbyvik/simple-notifier": "2.2.1",
+        "@codebundlesbyvik/simple-maths-captcha": "1.0.0",
         "bootstrap": "5.3.6",
         "core-js": "3.42.0",
         "typeit": "8.8.7"

@@ -1,12 +1,7 @@
-// TODO:
-// * Add border when CAPTCHA :valid.
-// Possible solution: add instance option for answerInputEl data attributes to be
-// added on either input and/or submit. Would solve :invalid border missing when
-// form submit produces HTTP 500 and CAPTCHA is :valid.
-
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
-import SimpleMathsCaptcha from "../simple-maths-captcha/simple-maths-captcha-controller";
+import SimpleMathsCaptcha from "@codebundlesbyvik/simple-maths-captcha";
+import { convertUnixTimeFormatToMs } from "@codebundlesbyvik/ntp-sync";
 
 const HttpStatus = {
     Ok: 200,
@@ -31,10 +26,6 @@ const NotificationContent = {
         title: "Message sent",
         text: "I'll be in touch soon!",
         variant: "success",
-    },
-    submitErrorCaptchaInactive: {
-        text: "CAPTCHA is required. Please load it and solve the problem.",
-        variant: "warning",
     },
     submitErrorValidationFailed: {
         text: "One or more fields failed validation. Please check and correct them.",
@@ -237,30 +228,33 @@ async function submitForm(
                     }[];
                 };
 
-                let notificationOptions = NotificationContent.submitErrorValidationFailed;
+                let invalidCaptchaEl = null;
 
-                if (
-                    responseData.invalid_form_controls.find((control) =>
-                        control.id.includes(mathsCaptcha.answerInputEl.id),
-                    )
-                ) {
-                    mathsCaptcha.setIsValidState(false);
+                for (const el of [mathsCaptcha.activatorButtonEl, mathsCaptcha.answerInputEl]) {
+                    if (invalidCaptchaEl) break;
 
-                    if (
-                        responseData.invalid_form_controls.length === 1 &&
-                        responseData.invalid_form_controls[0].validation_errors.includes(true)
-                    ) {
-                        notificationOptions = NotificationContent.submitErrorCaptchaInactive;
-                    }
-                } else {
-                    mathsCaptcha.setIsValidState(true);
+                    if (!responseData.invalid_form_controls.find((control) => control.id === el.id))
+                        continue;
+
+                    invalidCaptchaEl = el;
                 }
 
-                notifier.show(notificationOptions);
-            } else {
-                notifier.show(NotificationContent.submitErrorUnknown);
+                if (invalidCaptchaEl) {
+                    mathsCaptcha.answerInputEl.setCustomValidity("required");
 
-                mathsCaptcha.setIsValidState(true);
+                    if (invalidCaptchaEl.id === mathsCaptcha.activatorButtonEl.id) {
+                        updateFieldMessage(mathsCaptcha.activatorButtonEl);
+                        mathsCaptcha.activatorButtonEl.setAttribute("data-show-validation", "true");
+                    }
+                } else {
+                    mathsCaptcha.answerInputEl.setCustomValidity("");
+                    // No need to update the activatorButton validation message as all data attributes
+                    // are reset on deactivation.
+                }
+
+                notifier.show(NotificationContent.submitErrorValidationFailed);
+            } else {
+                mathsCaptcha.answerInputEl.setCustomValidity("");
 
                 const formDataObj: { [name: string]: string } = {};
 
@@ -276,6 +270,7 @@ async function submitForm(
 
                 localStorage.setItem(`${formEl.id}-data`, JSON.stringify(formDataObj));
 
+                notifier.show(NotificationContent.submitErrorUnknown);
                 notifier.show({
                     ...NotificationContent.msgPushedToStorage,
                     hideOlder: false,
@@ -333,6 +328,112 @@ export default function initContactForm(formEl: HTMLFormElement) {
         const mathsCaptcha = new SimpleMathsCaptcha({
             activatorButtonEl: mathsCaptchaActivatorButtonEl,
             baseId: `${formEl.id}-simple-maths-captcha`,
+            generatorEndpointUrl: "./api/simple-maths-captcha/generate-problem.php",
+            answerInputElEventHandlers: [
+                {
+                    type: "input",
+                    listener: () => {
+                        console.debug("initContactForm: `input` event fired on SMC input.");
+
+                        mathsCaptcha.answerInputEl.setAttribute("data-had-interaction", "true");
+
+                        // The <input> is marked invalid after the answer is confirmed to be incorrect
+                        // proceeding the back end validation.
+                        // On any input, reset the validity state so that validation elements & styles
+                        // are gone until next the validation.
+                        if (
+                            mathsCaptcha.answerInputEl.value.length >=
+                            mathsCaptcha.answerInputEl.minLength
+                        ) {
+                            console.debug(
+                                "initContactForm: Setting SMC input custom validity to empty...",
+                            );
+
+                            mathsCaptcha.answerInputEl.setCustomValidity("");
+                        }
+
+                        if (
+                            mathsCaptcha.answerInputEl.getAttribute("data-show-validation") ===
+                            "true"
+                        ) {
+                            console.debug(
+                                "initContactForm: Updating SMC validation elements & styles...",
+                            );
+                            console.debug(
+                                "mathsCaptcha.answerInputEl.validity:",
+                                mathsCaptcha.answerInputEl.validity,
+                            );
+
+                            updateFieldMessage(mathsCaptcha.answerInputEl);
+                            mathsCaptcha.answerInputEl.setAttribute(
+                                "data-show-validation-border",
+                                mathsCaptcha.answerInputEl.validity.valid ? "neutral" : "invalid",
+                            );
+                        }
+
+                        return;
+                    },
+                },
+                {
+                    type: "blur",
+                    listener: () => {
+                        console.debug("initContactForm: `blur` event fired on SMC input.");
+
+                        if (mathsCaptcha.answerInputEl.hasAttribute("data-had-interaction")) {
+                            mathsCaptcha.answerInputEl.setAttribute("data-show-validation", "true");
+                        }
+
+                        if (
+                            mathsCaptcha.answerInputEl.getAttribute("data-show-validation") ===
+                            "true"
+                        ) {
+                            console.debug(
+                                "initContactForm: Updating SMC validation elements & styles...",
+                            );
+                            console.debug(
+                                "mathsCaptcha.answerInputEl.validity:",
+                                mathsCaptcha.answerInputEl.validity,
+                            );
+
+                            updateFieldMessage(mathsCaptcha.answerInputEl);
+                            mathsCaptcha.answerInputEl.setAttribute(
+                                "data-show-validation-border",
+                                mathsCaptcha.answerInputEl.validity.valid ? "neutral" : "invalid",
+                            );
+                        }
+
+                        return;
+                    },
+                },
+            ],
+            ntpOptions: {
+                t1EndpointUrl: "./api/ntp/get-server-time.php",
+                t1CalcFn: async function t1CalcFn(response: Response) {
+                    const data = (await response.json()) as { req_received_time: number };
+
+                    return convertUnixTimeFormatToMs(data.req_received_time);
+                },
+                t2CalcFn: function t2CalcFn(resHeaders: Headers) {
+                    // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
+                    const header = resHeaders.get("Response-Timing");
+
+                    if (!header) {
+                        return null;
+                    }
+
+                    const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
+                    const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
+
+                    if (!reqReceivedTime || !reqProcessingTime) {
+                        return null;
+                    }
+
+                    const resTransmitTime =
+                        Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
+
+                    return convertUnixTimeFormatToMs(resTransmitTime);
+                },
+            },
         });
         const notifier = new SimpleNotifier({ hideOlder: true });
 
