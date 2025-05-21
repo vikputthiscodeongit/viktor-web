@@ -1,3 +1,5 @@
+// TODO: Only run when in viewport.
+
 import { El } from "typeit/dist/types";
 import TypeIt from "typeit";
 
