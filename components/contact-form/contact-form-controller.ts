@@ -260,7 +260,6 @@ async function submitForm(
 
                 const formDataObj: { [name: string]: string } = {};
 
-                // TODO: Fix TypeScript error.
                 for (const [name, value] of formData.entries()) {
                     if (mathsCaptcha.isCaptchaInputEl(name)) continue;
 
@@ -332,6 +331,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
             throw new Error("mathsCaptchaActivatorButtonEl not found!");
         }
 
+        const notifier = new SimpleNotifier({ hideOlder: true });
         const mathsCaptcha = new SimpleMathsCaptcha({
             activatorButtonEl: mathsCaptchaActivatorButtonEl,
             baseId: `${formEl.id}-simple-maths-captcha`,
@@ -442,7 +442,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
                 },
             },
         });
-        const notifier = new SimpleNotifier({ hideOlder: true });
 
         const storedFormData = localStorage.getItem(`${formEl.id}-data`);
 
@@ -509,7 +508,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
 
         submitButtonEl.addEventListener("click", (e) => {
             e.preventDefault();
-
             submitForm(formEl, mathsCaptcha, notifier).catch((error) => console.error(error));
 
             return;
@@ -518,7 +516,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
         formEl
             .querySelectorAll("fieldset:disabled")
             .forEach((el) => el.removeAttribute("disabled"));
-
         formEl.classList.remove("has-overlay");
 
         return;

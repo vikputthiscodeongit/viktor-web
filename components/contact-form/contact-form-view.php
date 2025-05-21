@@ -6,7 +6,7 @@ $form_el = [
     "el" => "form",
     "attrs" => [
         "method" => "POST",
-        "class" => "form form--contact has-overlay js-required",
+        "class" => "has-overlay js-required",
         "id" => $FORM_ID,
     ],
     "children" => []
