@@ -1,10 +1,10 @@
-// TODO: Optimize build targets.
-
 import path from "path";
 import { fileURLToPath } from "url";
 import { merge } from "webpack-merge";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 
 // https://stackoverflow.com/a/64383997/6396604
 const __filename = fileURLToPath(import.meta.url);
@@ -16,27 +16,19 @@ const baseConfig = {
         main: "./index.ts",
     },
     output: {
-        assetModuleFilename: "[path][name]_[contenthash][ext]",
         clean: true,
-        chunkFilename: "bundle-[name]-[id].js",
-        filename: "bundle-[name].js",
+        filename: "./index.js",
+        library: { type: "module" },
     },
     stats: {
         children: true,
     },
     resolve: {
         extensions: [".ts", ".js"],
-        extensionAlias: {
-            ".ts": [".ts", ".tsx"],
-        },
     },
     plugins: [
-        new ESLintPlugin({
-            configType: "flat",
-        }),
-        new MiniCssExtractPlugin({
-            filename: "./style.css",
-        }),
+        new ESLintPlugin({ configType: "flat" }),
+        new MiniCssExtractPlugin({ filename: "./style.css" }),
     ],
     module: {
         rules: [
@@ -46,9 +38,9 @@ const baseConfig = {
                 use: ["source-map-loader"],
             },
             {
-                test: /\.([cm]?ts|tsx|[cm]?js)$/,
+                test: /\.tsx?$/,
+                use: "ts-loader",
                 exclude: /node_modules/,
-                use: { loader: "babel-loader" },
             },
             {
                 test: /\.(sa|sc|c)ss$/,
@@ -60,6 +52,9 @@ const baseConfig = {
             },
         ],
     },
+    experiments: {
+        outputModule: true,
+    },
 };
 
 const devConfig = {
@@ -68,7 +63,7 @@ const devConfig = {
     module: {
         rules: [
             {
-                test: /\.(sa|sc|c)ss$/i,
+                test: /\.(sa|sc|c)ss$/,
                 use: [
                     {
                         loader: "sass-loader",
@@ -88,11 +83,11 @@ const devConfig = {
 
 const prodConfig = {
     mode: "production",
-    devtool: "source-map",
+    devtool: false,
     module: {
         rules: [
             {
-                test: /\.(sa|sc|c)ss$/i,
+                test: /\.(sa|sc|c)ss$/,
                 use: [
                     {
                         loader: "sass-loader",
@@ -104,6 +99,23 @@ const prodConfig = {
                     },
                 ],
             },
+        ],
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    ecma: "ES2020",
+                    module: true,
+                    compress: {
+                        drop_console: ["log", "info", "debug"],
+                        passes: 2,
+                    },
+                    mangle: false,
+                },
+            }),
+            new CssMinimizerPlugin(),
         ],
     },
 };

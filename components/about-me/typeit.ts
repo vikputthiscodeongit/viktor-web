@@ -1,10 +1,9 @@
 // TODO: Only run when in viewport.
 
-import { El } from "typeit/dist/types";
 import TypeIt from "typeit";
 
-export default function initTypeItAboutMe(targetEl: Element) {
-    const instance = new TypeIt(targetEl as El, {
+export default function initTypeItAboutMe(targetEl: HTMLElement) {
+    const instance = new TypeIt(targetEl, {
         speed: 80,
         deleteSpeed: 40,
         loop: true,

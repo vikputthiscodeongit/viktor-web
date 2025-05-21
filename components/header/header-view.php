@@ -38,7 +38,7 @@
     <link rel="stylesheet" href="./dist/style.css">
 
     <!-- Scripts -->
-    <script src="./dist/bundle-main.js" defer></script>
+    <script src="./dist/index.js" defer></script>
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="./public/favicon/apple-touch-icon.png">
