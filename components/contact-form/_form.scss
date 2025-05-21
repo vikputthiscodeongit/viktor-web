@@ -49,7 +49,7 @@ legend {
         display: none;
         font-size: rem(13px);
 
-        [data-show-validation-message="true"] ~ & {
+        [data-show-validation="true"] ~ & {
             display: block;
         }
 
@@ -222,16 +222,16 @@ textarea {
     transition: outline-color $transition-base;
 
     &:not(:focus-visible) {
-        &[data-show-validation-message="true"] {
-            &:invalid {
-                outline-color: $warning;
-            }
+        &[data-show-validation-border="invalid"] {
+            outline-color: $warning;
+        }
 
-            &[data-has-input="true"] {
-                &:valid {
-                    outline-color: $success;
-                }
-            }
+        &[data-show-validation-border="valid"] {
+            outline-color: $success;
+        }
+
+        &[data-show-validation-border="neutral"] {
+            outline-color: $blue;
         }
     }
 

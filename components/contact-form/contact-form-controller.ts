@@ -120,9 +120,11 @@ function loadStoredFormData(formDataFromLocalStorage: string, formEl: HTMLFormEl
             if (formControlElsWithFormData.includes(el.id)) {
                 el.value = formData[el.id];
                 updateFieldMessage(el);
-                el.setAttribute("data-has-input", "true");
-                el.setAttribute("data-had-interaction", "true");
-                el.setAttribute("data-show-validation-message", "true");
+                el.setAttribute("data-show-validation", "true");
+                el.setAttribute(
+                    "data-show-validation-border",
+                    el.validity.valid ? "valid" : "invalid",
+                );
             }
         });
 
@@ -295,14 +297,19 @@ async function submitForm(
     } finally {
         formFieldsets.forEach((el) => el.removeAttribute("disabled"));
 
-        const formControlElsWithButtonButtonsWithId = formEl.querySelectorAll<
-            HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement
-        >(
-            "button[id]:not([type=reset], [type=submit]), input:not([type=reset], [type=submit]), textarea",
-        );
-        formControlElsWithButtonButtonsWithId.forEach((el) => {
+        const formControlElsWithoutButtonsAndHidden = formEl.querySelectorAll<
+            HTMLInputElement | HTMLTextAreaElement
+        >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
+        formControlElsWithoutButtonsAndHidden.forEach((el) => {
             updateFieldMessage(el);
-            el.setAttribute("data-show-validation-message", !submitSuccessful ? "true" : "false");
+            el.setAttribute("data-show-validation", !submitSuccessful ? "true" : "false");
+
+            if (el.getAttribute("required") === "true") {
+                el.setAttribute(
+                    "data-show-validation-border",
+                    el.validity.valid ? "valid" : "invalid",
+                );
+            }
         });
     }
 }
@@ -443,13 +450,11 @@ export default function initContactForm(formEl: HTMLFormElement) {
             initStoredFormDataLoader(storedFormData, formEl, notifier);
         }
 
-        const formControlElsWithoutButtons = formEl.querySelectorAll<
+        const formControlElsWithoutButtonsAndHidden = formEl.querySelectorAll<
             HTMLInputElement | HTMLTextAreaElement
-        >("input:not([type=button], [type=reset], [type=submit]), textarea");
+        >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
 
-        formControlElsWithoutButtons.forEach((el) => {
-            el.setAttribute("data-show-validation-message", "false");
-
+        formControlElsWithoutButtonsAndHidden.forEach((el) => {
             el.addEventListener(
                 "input",
                 () => {
@@ -468,12 +473,14 @@ export default function initContactForm(formEl: HTMLFormElement) {
             el.addEventListener("input", () => {
                 console.debug("initContactForm: `input` event fired on form control.");
 
-                updateFieldMessage(el);
+                if (el.getAttribute("data-show-validation") === "true") {
+                    console.debug("initContactForm: Updating validation elements & styles...");
 
-                if (el.value !== "") {
-                    el.setAttribute("data-has-input", "true");
-                } else {
-                    el.removeAttribute("data-has-input");
+                    updateFieldMessage(el);
+                    el.setAttribute(
+                        "data-show-validation-border",
+                        el.validity.valid ? "valid" : "invalid",
+                    );
                 }
 
                 return;
@@ -482,8 +489,18 @@ export default function initContactForm(formEl: HTMLFormElement) {
             el.addEventListener("blur", () => {
                 console.debug("initContactForm: `blur` event fired on form control.");
 
-                if (el.hasAttribute("data-has-input") && el.hasAttribute("data-had-interaction")) {
-                    el.setAttribute("data-show-validation-message", "true");
+                if (el.hasAttribute("data-had-interaction")) {
+                    el.setAttribute("data-show-validation", "true");
+                }
+
+                if (el.getAttribute("data-show-validation") === "true") {
+                    console.debug("initContactForm: Updating validation elements & styles...");
+
+                    updateFieldMessage(el);
+                    el.setAttribute(
+                        "data-show-validation-border",
+                        el.validity.valid ? "valid" : "invalid",
+                    );
                 }
 
                 return;
