@@ -1,4 +1,4 @@
-.form {
+form {
     max-width: rem(640px);
 }
 
@@ -169,12 +169,14 @@ input[type="submit"] {
     }
 }
 
+// TODO: Refactor this; all other form controls are styled by their element type.
 .btn {
     &--sm {
         padding: rem(6px) rem(12px);
         font-size: rem(12px);
     }
 }
+//
 
 input[type="email"],
 input[type="text"],
@@ -226,7 +228,7 @@ input[type="text"] {
     // WebKit-based browsers
     &:-webkit-autofill,
     &:-internal-autofill-selected {
-        // TODO: Check if still required.
+        // TODO: Check if I still want this behavior.
         box-shadow: 0 0 0 1000px $off-white-dark inset;
 
         @media (prefers-contrast: more) {
