@@ -5,13 +5,13 @@ include ROOT_DIR . "/content/home-nav-content.php";
 $navigation_el = [
     "el" => "nav",
     "attrs" => [
-        "class" => "home-nav",
+        "class" => "nav",
     ],
     "children" => [
         "items" => [
             "el" => "ul",
             "attrs" => [
-                "class" => "home-nav__items"
+                "class" => "nav__items"
             ],
             "children" => []
         ],
@@ -24,13 +24,13 @@ foreach ($NAVIGATION_ITEMS as $ITEM) {
     $el = [
         "el" => "li",
         "attrs" => [
-            "class" => "home-nav__item"
+            "class" => "nav__item"
         ],
         "children" => [
             "link" => [
                 "el" => "a",
                 "attrs" => [
-                    "class" => "home-nav__link",
+                    "class" => "nav__link",
                     "href" => $ITEM["id"],
                     "target" => "_self",
                 ],
