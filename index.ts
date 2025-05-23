@@ -1,8 +1,7 @@
-import "./style.scss";
-
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
-import initTypeItAboutMe from "./components/about-me/typeit";
-import initContactForm from "./components/contact-form/contact-form-controller";
+import initTypeItAboutMe from "./ts/controllers/typeit-controller";
+import initContactForm from "./ts/controllers/contact-form-controller";
+import "./style.scss";
 
 (function () {
     document.documentElement.classList.replace("js-disabled", "js-enabled");

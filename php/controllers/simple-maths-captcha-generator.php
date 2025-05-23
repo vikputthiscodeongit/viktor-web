@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../../global.php";
 require_once ROOT_DIR . "/session.php";
-require_once ROOT_DIR . "/components/simple-maths-captcha/simple-maths-captcha-global.php";
+require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-global.php";
 
 function makeSimpleMathsCaptchaProblem($base_id)
 {
