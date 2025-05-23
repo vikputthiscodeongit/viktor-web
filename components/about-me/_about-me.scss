@@ -1,10 +1,4 @@
 .viktor {
-    &-info {
-        grid-column: 1 / span 3;
-        grid-row: 1 / span 2;
-        align-self: center;
-    }
-
     &-name {
         h1 {
             font-size: rem(40px);
