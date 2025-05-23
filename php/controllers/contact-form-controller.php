@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/components/simple-maths-captcha/simple-maths-captcha-validator.php";
+require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-validator.php";
 
 function isValidEmailAddress(string $email_address)
 {
