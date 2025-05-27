@@ -65,6 +65,9 @@ foreach ($FORM_ITEMS as $FIELDSET) {
         if (isset($ITEM["label"]["text"])) {
             $label_el = [
                 "el" => "label",
+                "attrs" => [
+                    "for" => $ITEM["control"]["id"],
+                ],
                 "text" => $ITEM["label"]["text"],
             ];
 
