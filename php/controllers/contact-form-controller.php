@@ -93,7 +93,11 @@ function validateFormData($form_controls_attrs, $form_data)
         // Empty, non-required form controls.
         if (
             $form_control_value === "" &&
-            (!isset($form_control_attrs["required"]) || $form_control_attrs["required"] === "false")
+            (
+                !isset($form_control_attrs["required"]) ||
+                $form_control_attrs["required"] === false ||
+                $form_control_attrs["required"] === "false"
+            )
         ) {
             array_push($validated_form_data, $form_control_validation_result);
 
