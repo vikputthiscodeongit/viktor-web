@@ -103,6 +103,11 @@ label {
         }
     }
 
+    // Crude way of clearing any possible scroll bar.
+    .field--ifl:has(textarea) & {
+        right: rem(2px) + rem(16px);
+    }
+
     .field--inline & {
         flex-shrink: 0;
         margin-bottom: 0;
