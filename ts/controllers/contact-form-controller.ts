@@ -144,10 +144,10 @@ function initStoredFormDataLoader(
     console.info("initStoredFormDataLoader: Running...");
 
     const fieldsetEl = createEl("fieldset");
-    const fieldEl = createEl("div", { class: "field" });
     const legendEl = createEl("legend", { textContent: "A previously unsent message was stored." });
     const buttonContainerEl = createEl("div", { class: "item-grid" });
 
+    const loadButtonContainerEl = createEl("div", { class: "item" });
     const loadButtonEl = createEl("button", {
         type: "button",
         class: "btn btn--sm",
@@ -163,8 +163,9 @@ function initStoredFormDataLoader(
         },
         { once: true },
     );
-    buttonContainerEl.append(loadButtonEl);
+    loadButtonContainerEl.append(loadButtonEl);
 
+    const clearButtonContainerEl = createEl("div", { class: "item" });
     const clearButtonEl = createEl("button", {
         type: "button",
         class: "btn btn--sm",
@@ -182,10 +183,10 @@ function initStoredFormDataLoader(
         },
         { once: true },
     );
-    buttonContainerEl.append(clearButtonEl);
+    clearButtonContainerEl.append(clearButtonEl);
 
-    fieldEl.append(legendEl, buttonContainerEl);
-    fieldsetEl.append(fieldEl);
+    buttonContainerEl.append(loadButtonContainerEl, clearButtonContainerEl);
+    fieldsetEl.append(legendEl, buttonContainerEl);
     formEl.insertBefore(fieldsetEl, formEl.firstElementChild);
 
     return;
