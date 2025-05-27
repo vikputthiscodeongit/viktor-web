@@ -326,6 +326,8 @@ async function submitForm(
                 el.setAttribute("data-had-interaction", "false");
                 el.setAttribute("data-show-validation", "false");
                 el.setAttribute("data-show-validation-border", "false");
+
+                mathsCaptcha.deactivate();
             } else {
                 el.setAttribute("data-show-validation", "true");
 
