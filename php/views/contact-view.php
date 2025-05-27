@@ -13,4 +13,5 @@
 
             <?php include ROOT_DIR . "/php/views/contact-form-view.php"; ?>
         </div>
+    </div>
 </section>
