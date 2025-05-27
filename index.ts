@@ -12,8 +12,8 @@ import "./style.scss";
     htmlDevLabel({ hideOnHover: true });
 
     try {
-        const typeItContainerEl = document.querySelector<HTMLElement>(
-            ".viktor-about--typeit > span",
+        const typeItContainerEl = document.querySelector<HTMLSpanElement>(
+            ".viktor-properties-typeit > span",
         );
 
         if (typeItContainerEl) {

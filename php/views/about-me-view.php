@@ -14,11 +14,11 @@ include ROOT_DIR . "/content/about-me-content.php";
         </h1>
     </div>
 
-    <div class="viktor-about viktor-about--typeit" aria-hidden="true">
+    <div class="viktor-properties-typeit" aria-hidden="true">
         <span></span>
     </div>
 
-    <div class="viktor-about viktor-about--static visually-hidden">
+    <div class="visually-hidden">
         <?php
         foreach ($MY_PROPERTIES_ITEMS as $PROPERTY) {
             echo "<span>" . $PROPERTY . "</span>";
