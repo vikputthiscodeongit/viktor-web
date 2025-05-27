@@ -3,7 +3,7 @@ require_once __DIR__ . "/../../global.php";
 require_once ROOT_DIR . "/php/helpers/return-http-response.php";
 require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-global.php";
 require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-generator.php";
-require_once ROOT_DIR . "/content/form-content.php";
+require_once ROOT_DIR . "/content/contact-form-content.php";
 
 function requestHandler($simple_maths_captcha_base_id)
 {

@@ -1,6 +1,6 @@
 <?php
 include_once ROOT_DIR . "/php/helpers/render-html-el.php";
-include ROOT_DIR . "/content/form-content.php";
+include ROOT_DIR . "/content/contact-form-content.php";
 
 $form_el = [
     "el" => "form",
@@ -16,16 +16,30 @@ foreach ($FORM_ITEMS as $FIELDSET) {
     $fieldset_el = [
         "el" => "fieldset",
         "attrs" => [
-            "disabled" => "true"
+            "disabled" => "disabled",
         ],
         "children" => []
     ];
 
-    foreach ($FIELDSET as $FIELD) {
+    foreach ($FIELDSET as $KEY => $ITEM) {
+        if ($KEY === "legend") {
+            $legend_el = [
+                "el" => "legend",
+                "attrs" => [
+                    "class" => "visually-hidden",
+                ],
+                "text" => $ITEM,
+            ];
+
+            array_push($fieldset_el["children"], $legend_el);
+
+            continue;
+        }
+
         $field_el_class = "field";
 
-        if (isset($FIELD["label"]["type"])) {
-            switch ($FIELD["label"]["type"]) {
+        if (isset($ITEM["label"]["type"])) {
+            switch ($ITEM["label"]["type"]) {
                 case "in_field":
                     $field_el_class .= " field--ifl";
                     break;
@@ -48,31 +62,31 @@ foreach ($FORM_ITEMS as $FIELDSET) {
 
         $label_el = null;
 
-        if (isset($FIELD["label"]["text"])) {
+        if (isset($ITEM["label"]["text"])) {
             $label_el = [
                 "el" => "label",
-                "text" => $FIELD["label"]["text"]
+                "text" => $ITEM["label"]["text"],
             ];
 
             array_push($field_el_children, $label_el);
         }
 
         $input_el = [
-            "el" => $FIELD["control"]["el"] ?? "input",
-            "attrs" => array_filter($FIELD["control"], function ($attr) {
+            "el" => $ITEM["control"]["el"] ?? "input",
+            "attrs" => array_filter($ITEM["control"], function ($attr) {
                 return $attr !== "el";
             }, ARRAY_FILTER_USE_KEY),
         ];
         $input_el["attrs"]["id"] = $input_el["attrs"]["id"];
-        $input_el["attrs"]["name"] = $FIELD["control"]["id"];
+        $input_el["attrs"]["name"] = $ITEM["control"]["id"];
 
-        if (isset($FIELD["control"]["text"])) {
-            $input_el["text"] = $FIELD["control"]["text"];
+        if (isset($ITEM["control"]["text"])) {
+            $input_el["text"] = $ITEM["control"]["text"];
         }
 
         array_push($field_el_children, $input_el);
 
-        if (!isset($FIELD["control"]["type"]) || $FIELD["control"]["type"] !== "submit") {
+        if (!isset($ITEM["control"]["type"]) || $ITEM["control"]["type"] !== "submit") {
             $message_el = [
                 "el" => "span",
                 "attrs" => [

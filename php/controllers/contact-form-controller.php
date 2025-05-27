@@ -30,11 +30,14 @@ function getFormControlsAttributes($form_items)
     $form_items_flat = array_merge([], ...$form_items);
     $form_controls_attrs = [];
 
-    foreach ($form_items_flat as $field_items) {
-        if (isset($field_items["control"]["type"]) && $field_items["control"]["type"] === "submit") continue;
+    foreach ($form_items_flat as $key => $item) {
+        if ($key === "legend") continue;
+
+        if (isset($item["control"]["type"]) && $item["control"]["type"] === "submit")
+            continue;
 
         $form_control_attrs = array_filter(
-            $field_items["control"],
+            $item["control"],
             function ($attr) {
                 if (in_array($attr, ["id", "type", "minlength", "maxlength", "pattern", "required"])) {
                     return $attr;

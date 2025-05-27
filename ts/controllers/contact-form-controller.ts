@@ -57,7 +57,10 @@ function getFormControlValidationMessage(
         return null;
     }
 
-    if (el.validity.valueMissing) {
+    if (
+        el.validity.valueMissing ||
+        (el.validity.customError && el.getAttribute("data-required") === "true")
+    ) {
         return FormControlValidationMessage.requiredEmpty;
     }
 
@@ -204,7 +207,7 @@ async function submitForm(
 
     try {
         formFieldsets.forEach((el) => {
-            el.setAttribute("disabled", "true");
+            el.setAttribute("disabled", "disabled");
         });
 
         const formControlElsWithoutButtons = formEl.querySelectorAll<
@@ -304,7 +307,7 @@ async function submitForm(
             updateFieldMessage(el);
             el.setAttribute("data-show-validation", !submitSuccessful ? "true" : "false");
 
-            if (el.getAttribute("required") === "true") {
+            if (el.getAttribute("required") !== null) {
                 el.setAttribute(
                     "data-show-validation-border",
                     el.validity.valid ? "valid" : "invalid",
