@@ -321,13 +321,20 @@ async function submitForm(
         >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
         formControlElsWithoutButtonsAndHidden.forEach((el) => {
             updateFieldMessage(el);
-            el.setAttribute("data-show-validation", !submitSuccessful ? "true" : "false");
 
-            if (el.getAttribute("required") !== null) {
-                el.setAttribute(
-                    "data-show-validation-border",
-                    el.validity.valid ? "valid" : "invalid",
-                );
+            if (submitSuccessful) {
+                el.setAttribute("data-had-interaction", "false");
+                el.setAttribute("data-show-validation", "false");
+                el.setAttribute("data-show-validation-border", "false");
+            } else {
+                el.setAttribute("data-show-validation", "true");
+
+                if (el.getAttribute("required") !== null) {
+                    el.setAttribute(
+                        "data-show-validation-border",
+                        el.validity.valid ? "valid" : "invalid",
+                    );
+                }
             }
         });
     }
@@ -412,7 +419,10 @@ export default function initContactForm(formEl: HTMLFormElement) {
                     listener: () => {
                         console.debug("initContactForm: `blur` event fired on SMC input.");
 
-                        if (mathsCaptcha.answerInputEl.hasAttribute("data-had-interaction")) {
+                        if (
+                            mathsCaptcha.answerInputEl.getAttribute("data-had-interaction") ===
+                            "true"
+                        ) {
                             mathsCaptcha.answerInputEl.setAttribute("data-show-validation", "true");
                         }
 
@@ -480,23 +490,11 @@ export default function initContactForm(formEl: HTMLFormElement) {
         >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
 
         formControlElsWithoutButtonsAndHidden.forEach((el) => {
-            el.addEventListener(
-                "input",
-                () => {
-                    console.debug(
-                        "initContactForm: `input` event fired for first time on form control.",
-                    );
-
-                    el.setAttribute("data-had-interaction", "true");
-
-                    return;
-                },
-                { once: true },
-            );
-
             // TODO: Debounce
             el.addEventListener("input", () => {
                 console.debug("initContactForm: `input` event fired on form control.");
+
+                el.setAttribute("data-had-interaction", "true");
 
                 if (el.getAttribute("data-show-validation") === "true") {
                     console.debug("initContactForm: Updating validation elements & styles...");
@@ -514,7 +512,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
             el.addEventListener("blur", () => {
                 console.debug("initContactForm: `blur` event fired on form control.");
 
-                if (el.hasAttribute("data-had-interaction")) {
+                if (el.getAttribute("data-had-interaction") === "true") {
                     el.setAttribute("data-show-validation", "true");
                 }
 
