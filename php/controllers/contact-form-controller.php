@@ -64,10 +64,14 @@ function validateFormData($form_controls_attrs, $form_data)
 
         // Simple Maths CAPTCHA
         if (isSimpleMathsCaptchaFormControl($form_control_attrs["id"])) {
-            $validation_result = getSimpleMathsCaptchaValidationState($form_data);
+            $simple_maths_captcha_id =
+                getSimpleMathsCaptchaId($form_control_attrs["id"]) ?? $form_control_attrs["id"];
+            $validation_result =
+                getSimpleMathsCaptchaValidationState($simple_maths_captcha_id, $form_data);
 
-            if ($validation_result === "inactive" || $validation_result === "invalid") {
-                $form_control_validation_result["id"] = $validation_result === "inactive" ? getSimpleMathsCaptchaActivatorButtonElId() : getSimpleMathsCaptchaAnswerInputElId();
+            if ($validation_result !== "valid") {
+                $form_control_validation_result["id"] =
+                    getSimpleMathsCaptchaInvalidControlId($simple_maths_captcha_id, $validation_result);
                 $form_control_validation_result["validation_errors"] = [true];
             }
 

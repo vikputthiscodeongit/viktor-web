@@ -1,27 +1,37 @@
 <?php
 require_once __DIR__ . "/../../global.php";
 require_once ROOT_DIR . "/session.php";
-require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-global.php";
 
 function isSimpleMathsCaptchaFormControl($form_control_id)
 {
-    return strpos($form_control_id, SIMPLE_MATHS_CATPCHA_BASE_ID) !== false;
+    return strpos($form_control_id, "simple-maths-captcha") !== false;
 }
 
-function getSimpleMathsCaptchaActivatorButtonElId()
+function getSimpleMathsCaptchaId($form_control_id)
 {
-    return SIMPLE_MATHS_CATPCHA_BASE_ID . "-activator";
+    $default_id = "simple-maths-captcha";
+    $default_id_start_pos = strpos($form_control_id, $default_id);
+
+    if ($default_id_start_pos === false) {
+        return null;
+    }
+
+    return substr($form_control_id, 0, $default_id_start_pos + strlen($default_id));
 }
 
-function getSimpleMathsCaptchaAnswerInputElId()
+function getSimpleMathsCaptchaInvalidControlId($simple_maths_captcha_id, $validation_state)
 {
-    return SIMPLE_MATHS_CATPCHA_BASE_ID . "-answer";
+    if ($validation_state === "invalid") {
+        return $simple_maths_captcha_id . "-answer";
+    }
+
+    return $simple_maths_captcha_id . "-activator";
 }
 
-function isSimpleMathsCaptchaAnswerValid($digit_1, $digit_2, $answer)
+function isSimpleMathsCaptchaAnswerValid($simple_maths_captcha_id, $digit_1, $digit_2, $answer)
 {
     // Contains the problem digits and a unix timestamp.
-    $stored_problem_data = $_SESSION[SIMPLE_MATHS_CATPCHA_BASE_ID];
+    $stored_problem_data = $_SESSION[$simple_maths_captcha_id];
 
     if (
         !is_int($digit_1) || !is_int($digit_2) || !is_int($answer) ||
@@ -38,26 +48,26 @@ function isSimpleMathsCaptchaAnswerValid($digit_1, $digit_2, $answer)
         // Answer to the problem is correct.
         $answer === $stored_problem_data[0] + $stored_problem_data[1] &&
         // Answer was submitted within the allowed time.
-        floor(microtime(true) * 1000) < (($stored_problem_data[2]) + SIMPLE_MATHS_CAPTCHA_PROBLEM_VALIDATION_SLACK_TIME);
+        floor(microtime(true) * 1000) < (($stored_problem_data[2]) + 1500);
 
     return $answer_valid;
 }
 
-function getSimpleMathsCaptchaValidationState($form_data)
+function getSimpleMathsCaptchaValidationState($simple_maths_captcha_id, $form_data)
 {
-    $state = "inactive";
+    $has_all_captcha_data =
+        array_key_exists($simple_maths_captcha_id . "-digit-1", $form_data) &&
+        array_key_exists($simple_maths_captcha_id . "-digit-2", $form_data) &&
+        array_key_exists($simple_maths_captcha_id . "-answer", $form_data);
 
-    if (
-        array_key_exists(SIMPLE_MATHS_CATPCHA_BASE_ID . "-digit-1", $form_data) &&
-        array_key_exists(SIMPLE_MATHS_CATPCHA_BASE_ID . "-digit-2", $form_data) &&
-        array_key_exists(SIMPLE_MATHS_CATPCHA_BASE_ID . "-answer", $form_data)
-    ) {
-        $state = isSimpleMathsCaptchaAnswerValid(
-            (int) $form_data[SIMPLE_MATHS_CATPCHA_BASE_ID . "-digit-1"],
-            (int) $form_data[SIMPLE_MATHS_CATPCHA_BASE_ID . "-digit-2"],
-            (int) $form_data[SIMPLE_MATHS_CATPCHA_BASE_ID . "-answer"],
-        ) ? "valid" : "invalid";
+    if (!$has_all_captcha_data) {
+        return "inactive";
     }
 
-    return $state;
+    return isSimpleMathsCaptchaAnswerValid(
+        $simple_maths_captcha_id,
+        (int) $form_data[$simple_maths_captcha_id . "-digit-1"],
+        (int) $form_data[$simple_maths_captcha_id . "-digit-2"],
+        (int) $form_data[$simple_maths_captcha_id . "-answer"],
+    ) ? "valid" : "invalid";
 }
