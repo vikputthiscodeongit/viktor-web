@@ -11,11 +11,11 @@ $navigation_el = [
         "items" => [
             "el" => "ul",
             "attrs" => [
-                "class" => "nav__items"
+                "class" => "nav__items",
             ],
-            "children" => []
+            "children" => [],
         ],
-    ]
+    ],
 ];
 
 $list_item_els = [];
@@ -24,7 +24,7 @@ foreach ($NAVIGATION_ITEMS as $ITEM) {
     $el = [
         "el" => "li",
         "attrs" => [
-            "class" => "nav__item"
+            "class" => "nav__item",
         ],
         "children" => [
             "link" => [
@@ -34,9 +34,9 @@ foreach ($NAVIGATION_ITEMS as $ITEM) {
                     "href" => $ITEM["id"],
                     "target" => "_self",
                 ],
-                "text" => $ITEM["name"]
-            ]
-        ]
+                "text" => $ITEM["name"],
+            ],
+        ],
     ];
 
     array_push($list_item_els, $el);

@@ -7,7 +7,7 @@ $icon_grid_el = [
     "attrs" => [
         "class" => "item-grid",
     ],
-    "children" => []
+    "children" => [],
 ];
 
 $group_index = 0;
@@ -27,7 +27,7 @@ foreach ($ICON_GRID_ITEMS as $ICON_SET) {
         $el = [
             "el" => "li",
             "attrs" => [
-                "class" => $el_class
+                "class" => $el_class,
             ],
             "children" => [
                 "link" => [
@@ -42,12 +42,12 @@ foreach ($ICON_GRID_ITEMS as $ICON_SET) {
                             "el" => "img",
                             "attrs" => [
                                 "src" => $ICON["icon_uri"],
-                                "alt" => $ICON["name"]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                "alt" => $ICON["name"],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         array_push($list_icon_el_group, $el);

@@ -2,6 +2,6 @@
 $NAVIGATION_ITEMS = [
     [
         "name" => "Contact",
-        "id" => "#contact"
-    ]
+        "id" => "#contact",
+    ],
 ];

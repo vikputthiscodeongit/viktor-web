@@ -9,7 +9,7 @@ $form_el = [
         "class" => "has-overlay js-required",
         "id" => $FORM_ID,
     ],
-    "children" => []
+    "children" => [],
 ];
 
 foreach ($FORM_ITEMS as $FIELDSET) {
@@ -18,7 +18,7 @@ foreach ($FORM_ITEMS as $FIELDSET) {
         "attrs" => [
             "disabled" => "disabled",
         ],
-        "children" => []
+        "children" => [],
     ];
 
     foreach ($FIELDSET as $KEY => $ITEM) {
@@ -55,7 +55,7 @@ foreach ($FORM_ITEMS as $FIELDSET) {
             "attrs" => [
                 "class" => $field_el_class,
             ],
-            "children" => []
+            "children" => [],
         ];
 
         $field_el_children = [];
@@ -93,8 +93,8 @@ foreach ($FORM_ITEMS as $FIELDSET) {
             $message_el = [
                 "el" => "span",
                 "attrs" => [
-                    "class" => "field__message"
-                ]
+                    "class" => "field__message",
+                ],
             ];
 
             array_push($field_el_children, $message_el);
