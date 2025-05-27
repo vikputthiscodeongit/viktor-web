@@ -28,7 +28,6 @@ import "./style.scss";
 
         if (contactFormEl) {
             initContactForm(contactFormEl);
-            console.info("Contact form initialized.");
         }
     } catch (error) {
         console.error(error);

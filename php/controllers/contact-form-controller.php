@@ -80,6 +80,7 @@ function validateFormData($form_controls_attrs, $form_data)
             continue;
         }
 
+        // Each form control must be reflected in the form data.
         if (!array_key_exists($form_control_attrs["id"], $form_data)) {
             $form_control_validation_result["validation_errors"] = [true];
             array_push($validated_form_data, $form_control_validation_result);
