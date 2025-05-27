@@ -219,7 +219,7 @@ async function submitForm(
             formData.set(el.name, el.value);
         });
 
-        const submitResponse = await fetchWithTimeout("./api/contact-form/submit-form.php", {
+        const submitResponse = await fetchWithTimeout("./api/form/submit-contact-form.php", {
             method: "POST",
             body: formData,
         });
