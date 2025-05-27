@@ -6,7 +6,6 @@
         "module": "ES2022",
         "moduleResolution": "bundler",
         "outDir": "dist",
-        "verbatimModuleSyntax": true,
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "target": "ES2022"
     }

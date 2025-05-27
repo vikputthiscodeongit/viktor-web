@@ -18,7 +18,9 @@ const baseConfig = {
     output: {
         clean: true,
         filename: "./index.js",
-        library: { type: "module" },
+        library: {
+            type: "module",
+        },
     },
     stats: {
         children: true,
@@ -35,7 +37,10 @@ const baseConfig = {
             {
                 test: /\.js$/,
                 enforce: "pre",
-                use: ["source-map-loader"],
+                use: "source-map-loader",
+                resolve: {
+                    fullySpecified: false,
+                },
             },
             {
                 test: /\.tsx?$/,
@@ -44,11 +49,7 @@ const baseConfig = {
             },
             {
                 test: /\.(sa|sc|c)ss$/,
-                use: [
-                    { loader: MiniCssExtractPlugin.loader },
-                    { loader: "css-loader" },
-                    { loader: "postcss-loader" },
-                ],
+                use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
             },
         ],
     },
@@ -106,13 +107,12 @@ const prodConfig = {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    ecma: "ES2020",
-                    module: true,
                     compress: {
-                        drop_console: ["log", "info", "debug"],
+                        drop_console: ["debug", "log", "info"],
+                        ecma: "ES2022",
+                        module: true,
                         passes: 2,
                     },
-                    mangle: false,
                 },
             }),
             new CssMinimizerPlugin(),

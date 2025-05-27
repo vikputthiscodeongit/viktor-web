@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack --watch",
-    "prod": "cross-env NODE_ENV=production webpack"
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
     "@codebundlesbyvik/html-dev-label": "3.2.1",
@@ -47,7 +47,7 @@
     "webpack-merge": "6.0.1"
   },
   "browserslist": [
-    "> 0.2%",
+    "> 0.25%",
     "last 3 versions and not dead",
     "Firefox ESR"
   ]
