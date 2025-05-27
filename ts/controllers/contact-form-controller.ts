@@ -338,8 +338,14 @@ export default function initContactForm(formEl: HTMLFormElement) {
         const notifier = new SimpleNotifier({ hideOlder: true });
         const mathsCaptcha = new SimpleMathsCaptcha({
             activatorButtonEl: mathsCaptchaActivatorButtonEl,
-            baseId: `${formEl.id}-simple-maths-captcha`,
-            generatorEndpointUrl: "./api/simple-maths-captcha/generate-problem.php",
+            baseId: formEl.id,
+            generatorEndpoint: {
+                url: "./api/simple-maths-captcha/generate-problem.php",
+                fetchOptions: {
+                    method: "POST",
+                    body: JSON.stringify({ base_id: formEl.id }),
+                },
+            },
             answerInputElEventHandlers: [
                 {
                     type: "input",
