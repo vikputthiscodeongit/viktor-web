@@ -236,13 +236,29 @@ async function submitForm(
 
                 let invalidCaptchaEl = null;
 
-                for (const el of [mathsCaptcha.activatorButtonEl, mathsCaptcha.answerInputEl]) {
-                    if (invalidCaptchaEl) break;
+                if (responseData.invalid_form_controls.length > 0) {
+                    const firstInvalidFormControl = document.querySelector(
+                        `#${responseData.invalid_form_controls[0].id}`,
+                    );
 
-                    if (!responseData.invalid_form_controls.find((control) => control.id === el.id))
-                        continue;
+                    if (firstInvalidFormControl) {
+                        document.documentElement.style.scrollPadding = "7.5rem";
+                        firstInvalidFormControl.scrollIntoView();
+                        document.documentElement.style.scrollPadding = "";
+                    }
 
-                    invalidCaptchaEl = el;
+                    for (const el of [mathsCaptcha.activatorButtonEl, mathsCaptcha.answerInputEl]) {
+                        if (invalidCaptchaEl) break;
+
+                        if (
+                            !responseData.invalid_form_controls.find(
+                                (control) => control.id === el.id,
+                            )
+                        )
+                            continue;
+
+                        invalidCaptchaEl = el;
+                    }
                 }
 
                 if (invalidCaptchaEl) {
