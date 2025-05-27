@@ -8,7 +8,7 @@ require_once ROOT_DIR . "/session.php";
 require_once ROOT_DIR . "/_folder/values.php";
 require_once ROOT_DIR . "/php/helpers/return-http-response.php";
 require_once ROOT_DIR . "/php/controllers/contact-form-controller.php";
-require_once ROOT_DIR . "/content/form-content.php";
+require_once ROOT_DIR . "/content/contact-form-content.php";
 
 function sendMail($form_values)
 {
