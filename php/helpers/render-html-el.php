@@ -14,6 +14,12 @@ function renderHtmlFromArray(array $data): string
         $attributes = $data['attrs'] ?? [];
         $content = $data['children'] ?? $data['text'] ?? '';
 
+        if ($content !== "") {
+            $attributes = array_filter($attributes, function ($attr) {
+                return $attr !== "text";
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
         if (is_array($content)) {
             $children_html = '';
 
