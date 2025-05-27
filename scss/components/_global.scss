@@ -3,21 +3,25 @@ body {
     margin: 0 auto;
     scrollbar-width: thin;
 
-    &::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-        background-color: $off-white-light;
-
-        &-track {
+    @supports not (scrollbar-width: thin) {
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
             background-color: $off-white-light;
-            border-radius: 100px;
-            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-        }
 
-        &-thumb {
-            background-color: $gray-light;
-            border-radius: 100px;
-            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+            &-thumb,
+            &-track {
+                border-radius: 100px;
+                box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+            }
+
+            &-thumb {
+                background-color: $gray-light;
+            }
+
+            &-track {
+                background-color: $off-white-light;
+            }
         }
     }
 }
