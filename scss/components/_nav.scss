@@ -10,7 +10,7 @@
     }
 
     &__item {
-        margin-bottom: 1em;
+        margin-bottom: rem(8px);
 
         &:last-child {
             margin-bottom: 0;

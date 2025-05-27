@@ -1,5 +1,5 @@
 <section class="site-section" id="home">
-    <div class="container">
+    <div class="container container--padding-lg">
         <?php include ROOT_DIR . "/php/views/about-me-view.php"; ?>
 
         <?php include ROOT_DIR . "/php/views/nav-view.php"; ?>

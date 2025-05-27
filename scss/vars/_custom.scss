@@ -1,14 +1,8 @@
-// Viewport
-$min-vw: rem(320px);
-$min-vh: rem(480px);
-
 // Grid breakpoints
 $grid-breakpoints: (
-    xxs: 0,
-    // 448
-    xs: 28em,
-    // 576
-    sm: 36em,
+    xs: 0,
+    // 412
+    sm: 25.75em,
     // 768
     md: 48em,
     // 992

@@ -135,7 +135,7 @@ input[type="submit"] {
     color: $white;
     background-color: $blue;
     border: rem(2px) solid $blue;
-    border-radius: rem(1.25em);
+    border-radius: rem(20px);
     outline: rem(2px) solid transparent;
     outline-offset: rem(4px);
     // TODO: Use $transition-base for all animations?

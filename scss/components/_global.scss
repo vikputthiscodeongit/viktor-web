@@ -1,5 +1,5 @@
 body {
-    min-width: $min-vw;
+    min-width: rem(320px);
     margin: 0 auto;
     scrollbar-width: thin;
 
@@ -124,41 +124,54 @@ img {
 .container {
     position: relative;
     max-width: rem(1440px);
-    min-height: $min-vh;
+    min-height: rem(320px);
     margin-left: auto;
     margin-right: auto;
-    padding: rem(24px);
+    padding: rem(16px);
 
-    @include respond-above(xs) {
+    @include respond-above(sm) {
         padding-left: 10vw;
         padding-right: 10vw;
     }
 
-    @include respond-above(sm) {
-        padding-left: 15vw;
-        padding-right: 15vw;
+    @include respond-above(md) {
+        padding: rem(24px) 15vw;
     }
 
     @include respond-above(xxl) {
         padding-left: rem(216px);
         padding-right: rem(216px);
     }
+
+    &--padding-lg {
+        @include respond-below(sm) {
+            padding-left: rem(24px);
+            padding-right: rem(24px);
+        }
+
+        @include respond-below(md) {
+            padding-top: rem(24px);
+            padding-bottom: rem(24px);
+        }
+    }
 }
 
 .item {
     &-grid {
-        margin: rem(-6px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: rem(12px);
 
-        & > * {
-            margin: rem(6px);
+        @include respond-above(lg) {
+            gap: rem(16px);
         }
     }
 
     &--shift-right {
-        margin-left: rem(50px);
+        margin-left: rem(44px);
 
         @include respond-above(lg) {
-            margin-left: rem(75px);
+            margin-left: rem(82px);
         }
     }
 }
