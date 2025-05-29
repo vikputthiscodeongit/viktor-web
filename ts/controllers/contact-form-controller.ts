@@ -304,6 +304,20 @@ function initStoredFormDataLoader(
     return;
 }
 
+function makeFormDataObject(formData: FormData, excludedFieldNames: string[]) {
+    const formDataObj: { [name: string]: string } = {};
+
+    for (const [name, value] of formData.entries()) {
+        if (excludedFieldNames.includes(name)) continue;
+
+        if (typeof value !== "string" || value.trim() === "") continue;
+
+        formDataObj[name] = value;
+    }
+
+    return formDataObj;
+}
+
 async function submitForm(
     formEl: HTMLFormElement,
     mathsCaptcha: SimpleMathsCaptcha,
@@ -374,20 +388,18 @@ async function submitForm(
 
                 notifier.show(NotificationContent.submitErrorValidationFailed);
             } else {
-                mathsCaptcha.answerInputEl.setCustomValidity("");
+                captcha.answerInputEl.setCustomValidity("");
 
-                const formDataObj: { [name: string]: string } = {};
-
-                for (const [name, value] of formData.entries()) {
-                    if (mathsCaptcha.isCaptchaInputEl(name)) continue;
-
-                    // This form has no input of type "file".
-                    if (typeof value !== "string" || value.trim() === "") continue;
-
-                    formDataObj[name] = value;
-                }
-
-                localStorage.setItem(`${formEl.id}-data`, JSON.stringify(formDataObj));
+                localStorage.setItem(
+                    `${formEl.id}-data`,
+                    JSON.stringify(
+                        makeFormDataObject(formData, [
+                            captcha.answerInputEl.id,
+                            captcha.digit1InputEl.id,
+                            captcha.digit2InputEl.id,
+                        ]),
+                    ),
+                );
 
                 notifier.show(NotificationContent.submitErrorUnknown);
                 notifier.show({
