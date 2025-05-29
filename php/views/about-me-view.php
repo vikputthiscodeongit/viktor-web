@@ -1,6 +1,6 @@
 <?php
-include_once ROOT_DIR . "/php/helpers/render-html-el.php";
-include ROOT_DIR . "/content/about-me-content.php";
+require_once ROOT_DIR . "/php/helpers/render-html-el.php";
+require ROOT_DIR . "/content/about-me-content.php";
 ?>
 
 <div class="my-details">
