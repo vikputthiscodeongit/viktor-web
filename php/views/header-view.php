@@ -25,7 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Site information -->
-    <title><?php echo $MY_NAME_GIVEN . " " . $MY_NAME_FAMILY; ?></title>
+    <title><?php echo $SITE_TITLE; ?></title>
     <meta name="keywords" content="<?php echo $META_KEYWORDS; ?>">
     <meta name="description" content="<?php echo $META_DESCRIPTION; ?>">
 
