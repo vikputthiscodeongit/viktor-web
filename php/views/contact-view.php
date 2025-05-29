@@ -13,7 +13,7 @@
         <div class="section-content">
             <h2 class="section-title"><?php echo $CONTACT_SECTION_FORM_TITLE; ?></h2>
 
-            <?php include ROOT_DIR . "/php/views/contact-form-view.php"; ?>
+            <?php require ROOT_DIR . "/php/views/contact-form-view.php"; ?>
         </div>
     </div>
 </section>
