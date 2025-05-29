@@ -49,7 +49,7 @@ legend {
         display: none;
         font-size: rem(13px);
 
-        [data-show-validation="true"] ~ & {
+        [data-show-validation-message="true"] ~ & {
             display: block;
         }
 
