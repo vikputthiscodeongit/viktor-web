@@ -1,7 +1,7 @@
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
-import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
-import SimpleMathsCaptcha from "@codebundlesbyvik/simple-maths-captcha";
 import { convertUnixTimeFormatToMs } from "@codebundlesbyvik/ntp-sync";
+import SimpleMathsCaptcha from "@codebundlesbyvik/simple-maths-captcha";
+import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 const HttpStatus = {
     Ok: 200,
@@ -249,7 +249,7 @@ function loadStoredFormData(formDataFromAsString: string, formEl: HTMLFormElemen
 }
 
 function initStoredFormDataLoader(
-    formDataFromLocalStorage: string,
+    formDataAsString: string,
     formEl: HTMLFormElement,
     notifier: SimpleNotifier,
 ) {
@@ -268,7 +268,7 @@ function initStoredFormDataLoader(
     loadButtonEl.addEventListener(
         "click",
         () => {
-            loadStoredFormData(formDataFromLocalStorage, formEl);
+            loadStoredFormData(formDataAsString, formEl);
             fieldsetEl.remove();
 
             return;
@@ -333,7 +333,7 @@ function makeFormDataObject(formData: FormData, excludedFieldNames: string[]) {
 
 async function submitForm(
     formEl: HTMLFormElement,
-    mathsCaptcha: SimpleMathsCaptcha,
+    captcha: SimpleMathsCaptcha,
     notifier: SimpleNotifier,
 ) {
     console.info("submitForm: Running...");
@@ -355,14 +355,14 @@ async function submitForm(
             formData.set(el.name, el.value);
         });
 
-        const submitResponse = await fetchWithTimeout("./api/form/submit-contact-form.php", {
+        const response = await fetchWithTimeout("/api/form/submit-contact-form.php", {
             method: "POST",
             body: formData,
         });
 
-        if (!submitResponse.ok) {
-            if (submitResponse.status === HttpStatus.UnprocessableContent) {
-                const responseData = (await submitResponse.json()) as {
+        if (!response.ok) {
+            if (response.status === HttpStatus.UnprocessableContent) {
+                const data = (await response.json()) as {
                     message: string;
                     invalid_form_controls: {
                         id: string;
@@ -455,12 +455,12 @@ export default function initContactForm(formEl: HTMLFormElement) {
             throw new Error("submitButtonEl not found!");
         }
 
-        const mathsCaptchaActivatorButtonEl = formEl.querySelector<HTMLButtonElement>(
+        const captchaActivatorButtonEl = formEl.querySelector<HTMLButtonElement>(
             `#${formEl.id}-simple-maths-captcha-activator`,
         );
 
-        if (!mathsCaptchaActivatorButtonEl) {
-            throw new Error("mathsCaptchaActivatorButtonEl not found!");
+        if (!captchaActivatorButtonEl) {
+            throw new Error("captchaActivatorButtonEl not found!");
         }
 
         const notifier = new SimpleNotifier({ hideOlder: true });
@@ -479,8 +479,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
         formControlElsWithoutButtonsAndHidden.forEach((el) => {
             // TODO: Debounce
             el.addEventListener("input", () => {
-                console.debug("initContactForm: `input` event fired on form control.");
-
                 el.setAttribute("data-had-interaction", "true");
 
                 if (el.getAttribute("data-rolling-validation") === "true") {
@@ -491,8 +489,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
             });
 
             el.addEventListener("blur", () => {
-                console.debug("initContactForm: `blur` event fired on form control.");
-
                 if (el.getAttribute("data-had-interaction") === "true") {
                     el.setAttribute("data-rolling-validation", "true");
                 }
@@ -507,7 +503,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
 
         submitButtonEl.addEventListener("click", (e) => {
             e.preventDefault();
-            submitForm(formEl, mathsCaptcha, notifier).catch((error) => console.error(error));
+            submitForm(formEl, captcha, notifier).catch((error) => console.error(error));
 
             return;
         });
