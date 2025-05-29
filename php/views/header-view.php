@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html class="js-disabled" lang="en">
 
 <head>
