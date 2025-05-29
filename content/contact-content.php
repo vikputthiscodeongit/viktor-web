@@ -1,0 +1,4 @@
+<?php
+$CONTACT_SECTION_TITLE = "Contact";
+$CONTACT_SECTION_SOCIAL_ICONS_TITLE = "Find me on";
+$CONTACT_SECTION_FORM_TITLE = "Shoot me a message";
