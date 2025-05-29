@@ -1,6 +1,6 @@
 <?php
-$FORM_ID = "contact-form";
-$FORM_ITEMS = [
+$CONTACT_FORM_ID = "contact-form";
+$CONTACT_FORM_ITEMS = [
     [
         "legend" => "Sender information",
         [
@@ -10,7 +10,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "text",
-                "id" => $FORM_ID . "-name",
+                "id" => $CONTACT_FORM_ID . "-name",
                 "minlength" => "2",
                 "maxlength" => "128",
             ],
@@ -22,7 +22,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "email",
-                "id" => $FORM_ID . "-email",
+                "id" => $CONTACT_FORM_ID . "-email",
                 "required" => "required",
             ],
         ],
@@ -36,7 +36,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "type" => "text",
-                "id" => $FORM_ID . "-subject",
+                "id" => $CONTACT_FORM_ID . "-subject",
                 "minlength" => "4",
                 "maxlength" => "128",
                 "required" => "required",
@@ -49,7 +49,7 @@ $FORM_ITEMS = [
             ],
             "control" => [
                 "el" => "textarea",
-                "id" => $FORM_ID . "-message",
+                "id" => $CONTACT_FORM_ID . "-message",
                 "rows" => "8",
                 "minlength" => "12",
                 "required" => "required",
@@ -65,7 +65,7 @@ $FORM_ITEMS = [
             "control" => [
                 "el" => "button",
                 "type" => "button",
-                "id" => $FORM_ID . "-simple-maths-captcha-activator",
+                "id" => $CONTACT_FORM_ID . "-simple-maths-captcha-activator",
                 "class" => "btn btn--sm",
                 "data-required" => "true",
                 "text" => "Load CAPTCHA",
@@ -75,7 +75,7 @@ $FORM_ITEMS = [
             "control" => [
                 "el" => "button",
                 "type" => "submit",
-                "id" => $FORM_ID . "-submit",
+                "id" => $CONTACT_FORM_ID . "-submit",
                 "text" => "Send",
             ],
         ],
