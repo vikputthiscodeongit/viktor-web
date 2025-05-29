@@ -7,12 +7,12 @@ $form_el = [
     "attrs" => [
         "method" => "POST",
         "class" => "has-overlay js-required",
-        "id" => $FORM_ID,
+        "id" => $CONTACT_FORM_ID,
     ],
     "children" => [],
 ];
 
-foreach ($FORM_ITEMS as $FIELDSET) {
+foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
     $fieldset_el = [
         "el" => "fieldset",
         "attrs" => [

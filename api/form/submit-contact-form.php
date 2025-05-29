@@ -107,4 +107,4 @@ function requestHandler($form_items)
     }
 }
 
-requestHandler($FORM_ITEMS);
+requestHandler($CONTACT_FORM_ITEMS);
