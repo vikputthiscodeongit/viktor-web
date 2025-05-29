@@ -3,8 +3,32 @@
 <html class="js-disabled" lang="en">
 
 <head>
-    <?php include ROOT_DIR . "/content/header-content.php"; ?>
+    <?php
+    require ROOT_DIR . "/content/header-content.php";
 
+    function does_file_exist($relative_file_path)
+    {
+        if (is_null($relative_file_path)) {
+            return false;
+        }
+
+        return file_exists(ROOT_DIR . $relative_file_path);
+    }
+
+    function get_file_mtime($file_path)
+    {
+        return date("Ymd_His", filemtime($file_path));
+    }
+
+    function get_versioned_asset_href($relative_file_path)
+    {
+        if (!does_file_exist($relative_file_path)) {
+            return $relative_file_path;
+        }
+
+        return $relative_file_path . "?v=" . get_file_mtime(ROOT_DIR . $relative_file_path);
+    }
+    ?>
     <meta charset="UTF-8">
 
     <!--
@@ -35,10 +59,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Recursive:wght@400;600&display=swap">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="./dist/style.css">
+    <link rel="stylesheet" href="<?php echo get_versioned_asset_href('/dist/style.css'); ?>">
 
     <!-- Scripts -->
-    <script src="./dist/index.js" defer></script>
+    <script src="<?php echo get_versioned_asset_href('/dist/index.js'); ?>" defer></script>
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/public/favicon/apple-touch-icon.png">
