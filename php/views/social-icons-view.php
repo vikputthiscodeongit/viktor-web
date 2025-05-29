@@ -1,6 +1,6 @@
 <?php
-include_once ROOT_DIR . "/php/helpers/render-html-el.php";
-include ROOT_DIR . "/content/icon-grid-content.php";
+require_once ROOT_DIR . "/php/helpers/render-html-el.php";
+require ROOT_DIR . "/content/social-icons-content.php";
 
 $icon_grid_el = [
     "el" => "ul",
@@ -13,7 +13,7 @@ $icon_grid_el = [
 $group_index = 0;
 $list_icon_el_groups = [];
 
-foreach ($ICON_GRID_ITEMS as $ICON_SET) {
+foreach ($SOCIAL_ICONS_ITEMS as $ICON_SET) {
     $i = 0;
     $list_icon_el_group = [];
 
