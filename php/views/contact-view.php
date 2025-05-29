@@ -7,7 +7,7 @@
         <div class="section-content">
             <h2 class="section-title"><?php echo $CONTACT_SECTION_SOCIAL_ICONS_TITLE; ?></h2>
 
-            <?php include ROOT_DIR . "/php/views/icon-grid-view.php"; ?>
+            <?php require ROOT_DIR . "/php/views/social-icons-view.php"; ?>
         </div>
 
         <div class="section-content">

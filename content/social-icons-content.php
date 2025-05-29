@@ -1,5 +1,5 @@
 <?php
-$ICON_GRID_ITEMS = [
+$SOCIAL_ICONS_ITEMS = [
     [
         [
             "name" => "Instagram",
