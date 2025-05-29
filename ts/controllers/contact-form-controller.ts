@@ -109,25 +109,134 @@ function updateFieldMessage(el: HTMLButtonElement | HTMLInputElement | HTMLTextA
     return;
 }
 
-function loadStoredFormData(formDataFromLocalStorage: string, formEl: HTMLFormElement) {
+function updateValidation(
+    el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement,
+    border: "auto" | "validNeutral" | false = "auto",
+) {
+    updateFieldMessage(el);
+    el.setAttribute("data-show-validation-message", "true");
+
+    if (!border) return;
+
+    el.setAttribute(
+        "data-show-validation-border",
+        el.validity.valid && border === "validNeutral"
+            ? "neutral"
+            : el.validity.valid
+              ? "valid"
+              : "invalid",
+    );
+
+    return;
+}
+
+function removeValidation(el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement) {
+    el.setAttribute("data-had-interaction", "false");
+    el.setAttribute("data-rolling-validation", "false");
+    el.setAttribute("data-show-validation-message", "false");
+    el.setAttribute("data-show-validation-border", "false");
+
+    return;
+}
+
+function initSimpleMathsCaptcha(
+    formEl: HTMLFormElement,
+    activatorButtonEl: HTMLButtonElement | HTMLInputElement,
+) {
+    const captcha = new SimpleMathsCaptcha({
+        activatorButtonEl,
+        baseId: formEl.id,
+        generatorEndpoint: {
+            url: "/api/simple-maths-captcha/generate-problem.php",
+            fetchOptions: {
+                method: "POST",
+                body: JSON.stringify({ base_id: formEl.id }),
+            },
+        },
+        answerInputElEventHandlers: [
+            {
+                // TODO: Debounce
+                type: "input",
+                listener: () => {
+                    captcha.answerInputEl.setAttribute("data-had-interaction", "true");
+
+                    // The <input> is marked invalid after the answer is confirmed to be incorrect
+                    // proceeding the back end validation.
+                    // On any input, reset the validity state so that validation elements & styles
+                    // are gone until next the validation.
+                    if (captcha.answerInputEl.value.length >= captcha.answerInputEl.minLength) {
+                        captcha.answerInputEl.setCustomValidity("");
+                    }
+
+                    if (captcha.answerInputEl.getAttribute("data-rolling-validation") === "true") {
+                        updateValidation(captcha.answerInputEl, "validNeutral");
+                    }
+
+                    return;
+                },
+            },
+            {
+                type: "blur",
+                listener: () => {
+                    if (captcha.answerInputEl.getAttribute("data-had-interaction") === "true") {
+                        captcha.answerInputEl.setAttribute("data-rolling-validation", "true");
+                    }
+
+                    if (captcha.answerInputEl.getAttribute("data-rolling-validation") === "true") {
+                        updateValidation(captcha.answerInputEl, "validNeutral");
+                    }
+
+                    return;
+                },
+            },
+        ],
+        ntpOptions: {
+            t1EndpointUrl: "/api/ntp/get-server-time.php",
+            t1CalcFn: async function t1CalcFn(response: Response) {
+                const data = (await response.json()) as { req_received_time: number };
+
+                return convertUnixTimeFormatToMs(data.req_received_time);
+            },
+            t2CalcFn: function t2CalcFn(resHeaders: Headers) {
+                // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
+                const header = resHeaders.get("Response-Timing");
+
+                if (!header) {
+                    return null;
+                }
+
+                const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
+                const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
+
+                if (!reqReceivedTime || !reqProcessingTime) {
+                    return null;
+                }
+
+                const resTransmitTime =
+                    Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
+
+                return convertUnixTimeFormatToMs(resTransmitTime);
+            },
+        },
+    });
+
+    return captcha;
+}
+
+function loadStoredFormData(formDataFromAsString: string, formEl: HTMLFormElement) {
     console.info("loadStoredFormData: Running...");
 
     try {
         const formControlElsWithoutButtons = formEl.querySelectorAll<
             HTMLInputElement | HTMLTextAreaElement
         >("input:not([type=button], [type=reset], [type=submit]), textarea");
-        const formData = JSON.parse(formDataFromLocalStorage) as { [name: string]: string };
+        const formData = JSON.parse(formDataFromAsString) as { [name: string]: string };
         const formControlElsWithFormData = Object.keys(formData);
 
         formControlElsWithoutButtons.forEach((el) => {
             if (formControlElsWithFormData.includes(el.id)) {
                 el.value = formData[el.id];
-                updateFieldMessage(el);
-                el.setAttribute("data-show-validation", "true");
-                el.setAttribute(
-                    "data-show-validation-border",
-                    el.validity.valid ? "valid" : "invalid",
-                );
+                updateValidation(el);
             }
         });
 
@@ -261,18 +370,7 @@ async function submitForm(
                     }
                 }
 
-                if (invalidCaptchaEl) {
-                    mathsCaptcha.answerInputEl.setCustomValidity("required");
-
-                    if (invalidCaptchaEl.id === mathsCaptcha.activatorButtonEl.id) {
-                        updateFieldMessage(mathsCaptcha.activatorButtonEl);
-                        mathsCaptcha.activatorButtonEl.setAttribute("data-show-validation", "true");
-                    }
-                } else {
-                    mathsCaptcha.answerInputEl.setCustomValidity("");
-                    // No need to update the activatorButton validation message as all data attributes
-                    // are reset on deactivation.
-                }
+                captcha.answerInputEl.setCustomValidity(invalidCaptchaEl ? "required" : "");
 
                 notifier.show(NotificationContent.submitErrorValidationFailed);
             } else {
@@ -316,27 +414,19 @@ async function submitForm(
     } finally {
         formFieldsets.forEach((el) => el.removeAttribute("disabled"));
 
-        const formControlElsWithoutButtonsAndHidden = formEl.querySelectorAll<
-            HTMLInputElement | HTMLTextAreaElement
-        >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
-        formControlElsWithoutButtonsAndHidden.forEach((el) => {
-            updateFieldMessage(el);
-
+        const formControlElsWithBasicButtonsWithoutHidden = formEl.querySelectorAll<
+            HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement
+        >("button[type=button], input:not([type=hidden], [type=reset], [type=submit]), textarea");
+        formControlElsWithBasicButtonsWithoutHidden.forEach((el) => {
             if (submitSuccessful) {
-                el.setAttribute("data-had-interaction", "false");
-                el.setAttribute("data-show-validation", "false");
-                el.setAttribute("data-show-validation-border", "false");
-
-                mathsCaptcha.deactivate();
-            } else {
-                el.setAttribute("data-show-validation", "true");
-
-                if (el.getAttribute("required") !== null) {
-                    el.setAttribute(
-                        "data-show-validation-border",
-                        el.validity.valid ? "valid" : "invalid",
-                    );
-                }
+                removeValidation(el);
+                captcha.deactivate();
+            } else if (
+                el.getAttribute("required") !== null ||
+                el.getAttribute("data-required") === "true"
+            ) {
+                el.setAttribute("data-rolling-validation", "true");
+                updateValidation(el, el.id !== captcha.activatorButtonEl.id ? "auto" : false);
             }
         });
     }
@@ -361,125 +451,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
         }
 
         const notifier = new SimpleNotifier({ hideOlder: true });
-        const mathsCaptcha = new SimpleMathsCaptcha({
-            activatorButtonEl: mathsCaptchaActivatorButtonEl,
-            baseId: formEl.id,
-            generatorEndpoint: {
-                url: "./api/simple-maths-captcha/generate-problem.php",
-                fetchOptions: {
-                    method: "POST",
-                    body: JSON.stringify({ base_id: formEl.id }),
-                },
-            },
-            answerInputElEventHandlers: [
-                {
-                    type: "input",
-                    listener: () => {
-                        console.debug("initContactForm: `input` event fired on SMC input.");
-
-                        mathsCaptcha.answerInputEl.setAttribute("data-had-interaction", "true");
-
-                        // The <input> is marked invalid after the answer is confirmed to be incorrect
-                        // proceeding the back end validation.
-                        // On any input, reset the validity state so that validation elements & styles
-                        // are gone until next the validation.
-                        if (
-                            mathsCaptcha.answerInputEl.value.length >=
-                            mathsCaptcha.answerInputEl.minLength
-                        ) {
-                            console.debug(
-                                "initContactForm: Setting SMC input custom validity to empty...",
-                            );
-
-                            mathsCaptcha.answerInputEl.setCustomValidity("");
-                        }
-
-                        if (
-                            mathsCaptcha.answerInputEl.getAttribute("data-show-validation") ===
-                            "true"
-                        ) {
-                            console.debug(
-                                "initContactForm: Updating SMC validation elements & styles...",
-                            );
-                            console.debug(
-                                "mathsCaptcha.answerInputEl.validity:",
-                                mathsCaptcha.answerInputEl.validity,
-                            );
-
-                            updateFieldMessage(mathsCaptcha.answerInputEl);
-                            mathsCaptcha.answerInputEl.setAttribute(
-                                "data-show-validation-border",
-                                mathsCaptcha.answerInputEl.validity.valid ? "neutral" : "invalid",
-                            );
-                        }
-
-                        return;
-                    },
-                },
-                {
-                    type: "blur",
-                    listener: () => {
-                        console.debug("initContactForm: `blur` event fired on SMC input.");
-
-                        if (
-                            mathsCaptcha.answerInputEl.getAttribute("data-had-interaction") ===
-                            "true"
-                        ) {
-                            mathsCaptcha.answerInputEl.setAttribute("data-show-validation", "true");
-                        }
-
-                        if (
-                            mathsCaptcha.answerInputEl.getAttribute("data-show-validation") ===
-                            "true"
-                        ) {
-                            console.debug(
-                                "initContactForm: Updating SMC validation elements & styles...",
-                            );
-                            console.debug(
-                                "mathsCaptcha.answerInputEl.validity:",
-                                mathsCaptcha.answerInputEl.validity,
-                            );
-
-                            updateFieldMessage(mathsCaptcha.answerInputEl);
-                            mathsCaptcha.answerInputEl.setAttribute(
-                                "data-show-validation-border",
-                                mathsCaptcha.answerInputEl.validity.valid ? "neutral" : "invalid",
-                            );
-                        }
-
-                        return;
-                    },
-                },
-            ],
-            ntpOptions: {
-                t1EndpointUrl: "./api/ntp/get-server-time.php",
-                t1CalcFn: async function t1CalcFn(response: Response) {
-                    const data = (await response.json()) as { req_received_time: number };
-
-                    return convertUnixTimeFormatToMs(data.req_received_time);
-                },
-                t2CalcFn: function t2CalcFn(resHeaders: Headers) {
-                    // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
-                    const header = resHeaders.get("Response-Timing");
-
-                    if (!header) {
-                        return null;
-                    }
-
-                    const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
-                    const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
-
-                    if (!reqReceivedTime || !reqProcessingTime) {
-                        return null;
-                    }
-
-                    const resTransmitTime =
-                        Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
-
-                    return convertUnixTimeFormatToMs(resTransmitTime);
-                },
-            },
-        });
+        const captcha = initSimpleMathsCaptcha(formEl, captchaActivatorButtonEl);
 
         const storedFormData = localStorage.getItem(`${formEl.id}-data`);
 
@@ -498,14 +470,8 @@ export default function initContactForm(formEl: HTMLFormElement) {
 
                 el.setAttribute("data-had-interaction", "true");
 
-                if (el.getAttribute("data-show-validation") === "true") {
-                    console.debug("initContactForm: Updating validation elements & styles...");
-
-                    updateFieldMessage(el);
-                    el.setAttribute(
-                        "data-show-validation-border",
-                        el.validity.valid ? "valid" : "invalid",
-                    );
+                if (el.getAttribute("data-rolling-validation") === "true") {
+                    updateValidation(el);
                 }
 
                 return;
@@ -515,17 +481,11 @@ export default function initContactForm(formEl: HTMLFormElement) {
                 console.debug("initContactForm: `blur` event fired on form control.");
 
                 if (el.getAttribute("data-had-interaction") === "true") {
-                    el.setAttribute("data-show-validation", "true");
+                    el.setAttribute("data-rolling-validation", "true");
                 }
 
-                if (el.getAttribute("data-show-validation") === "true") {
-                    console.debug("initContactForm: Updating validation elements & styles...");
-
-                    updateFieldMessage(el);
-                    el.setAttribute(
-                        "data-show-validation-border",
-                        el.validity.valid ? "valid" : "invalid",
-                    );
+                if (el.getAttribute("data-rolling-validation") === "true") {
+                    updateValidation(el);
                 }
 
                 return;
