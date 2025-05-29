@@ -304,6 +304,19 @@ function initStoredFormDataLoader(
     return;
 }
 
+function scrollToElWithOffset(elId: string) {
+    const firstInvalidFormControl = document.querySelector(`#${elId}`);
+
+    if (!firstInvalidFormControl) return;
+
+    // TODO: Set to 6.5rem when viewport width < md and to 7.5 rem in all other cases.
+    document.documentElement.style.scrollPadding = "7.5rem";
+    firstInvalidFormControl.scrollIntoView();
+    document.documentElement.style.scrollPadding = "";
+
+    return;
+}
+
 function makeFormDataObject(formData: FormData, excludedFieldNames: string[]) {
     const formDataObj: { [name: string]: string } = {};
 
@@ -359,25 +372,13 @@ async function submitForm(
 
                 let invalidCaptchaEl = null;
 
-                if (responseData.invalid_form_controls.length > 0) {
-                    const firstInvalidFormControl = document.querySelector(
-                        `#${responseData.invalid_form_controls[0].id}`,
-                    );
+                if (data.invalid_form_controls.length > 0) {
+                    scrollToElWithOffset(data.invalid_form_controls[0].id);
 
-                    if (firstInvalidFormControl) {
-                        document.documentElement.style.scrollPadding = "7.5rem";
-                        firstInvalidFormControl.scrollIntoView();
-                        document.documentElement.style.scrollPadding = "";
-                    }
-
-                    for (const el of [mathsCaptcha.activatorButtonEl, mathsCaptcha.answerInputEl]) {
+                    for (const el of [captcha.activatorButtonEl, captcha.answerInputEl]) {
                         if (invalidCaptchaEl) break;
 
-                        if (
-                            !responseData.invalid_form_controls.find(
-                                (control) => control.id === el.id,
-                            )
-                        )
+                        if (!data.invalid_form_controls.find((control) => control.id === el.id))
                             continue;
 
                         invalidCaptchaEl = el;
