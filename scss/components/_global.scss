@@ -1,3 +1,13 @@
+html {
+    &.has-scroll-offset {
+        scroll-padding: rem(104px);
+
+        @include respond-above(md) {
+            scroll-padding: rem(120px);
+        }
+    }
+}
+
 body {
     min-width: rem(320px);
     margin: 0 auto;

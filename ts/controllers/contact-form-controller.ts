@@ -309,10 +309,9 @@ function scrollToElWithOffset(elId: string) {
 
     if (!firstInvalidFormControl) return;
 
-    // TODO: Set to 6.5rem when viewport width < md and to 7.5 rem in all other cases.
-    document.documentElement.style.scrollPadding = "7.5rem";
+    document.documentElement.classList.add("has-scroll-offset");
     firstInvalidFormControl.scrollIntoView();
-    document.documentElement.style.scrollPadding = "";
+    document.documentElement.classList.remove("has-scroll-offset");
 
     return;
 }
