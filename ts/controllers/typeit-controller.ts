@@ -1,4 +1,6 @@
-// TODO: Only run when in viewport.
+// TODO:
+// * Extract the content somehow.
+// * Only run when in viewport.
 
 import TypeIt from "typeit";
 
