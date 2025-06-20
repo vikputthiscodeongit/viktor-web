@@ -53,8 +53,8 @@
     <meta name="description" content="<?php echo $META_DESCRIPTION; ?>">
 
     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Recursive:wght@400;600&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Recursive:wght@400;600&display=swap">
 
     <!-- Styles -->
