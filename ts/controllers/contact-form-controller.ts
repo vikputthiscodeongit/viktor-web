@@ -1,3 +1,6 @@
+// TODO:
+// * Fade out Simple Notifications when #contact not in viewport.
+
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
 import { convertUnixTimeFormatToMs } from "@codebundlesbyvik/ntp-sync";
 import SimpleMathsCaptcha from "@codebundlesbyvik/simple-maths-captcha";
