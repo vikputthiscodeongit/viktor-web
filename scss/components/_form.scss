@@ -51,9 +51,13 @@ legend {
 
         [data-show-validation-message="true"] ~ & {
             display: block;
+
+            .field--inline & {
+                display: inline-block;
+            }
         }
 
-        .field & {
+        .field:not(.field--inline) & {
             position: absolute;
             top: calc(100% + #{rem(1px)});
             left: 0;
