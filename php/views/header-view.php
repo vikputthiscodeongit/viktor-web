@@ -55,7 +55,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Recursive:wght@400;600&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Recursive:wght@300..1000&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="<?php echo get_versioned_asset_href('/dist/style.css'); ?>">
