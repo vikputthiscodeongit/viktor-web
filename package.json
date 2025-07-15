@@ -18,13 +18,13 @@
     "typeit": "8.8.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
+    "@eslint/js": "^9.31.0",
     "@tsconfig/recommended": "^1.0.10",
     "autoprefixer": "^10.4.21",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
-    "eslint": "^9.30.1",
+    "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "eslint-webpack-plugin": "^5.0.2",
@@ -40,8 +40,8 @@
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.1",
-    "webpack": "^5.99.9",
+    "typescript-eslint": "^8.37.0",
+    "webpack": "^5.100.2",
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"
   },
