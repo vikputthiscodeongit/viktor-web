@@ -101,10 +101,6 @@ label {
         @media (prefers-contrast: more) {
             background-color: $white;
         }
-
-        > span:nth-child(2) {
-            color: $gray;
-        }
     }
 
     // Crude way of clearing any possible scroll bar.
@@ -115,12 +111,6 @@ label {
     .field--inline & {
         flex-shrink: 0;
         margin-bottom: 0;
-    }
-
-    > span:nth-child(2) {
-        flex-shrink: 0;
-        margin-left: auto;
-        font-size: rem(10px);
     }
 }
 
