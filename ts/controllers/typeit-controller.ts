@@ -11,22 +11,28 @@ export default function initTypeItAboutMe(targetEl: HTMLElement) {
         loop: true,
     })
         //
-        .type("Software devlo", { delay: 500 })
+        .type("Technlo", { delay: 500 })
         .move(-2, { delay: 350 })
-        .type("e", { delay: 500 })
+        .type("o", { delay: 500 })
         .move(2, { delay: 400 })
-        .type("per", { delay: 1850 })
+        .type("gy", { delay: 1500 })
         .delete(undefined, { delay: 900 })
         //
-        .type("Photographer", { delay: 1800 })
+        .type("Cars", { delay: 1650 })
         .delete(undefined, { delay: 900 })
         //
-        .type("Moti", { delay: 400 })
-        .delete(2, { speed: 120, delay: 350 })
-        .type("toring enthusiast", { delay: 2000 })
+        .type("Photo ", { delay: 300 })
+        .delete(1)
+        .type("graphy", { delay: 1800 })
         .delete(undefined, { delay: 900 })
         //
-        .type("Human", { delay: 1450 })
+        .type("Food", { delay: 1450 })
+        .delete(undefined, { delay: 900 })
+        //
+        .type("Music", { delay: 1600 })
+        .delete(undefined, { delay: 900 })
+        //
+        .type("Nature", { delay: 1400 })
         .delete(undefined, { delay: 900 })
         //
         .go();
