@@ -20,8 +20,19 @@ require ROOT_DIR . "/content/about-me-content.php";
 
     <div class="visually-hidden">
         <?php
+        $array_length = count($MY_PROPERTIES_ITEMS);
+        $i = 0;
+
         foreach ($MY_PROPERTIES_ITEMS as $PROPERTY) {
-            echo "<span>" . $PROPERTY . "</span>";
+            echo $PROPERTY;
+
+            if ($i < $array_length - 2) {
+                echo ", ";
+            } else if ($i === $array_length - 2) {
+                echo " & ";
+            }
+
+            $i++;
         }
         ?>
     </div>
