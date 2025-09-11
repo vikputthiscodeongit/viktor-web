@@ -13,7 +13,7 @@ export default function initTypeItAboutMe(targetEl: HTMLElement) {
         //
         .type("Technlo", { delay: 500 })
         .move(-2, { delay: 350 })
-        .type("o", { delay: 500 })
+        .type("o", { delay: 300 })
         .move(2, { delay: 400 })
         .type("gy", { delay: 1500 })
         .delete(undefined, { delay: 900 })
@@ -21,12 +21,13 @@ export default function initTypeItAboutMe(targetEl: HTMLElement) {
         .type("Cars", { delay: 1650 })
         .delete(undefined, { delay: 900 })
         //
-        .type("Photo ", { delay: 300 })
-        .delete(1)
-        .type("graphy", { delay: 1800 })
+        .type("Photography", { delay: 1800 })
         .delete(undefined, { delay: 900 })
         //
-        .type("Food", { delay: 1450 })
+        .type("Goodfood", { delay: 300 })
+        .move(-4, { delay: 350 })
+        .type(" ", { delay: 250 })
+        .move(4, { delay: 1450 })
         .delete(undefined, { delay: 900 })
         //
         .type("Music", { delay: 1600 })
