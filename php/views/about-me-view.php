@@ -20,11 +20,11 @@ require ROOT_DIR . "/content/about-me-content.php";
 
     <div class="visually-hidden">
         <?php
-        $array_length = count($MY_PROPERTIES_ITEMS);
+        $array_length = count($THINGS_I_LIKE);
         $i = 0;
 
-        foreach ($MY_PROPERTIES_ITEMS as $PROPERTY) {
-            echo $PROPERTY;
+        foreach ($THINGS_I_LIKE as $item) {
+            echo $item;
 
             if ($i < $array_length - 2) {
                 echo ", ";
