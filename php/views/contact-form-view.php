@@ -7,7 +7,8 @@ $form_el = [
     "attrs" => [
         "method" => "POST",
         "class" => "has-overlay js-required",
-        "id" => $CONTACT_FORM_ID,
+        "id" => $CONTACT_FORM_NAME,
+        "name" => $CONTACT_FORM_NAME,
     ],
     "children" => [],
 ];
