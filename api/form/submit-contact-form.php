@@ -79,7 +79,7 @@ function requestHandler($form_items)
         $clean_form_data = sanitizeFormData($_POST);
         // var_dump($clean_form_data);
 
-        $form_controls_attrs = getFormControlsAttributes($form_items);
+        $form_controls_attrs = getFormControlsAttributesFromFormItems($form_items);
         // var_dump($form_controls_attrs);
 
         $validated_form_data = validateFormData($form_controls_attrs, $clean_form_data);

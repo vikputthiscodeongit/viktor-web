@@ -25,7 +25,7 @@ function sanitizeFormData($form_data)
     return $clean_form_data;
 }
 
-function getFormControlsAttributes($form_items)
+function getFormControlsAttributesFromFormItems($form_items)
 {
     $form_items_flat = array_merge([], ...$form_items);
     $form_controls_attrs = [];
