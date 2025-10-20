@@ -226,8 +226,8 @@ function initSimpleMathsCaptcha(
     return captcha;
 }
 
-function loadStoredFormData(formDataFromAsString: string, formEl: HTMLFormElement) {
-    console.info("loadStoredFormData: Running...");
+function loadStoredStringifiedFormData(formDataFromAsString: string, formEl: HTMLFormElement) {
+    console.info("loadStoredStringifiedFormData: Running...");
 
     try {
         const formControlElsWithoutButtons = formEl.querySelectorAll<
@@ -271,7 +271,7 @@ function initStoredFormDataLoader(
     loadButtonEl.addEventListener(
         "click",
         () => {
-            loadStoredFormData(formDataAsString, formEl);
+            loadStoredStringifiedFormData(formDataAsString, formEl);
             fieldsetEl.remove();
 
             return;
@@ -319,11 +319,11 @@ function scrollToElWithOffset(elId: string) {
     return;
 }
 
-function makeFormDataObject(formData: FormData, excludedFieldNames: string[]) {
+function makeFormDataObject(formData: FormData, excludedElsNames: string[]) {
     const formDataObj: { [name: string]: string } = {};
 
     for (const [name, value] of formData.entries()) {
-        if (excludedFieldNames.includes(name)) continue;
+        if (excludedElsNames.includes(name)) continue;
 
         if (typeof value !== "string" || value.trim() === "") continue;
 
