@@ -450,7 +450,6 @@ async function submitForm(
 export default function initContactForm(formEl: HTMLFormElement) {
     console.info("initContactForm: Running...");
 
-    try {
         const submitButtonEl = formEl.querySelector("[type=submit]");
 
         if (!submitButtonEl) {
@@ -516,9 +515,4 @@ export default function initContactForm(formEl: HTMLFormElement) {
         formEl.classList.remove("has-overlay");
 
         return;
-    } catch (error) {
-        throw error instanceof Error
-            ? error
-            : new Error("Unknown error during form initialization!");
-    }
 }
