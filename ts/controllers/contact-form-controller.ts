@@ -289,7 +289,7 @@ function initStoredFormDataLoader(
     clearButtonEl.addEventListener(
         "click",
         () => {
-            localStorage.removeItem(`${formEl.id}-data`);
+            localStorage.removeItem(`${formEl.name}-data`);
             fieldsetEl.remove();
 
             notifier.show(NotificationContent.msgRemovedFromStorage);
@@ -394,7 +394,7 @@ async function submitForm(
                 captcha.answerInputEl.setCustomValidity("");
 
                 localStorage.setItem(
-                    `${formEl.id}-data`,
+                    `${formEl.name}-data`,
                     JSON.stringify(
                         makeFormDataObject(formData, [
                             captcha.answerInputEl.id,
@@ -418,7 +418,7 @@ async function submitForm(
 
         notifier.show(NotificationContent.sumbitSuccess);
 
-        localStorage.removeItem(`${formEl.id}-data`);
+        localStorage.removeItem(`${formEl.name}-data`);
         formControlElsWithoutButtons.forEach((el) => (el.value = ""));
 
         return;
