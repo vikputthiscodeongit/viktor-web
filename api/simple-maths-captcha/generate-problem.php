@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . "/../../global.php";
 require_once ROOT_DIR . "/php/helpers/return-http-response.php";
-require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-generator.php";
+require ROOT_DIR . "/php/controllers/simple-maths-captcha/Generate.php";
 require_once ROOT_DIR . "/content/contact-form-content.php";
+
+use SimpleMathsCaptcha\Generate as CaptchaGenerator;
 
 function requestHandler()
 {
@@ -12,16 +14,20 @@ function requestHandler()
         }
 
         $request_body = json_decode(file_get_contents('php://input'));
+        $captcha_id = $request_body->id;
 
-        if (!isset($request_body->base_id)) {
+        if (!isset($captcha_id)) {
             returnHttpResponse(HttpStatus::UNPROCESSABLE_CONTENT, [
-                "message" => "CAPTCHA base ID must be provided."
+                "message" => "CAPTCHA ID must be provided."
             ]);
         }
 
+        $captcha_generator = new CaptchaGenerator($captcha_id);
+        $problem_data = $captcha_generator->generateProblem(15000);
+
         returnHttpResponse(
             HttpStatus::OK,
-            ["problem_data" => makeSimpleMathsCaptchaProblem($request_body->base_id, 15000)]
+            $problem_data
         );
     } catch (\Throwable $th) {
         // var_dump($th);

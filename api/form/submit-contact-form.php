@@ -4,7 +4,6 @@
 // next submission if hash hasn't changed.
 
 require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/session.php";
 require_once ROOT_DIR . "/_folder/values.php";
 require_once ROOT_DIR . "/php/helpers/return-http-response.php";
 require_once ROOT_DIR . "/php/controllers/form-controller.php";
@@ -69,7 +68,7 @@ function sendMail($form_values)
     return $mail_sent;
 }
 
-function requestHandler($form_items)
+function requestHandler($form_name, $form_items)
 {
     try {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -82,7 +81,7 @@ function requestHandler($form_items)
         $form_controls_attrs = getFormControlsAttributesFromFormItems($form_items);
         // var_dump($form_controls_attrs);
 
-        $validated_form_data = validateFormData($form_controls_attrs, $clean_form_data);
+        $validated_form_data = validateFormData($form_name, $form_controls_attrs, $clean_form_data);
         // var_dump($validated_form_data);
 
         $invalid_form_controls = getFormControlsErrors($validated_form_data);
@@ -107,4 +106,4 @@ function requestHandler($form_items)
     }
 }
 
-requestHandler($CONTACT_FORM_ITEMS);
+requestHandler($CONTACT_FORM_NAME, $CONTACT_FORM_ITEMS);

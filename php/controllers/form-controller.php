@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/php/controllers/simple-maths-captcha-validator.php";
+require ROOT_DIR . "/php/controllers/simple-maths-captcha/Validate.php";
+
+use SimpleMathsCaptcha\Validate as CaptchaValidator;
 
 function isValidEmailAddress(string $email_address)
 {
@@ -52,8 +54,10 @@ function getFormControlsAttributesFromFormItems($form_items)
     return $form_controls_attrs;
 }
 
-function validateFormData($form_controls_attrs, $form_data)
+function validateFormData($form_name, $form_controls_attrs, $form_data)
 {
+    $captcha_validator = new CaptchaValidator($form_name . "-simple-maths-captcha");
+
     $validated_form_data = [];
 
     foreach ($form_controls_attrs as $form_control_attrs) {
@@ -63,15 +67,12 @@ function validateFormData($form_controls_attrs, $form_data)
         ];
 
         // Simple Maths CAPTCHA
-        if (isSimpleMathsCaptchaFormControl($form_control_attrs["id"])) {
-            $simple_maths_captcha_id =
-                getSimpleMathsCaptchaId($form_control_attrs["id"]) ?? $form_control_attrs["id"];
-            $validation_result =
-                getSimpleMathsCaptchaValidationState($simple_maths_captcha_id, $form_data);
+        if ($captcha_validator->isCaptchaFormControlId($form_control_attrs["id"])) {
+            $validation_result = $captcha_validator->getValidationState($form_data);
 
             if ($validation_result !== "valid") {
                 $form_control_validation_result["id"] =
-                    getSimpleMathsCaptchaInvalidControlId($simple_maths_captcha_id, $validation_result);
+                    $captcha_validator->getInvalidFormControlId($validation_result);
                 $form_control_validation_result["validation_errors"] = [true];
             }
 
