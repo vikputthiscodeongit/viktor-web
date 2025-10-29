@@ -11,7 +11,7 @@ function requestHandler()
 
         returnHttpResponse(
             HttpStatus::OK,
-            ["req_received_time" => $_SERVER["REQUEST_TIME_FLOAT"]],
+            ["received_time" => $_SERVER["REQUEST_TIME_FLOAT"]],
         );
     } catch (\Throwable $th) {
         // var_dump($th);

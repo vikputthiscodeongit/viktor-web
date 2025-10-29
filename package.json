@@ -12,8 +12,8 @@
   "dependencies": {
     "@codebundlesbyvik/html-dev-label": "3.2.1",
     "@codebundlesbyvik/js-helpers": "2.1.3",
-    "@codebundlesbyvik/simple-maths-captcha": "1.1.0",
     "@codebundlesbyvik/simple-notifier": "2.2.3",
+    "@codebundlesbyvik/simple-maths-captcha": "2.0.0",
     "bootstrap": "5.3.8",
     "typeit": "8.8.7"
   },

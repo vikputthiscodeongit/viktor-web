@@ -2,7 +2,7 @@
 // * Fade out Simple Notifications when #contact not in viewport.
 
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
-import { convertUnixTimeFormatToMs } from "@codebundlesbyvik/ntp-sync";
+import Ntp, { convertUnixTimeFormatToMs } from "@codebundlesbyvik/ntp-sync";
 import SimpleMathsCaptcha from "@codebundlesbyvik/simple-maths-captcha";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
@@ -142,19 +142,74 @@ function removeValidation(el: HTMLButtonElement | HTMLInputElement | HTMLTextAre
     return;
 }
 
-function initSimpleMathsCaptcha(
-    formEl: HTMLFormElement,
-    activatorButtonEl: HTMLButtonElement | HTMLInputElement,
-) {
+function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
+    const id =
+        formEl.name || formEl.id
+            ? (formEl.name ?? formEl.id) + "-simple-maths-captcha"
+            : "simple-maths-captcha";
+
+    const activatorButtonEl = formEl.querySelector<HTMLButtonElement>(`#${id}-activator`);
+
+    if (!activatorButtonEl) {
+        throw new Error("Failed to initialize SimpleMathsCaptcha - activator button not found.");
+    }
+
+    const ntp = new Ntp({
+        t1EndpointUrl: "/api/ntp/get-server-time.php",
+        t1CalcFn: async function (response: Response) {
+            const fetchedData = (await response.json()) as unknown;
+
+            const isValidData = (data: unknown): data is { received_time: number } =>
+                typeof data === "object" && data !== null && "received_time" in data;
+
+            return isValidData(fetchedData)
+                ? convertUnixTimeFormatToMs(fetchedData.received_time)
+                : null;
+        },
+        t2CalcFn: function (responseHeaders: Headers) {
+            // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
+            const header = responseHeaders.get("Response-Timing");
+
+            if (!header) return null;
+
+            const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
+            const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
+
+            if (!reqReceivedTime || !reqProcessingTime) return null;
+
+            const respTransmitTime =
+                Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
+
+            return convertUnixTimeFormatToMs(respTransmitTime);
+        },
+    });
     const captcha = new SimpleMathsCaptcha({
         activatorButtonEl,
-        baseId: formEl.id,
-        generatorEndpoint: {
+        id,
+        ntp,
+        dataEndpoint: {
             url: "/api/simple-maths-captcha/generate-problem.php",
             fetchOptions: {
                 method: "POST",
-                body: JSON.stringify({ base_id: formEl.id }),
+                body: JSON.stringify({ id }),
             },
+        },
+        dataHandlerFn: async function (response: Response) {
+            const fetchedData = (await response.json()) as unknown;
+
+            const isValidData = (
+                data: unknown,
+            ): data is { digit_1: number; digit_2: number; invalid_after: number } =>
+                typeof data === "object" &&
+                data !== null &&
+                "digit_1" in data &&
+                "digit_2" in data &&
+                "invalid_after" in data &&
+                Object.values(data).every((value) => typeof value === "number");
+
+            return isValidData(fetchedData)
+                ? [fetchedData.digit_1, fetchedData.digit_2, fetchedData.invalid_after]
+                : null;
         },
         answerInputElEventHandlers: [
             {
@@ -166,7 +221,7 @@ function initSimpleMathsCaptcha(
                     // The <input> is marked invalid after the answer is confirmed to be incorrect
                     // proceeding the back end validation.
                     // On any input, reset the validity state so that validation elements & styles
-                    // are gone until next the validation.
+                    // are hidden until next the validation.
                     if (captcha.answerInputEl.value.length >= captcha.answerInputEl.minLength) {
                         captcha.answerInputEl.setCustomValidity("");
                     }
@@ -193,34 +248,10 @@ function initSimpleMathsCaptcha(
                 },
             },
         ],
-        ntpOptions: {
-            t1EndpointUrl: "/api/ntp/get-server-time.php",
-            t1CalcFn: async function t1CalcFn(response: Response) {
-                const data = (await response.json()) as { req_received_time: number };
-
-                return convertUnixTimeFormatToMs(data.req_received_time);
-            },
-            t2CalcFn: function t2CalcFn(resHeaders: Headers) {
-                // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
-                const header = resHeaders.get("Response-Timing");
-
-                if (!header) {
-                    return null;
-                }
-
-                const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
-                const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
-
-                if (!reqReceivedTime || !reqProcessingTime) {
-                    return null;
-                }
-
-                const resTransmitTime =
-                    Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
-
-                return convertUnixTimeFormatToMs(resTransmitTime);
-            },
-        },
+        loaderEl: createEl("div", {
+            class: "spinner spinner--lg",
+            role: "presentation",
+        }),
     });
 
     return captcha;
@@ -429,21 +460,30 @@ async function submitForm(
     } finally {
         formFieldsets.forEach((el) => el.removeAttribute("disabled"));
 
-        const formControlElsWithBasicButtonsWithoutHidden = formEl.querySelectorAll<
-            HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement
-        >("button[type=button], input:not([type=hidden], [type=reset], [type=submit]), textarea");
-        formControlElsWithBasicButtonsWithoutHidden.forEach((el) => {
-            if (submitSuccessful) {
-                removeValidation(el);
-                captcha.deactivate();
-            } else if (
-                el.getAttribute("required") !== null ||
-                el.getAttribute("data-required") === "true"
-            ) {
-                el.setAttribute("data-rolling-validation", "true");
-                updateValidation(el, el.id !== captcha.activatorButtonEl.id ? "auto" : false);
+        if (!submitSuccessful) {
+            const formControlElsToUpdate = formEl.querySelectorAll<
+                HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement
+            >(
+                "button[type=button], input:not([type=hidden], [type=reset], [type=submit]), textarea",
+            );
+            for (const [, el] of formControlElsToUpdate.entries()) {
+                if (
+                    el.getAttribute("required") === null &&
+                    el.getAttribute("data-required") !== "true"
+                )
+                    continue;
+
+                if (el.id === captcha.activatorButtonEl.id) {
+                    updateValidation(el, false);
+                } else {
+                    el.setAttribute("data-update-validation-on-input", "true");
+                    updateValidation(el);
+                }
             }
-        });
+        } else {
+            formControlElsWithoutButtons.forEach((el) => clearValidation(el));
+            captcha.deactivate();
+        }
     }
 }
 
@@ -456,16 +496,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
             throw new Error("submitButtonEl not found!");
         }
 
-        const captchaActivatorButtonEl = formEl.querySelector<HTMLButtonElement>(
-            `#${formEl.id}-simple-maths-captcha-activator`,
-        );
-
-        if (!captchaActivatorButtonEl) {
-            throw new Error("captchaActivatorButtonEl not found!");
-        }
-
         const notifier = new SimpleNotifier({ hideOlder: true });
-        const captcha = initSimpleMathsCaptcha(formEl, captchaActivatorButtonEl);
 
         const storedFormData = localStorage.getItem(`${formEl.id}-data`);
 
@@ -476,6 +507,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
         const formControlElsWithoutButtonsAndHidden = formEl.querySelectorAll<
             HTMLInputElement | HTMLTextAreaElement
         >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
+    const captcha = initSimpleMathsCaptcha(formEl);
 
         formControlElsWithoutButtonsAndHidden.forEach((el) => {
             // TODO: Debounce
