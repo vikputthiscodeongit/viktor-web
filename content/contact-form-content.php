@@ -11,8 +11,8 @@ $CONTACT_FORM_ITEMS = [
             "control" => [
                 "type" => "text",
                 "id" => $CONTACT_FORM_NAME . "-name",
-                "minlength" => "2",
-                "maxlength" => "128",
+                "minlength" => 2,
+                "maxlength" => 128,
             ],
         ],
         [
@@ -23,7 +23,7 @@ $CONTACT_FORM_ITEMS = [
             "control" => [
                 "type" => "email",
                 "id" => $CONTACT_FORM_NAME . "-email",
-                "required" => "required",
+                "required" => true,
             ],
         ],
     ],
@@ -37,9 +37,9 @@ $CONTACT_FORM_ITEMS = [
             "control" => [
                 "type" => "text",
                 "id" => $CONTACT_FORM_NAME . "-subject",
-                "minlength" => "4",
-                "maxlength" => "128",
-                "required" => "required",
+                "minlength" => 4,
+                "maxlength" => 128,
+                "required" => true,
             ],
         ],
         [
@@ -50,9 +50,9 @@ $CONTACT_FORM_ITEMS = [
             "control" => [
                 "el" => "textarea",
                 "id" => $CONTACT_FORM_NAME . "-message",
-                "rows" => "8",
-                "minlength" => "12",
-                "required" => "required",
+                "rows" => 8,
+                "minlength" => 12,
+                "required" => true,
             ],
         ],
     ],
@@ -67,7 +67,7 @@ $CONTACT_FORM_ITEMS = [
                 "type" => "button",
                 "id" => $CONTACT_FORM_NAME . "-simple-maths-captcha-activator",
                 "class" => "btn btn--sm",
-                "data-required" => "true",
+                "required" => true,
                 "text" => "Load CAPTCHA",
             ],
         ],

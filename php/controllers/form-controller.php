@@ -94,11 +94,7 @@ function validateFormData($form_name, $form_controls_attrs, $form_data)
         // Empty, non-required form controls.
         if (
             $form_control_value === "" &&
-            (
-                !isset($form_control_attrs["required"]) ||
-                $form_control_attrs["required"] === false ||
-                $form_control_attrs["required"] === "false"
-            )
+            (!isset($form_control_attrs["required"]) || $form_control_attrs["required"] !== true)
         ) {
             array_push($validated_form_data, $form_control_validation_result);
 
@@ -121,11 +117,11 @@ function validateFormData($form_name, $form_controls_attrs, $form_data)
                     break;
 
                 case "minlength";
-                    $form_control_value_valid = strlen($form_control_value) >= (int) $attr_value;
+                    $form_control_value_valid = strlen($form_control_value) >= $attr_value;
                     break;
 
                 case "maxlength";
-                    $form_control_value_valid = strlen($form_control_value) <= (int) $attr_value;
+                    $form_control_value_valid = strlen($form_control_value) <= $attr_value;
                     break;
             }
 
