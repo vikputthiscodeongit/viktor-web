@@ -25,31 +25,37 @@ const FormControlValidationMessage = {
 };
 
 const NotificationContent = {
-    sumbitSuccess: {
-        title: "Message sent",
-        text: "I'll be in touch soon!",
-        variant: "success",
+    submit: {
+        success: {
+            title: "Message sent",
+            text: "I'll be in touch soon!",
+            variant: "success",
+        },
+        validationError: {
+            text: "One or more fields failed validation. Please check and correct them.",
+            variant: "warning",
+        },
+        unknownError: {
+            text: "Failed to send message. Please try again at a later time.",
+            variant: "error",
+        },
     },
-    submitErrorValidationFailed: {
-        text: "One or more fields failed validation. Please check and correct them.",
-        variant: "warning",
-    },
-    submitErrorUnknown: {
-        text: "Failed to send message. Please try again at a later time.",
-        variant: "error",
-    },
-    msgInStorage: {
-        text: "A previously unsent message was stored.",
-        variant: "info",
-    },
-    msgPushedToStorage: {
-        text: "Your message has been stored on your device. You may close this page and come back at a later time to retry sending it.",
-        variant: "info",
-        hideAfterTime: 8000,
-    },
-    msgRemovedFromStorage: {
-        text: "Message removed from storage.",
-        variant: "info",
+    formDataStorage: {
+        inUse: {
+            text: "A previously unsent message was stored.",
+            variant: "info",
+        },
+        stored: {
+            text: [
+                "Your message has been stored on your device.",
+                "You may close this page and come back at a later time to retry sending it.",
+            ],
+            variant: "warning",
+            hideAfterTime: 6000,
+        },
+        removed: {
+            text: "Message removed from storage.",
+        },
     },
 };
 
@@ -323,7 +329,7 @@ function initStoredFormDataLoader(
             localStorage.removeItem(`${formEl.name}-data`);
             fieldsetEl.remove();
 
-            notifier.show(NotificationContent.msgRemovedFromStorage);
+            notifier.show(NotificationContent.formDataStorage.removed);
 
             return;
         },
@@ -420,7 +426,7 @@ async function submitForm(
 
                 captcha.answerInputEl.setCustomValidity(invalidCaptchaEl ? "required" : "");
 
-                notifier.show(NotificationContent.submitErrorValidationFailed);
+                notifier.show(NotificationContent.submit.validationError);
             } else {
                 captcha.answerInputEl.setCustomValidity("");
 
@@ -435,9 +441,9 @@ async function submitForm(
                     ),
                 );
 
-                notifier.show(NotificationContent.submitErrorUnknown);
+                notifier.show(NotificationContent.submit.unknownError);
                 notifier.show({
-                    ...NotificationContent.msgPushedToStorage,
+                    ...NotificationContent.formDataStorage.stored,
                     hideOlder: false,
                 });
             }
@@ -447,14 +453,14 @@ async function submitForm(
 
         submitSuccessful = true;
 
-        notifier.show(NotificationContent.sumbitSuccess);
+        notifier.show(NotificationContent.submit.success);
 
         localStorage.removeItem(`${formEl.name}-data`);
         formControlElsWithoutButtons.forEach((el) => (el.value = ""));
 
         return;
     } catch (error) {
-        notifier.show(NotificationContent.submitErrorUnknown);
+        notifier.show(NotificationContent.submit.unknownError);
 
         throw error instanceof Error ? error : new Error("Unknown error during form submission!");
     } finally {
