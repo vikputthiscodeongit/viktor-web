@@ -276,13 +276,13 @@ function loadStoredStringifiedFormData(formDataFromAsString: string, formEl: HTM
     console.info("loadStoredStringifiedFormData: Running...");
 
     try {
-        const formControlElsWithoutButtons = formEl.querySelectorAll<
-            HTMLInputElement | HTMLTextAreaElement
-        >("input:not([type=button], [type=reset], [type=submit]), textarea");
+        const formControlEls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+            "input, textarea",
+        );
         const formData = JSON.parse(formDataFromAsString) as { [name: string]: string };
         const formControlElsWithFormData = Object.keys(formData);
 
-        formControlElsWithoutButtons.forEach((el) => {
+        formControlEls.forEach((el) => {
             if (formControlElsWithFormData.includes(el.id)) {
                 el.value = formData[el.id];
                 updateValidation(el);
@@ -388,15 +388,15 @@ async function submitForm(
 
     let submitSuccessful = false;
     const formFieldsets = formEl.querySelectorAll<HTMLFieldSetElement>("fieldset");
+    const formControlElsWithoutButtons = formEl.querySelectorAll<
+        HTMLInputElement | HTMLTextAreaElement
+    >("input:not([type=button], [type=reset], [type=submit]), textarea");
 
     try {
         formFieldsets.forEach((el) => {
             el.setAttribute("disabled", "disabled");
         });
 
-        const formControlElsWithoutButtons = formEl.querySelectorAll<
-            HTMLInputElement | HTMLTextAreaElement
-        >("input:not([type=button], [type=reset], [type=submit]), textarea");
         const formData = new FormData();
 
         formControlElsWithoutButtons.forEach((el) => {
