@@ -81,6 +81,18 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
                 return $attr !== "el";
             }, ARRAY_FILTER_USE_KEY),
         ];
+
+        if (array_key_exists("required", $input_el["attrs"]) && $input_el["attrs"]["required"] === true) {
+            if ($input_el["el"] === "input" || $input_el["el"] === "textarea") {
+                $input_el["attrs"]["required"] = "required";
+            }
+
+            if ($input_el["el"] === "button") {
+                unset($input_el["attrs"]["required"]);
+                $input_el["attrs"]["data-required"] = "true";
+            }
+        }
+
         $input_el["attrs"]["id"] = $input_el["attrs"]["id"];
         $input_el["attrs"]["name"] = $ITEM["control"]["id"];
 
