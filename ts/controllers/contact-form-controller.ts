@@ -410,17 +410,25 @@ async function submitForm(
 
         if (!response.ok) {
             if (response.status === HttpStatus.UnprocessableContent) {
-                const data = (await response.json()) as {
+                const data = (await response.json()) as unknown;
+
+                const isValidData = (
+                    data: unknown,
+                ): data is {
                     message: string;
                     invalid_form_controls: {
                         id: string;
                         validation_errors: [string | true];
                     }[];
-                };
+                } =>
+                    typeof data === "object" &&
+                    data !== null &&
+                    "invalid_form_controls" in data &&
+                    Array.isArray(data.invalid_form_controls);
 
                 let invalidCaptchaEl = null;
 
-                if (data.invalid_form_controls.length > 0) {
+                if (isValidData(data) && data.invalid_form_controls.length > 0) {
                     scrollToElWithOffset(data.invalid_form_controls[0].id);
 
                     for (const el of [captcha.activatorButtonEl, captcha.answerInputEl]) {
