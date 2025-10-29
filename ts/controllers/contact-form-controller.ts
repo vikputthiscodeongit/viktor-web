@@ -120,7 +120,7 @@ function updateFieldMessage(el: HTMLButtonElement | HTMLInputElement | HTMLTextA
 
 function updateValidation(
     el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement,
-    border: "auto" | "validNeutral" | false = "auto",
+    border: "auto" | "neutral" | false = "auto",
 ) {
     updateFieldMessage(el);
     el.setAttribute("data-show-validation-message", "true");
@@ -129,7 +129,7 @@ function updateValidation(
 
     el.setAttribute(
         "data-show-validation-border",
-        el.validity.valid && border === "validNeutral"
+        el.validity.valid && border === "neutral"
             ? "neutral"
             : el.validity.valid
               ? "valid"
@@ -139,9 +139,9 @@ function updateValidation(
     return;
 }
 
-function removeValidation(el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement) {
+function clearValidation(el: HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement) {
     el.setAttribute("data-had-interaction", "false");
-    el.setAttribute("data-rolling-validation", "false");
+    el.setAttribute("data-update-validation-on-input", "false");
     el.setAttribute("data-show-validation-message", "false");
     el.setAttribute("data-show-validation-border", "false");
 
@@ -232,8 +232,11 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
                         captcha.answerInputEl.setCustomValidity("");
                     }
 
-                    if (captcha.answerInputEl.getAttribute("data-rolling-validation") === "true") {
-                        updateValidation(captcha.answerInputEl, "validNeutral");
+                    if (
+                        captcha.answerInputEl.getAttribute("data-update-validation-on-input") ===
+                        "true"
+                    ) {
+                        updateValidation(captcha.answerInputEl, "neutral");
                     }
 
                     return;
@@ -243,11 +246,17 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
                 type: "blur",
                 listener: () => {
                     if (captcha.answerInputEl.getAttribute("data-had-interaction") === "true") {
-                        captcha.answerInputEl.setAttribute("data-rolling-validation", "true");
+                        captcha.answerInputEl.setAttribute(
+                            "data-update-validation-on-input",
+                            "true",
+                        );
                     }
 
-                    if (captcha.answerInputEl.getAttribute("data-rolling-validation") === "true") {
-                        updateValidation(captcha.answerInputEl, "validNeutral");
+                    if (
+                        captcha.answerInputEl.getAttribute("data-update-validation-on-input") ===
+                        "true"
+                    ) {
+                        updateValidation(captcha.answerInputEl, "neutral");
                     }
 
                     return;
@@ -496,61 +505,59 @@ async function submitForm(
 export default function initContactForm(formEl: HTMLFormElement) {
     console.info("initContactForm: Running...");
 
-        const submitButtonEl = formEl.querySelector("[type=submit]");
+    const submitButtonEl = formEl.querySelector("[type=submit]");
 
-        if (!submitButtonEl) {
-            throw new Error("submitButtonEl not found!");
-        }
+    if (!submitButtonEl) {
+        throw new Error("submitButtonEl not found!");
+    }
 
-        const notifier = new SimpleNotifier({ hideOlder: true });
-
-        const storedFormData = localStorage.getItem(`${formEl.id}-data`);
-
-        if (storedFormData) {
-            initStoredFormDataLoader(storedFormData, formEl, notifier);
-        }
-
-        const formControlElsWithoutButtonsAndHidden = formEl.querySelectorAll<
-            HTMLInputElement | HTMLTextAreaElement
-        >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
     const captcha = initSimpleMathsCaptcha(formEl);
+    const notifier = new SimpleNotifier({ hideOlder: true });
 
-        formControlElsWithoutButtonsAndHidden.forEach((el) => {
-            // TODO: Debounce
-            el.addEventListener("input", () => {
-                el.setAttribute("data-had-interaction", "true");
+    const storedFormData = localStorage.getItem(`${formEl.name}-data`);
 
-                if (el.getAttribute("data-rolling-validation") === "true") {
-                    updateValidation(el);
-                }
+    if (storedFormData) {
+        initStoredFormDataLoader(storedFormData, formEl, notifier);
+    }
 
-                return;
-            });
+    const formControlElsWithoutButtonsOrHidden = formEl.querySelectorAll<
+        HTMLInputElement | HTMLTextAreaElement
+    >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
 
-            el.addEventListener("blur", () => {
-                if (el.getAttribute("data-had-interaction") === "true") {
-                    el.setAttribute("data-rolling-validation", "true");
-                }
+    formControlElsWithoutButtonsOrHidden.forEach((el) => {
+        // TODO: Debounce
+        el.addEventListener("input", () => {
+            el.setAttribute("data-had-interaction", "true");
 
-                if (el.getAttribute("data-rolling-validation") === "true") {
-                    updateValidation(el);
-                }
-
-                return;
-            });
-        });
-
-        submitButtonEl.addEventListener("click", (e) => {
-            e.preventDefault();
-            submitForm(formEl, captcha, notifier).catch((error) => console.error(error));
+            if (el.getAttribute("data-update-validation-on-input") === "true") {
+                updateValidation(el);
+            }
 
             return;
         });
 
-        formEl
-            .querySelectorAll("fieldset:disabled")
-            .forEach((el) => el.removeAttribute("disabled"));
-        formEl.classList.remove("has-overlay");
+        el.addEventListener("blur", () => {
+            if (el.getAttribute("data-had-interaction") === "true") {
+                el.setAttribute("data-update-validation-on-input", "true");
+            }
+
+            if (el.getAttribute("data-update-validation-on-input") === "true") {
+                updateValidation(el);
+            }
+
+            return;
+        });
+    });
+
+    submitButtonEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        submitForm(formEl, captcha, notifier).catch((error) => console.error(error));
 
         return;
+    });
+
+    formEl.querySelectorAll("fieldset:disabled").forEach((el) => el.removeAttribute("disabled"));
+    formEl.classList.remove("has-overlay");
+
+    return;
 }
