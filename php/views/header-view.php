@@ -5,27 +5,15 @@
     <?php
     require ROOT_DIR . "/content/header-content.php";
 
-    function does_file_exist($relative_file_path)
-    {
-        if (is_null($relative_file_path) || trim($relative_file_path) === "") {
-            return false;
-        }
-
-        return file_exists(ROOT_DIR . $relative_file_path);
-    }
-
-    function get_file_mtime($file_path)
-    {
-        return date("Ymd_His", filemtime($file_path));
-    }
-
     function get_versioned_asset_href($relative_file_path)
     {
-        if (!does_file_exist($relative_file_path)) {
+        if (is_null($relative_file_path) || trim($relative_file_path) === "") {
             return $relative_file_path;
         }
 
-        return $relative_file_path . "?v=" . get_file_mtime(ROOT_DIR . $relative_file_path);
+        $file_mtime = date("Ymd_His", filemtime(ROOT_DIR . $relative_file_path));
+
+        return $relative_file_path . "?v=" . $file_mtime;
     }
     ?>
     <meta charset="UTF-8">
