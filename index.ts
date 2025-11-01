@@ -13,7 +13,7 @@ import "./style.scss";
 
     try {
         const typeItContainerEl = document.querySelector<HTMLSpanElement>(
-            ".viktor-properties-typeit > span",
+            "#viktor-properties-typeit",
         );
 
         if (typeItContainerEl) {
