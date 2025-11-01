@@ -11,29 +11,31 @@ export default function initTypeItAboutMe(targetEl: HTMLElement) {
         loop: true,
     })
         //
-        .type("Technlo", { delay: 500 })
+        .type("Likes technlo", { delay: 500 })
         .move(-2, { delay: 350 })
         .type("o", { delay: 300 })
         .move(2, { delay: 400 })
-        .type("gy", { delay: 1500 })
+        .type("gy ...", { delay: 1500 })
+        .move(-3, { delay: 333 })
         .delete(undefined, { delay: 900 })
+        .move(3, { delay: 450 })
         //
-        .type("Cars", { delay: 1650 })
-        .delete(undefined, { delay: 900 })
+        .type(" and cars", { delay: 1650 })
+        .delete(4, { delay: 900 })
         //
-        .type("Photography", { delay: 1800 })
-        .delete(undefined, { delay: 900 })
+        .type("photography", { delay: 1800 })
+        .delete(15, { delay: 900 })
         //
-        .type("Goodfood", { delay: 300 })
+        .type("but also goodfood", { delay: 300 })
         .move(-4, { delay: 350 })
         .type(" ", { delay: 250 })
         .move(4, { delay: 1450 })
-        .delete(undefined, { delay: 900 })
+        .delete(9, { delay: 900 })
         //
-        .type("Music", { delay: 1600 })
-        .delete(undefined, { delay: 900 })
+        .type("music", { delay: 1600 })
+        .delete(14, { delay: 900 })
         //
-        .type("Nature", { delay: 1400 })
+        .type("and nature", { delay: 1400 })
         .delete(undefined, { delay: 900 })
         //
         .go();

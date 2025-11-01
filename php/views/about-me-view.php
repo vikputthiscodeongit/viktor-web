@@ -14,26 +14,10 @@ require ROOT_DIR . "/content/about-me-content.php";
         </h1>
     </div>
 
-    <div class="viktor-properties-typeit" aria-hidden="true">
-        <span></span>
-    </div>
-
-    <div class="visually-hidden">
-        <?php
-        $array_length = count($THINGS_I_LIKE);
-        $i = 0;
-
-        foreach ($THINGS_I_LIKE as $item) {
-            echo $item;
-
-            if ($i < $array_length - 2) {
-                echo ", ";
-            } else if ($i === $array_length - 2) {
-                echo " & ";
-            }
-
-            $i++;
-        }
-        ?>
+    <div class="viktor-properties">
+        <p>
+            <span id="viktor-properties-typeit" aria-hidden="true"></span>
+            <span class="visually-hidden"><?php echo $THINGS_I_LIKE_HIDDEN; ?></span>
+        </p>
     </div>
 </div>
