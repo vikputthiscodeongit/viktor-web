@@ -226,8 +226,7 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
 
                     // The <input> is marked invalid after the answer is confirmed to be incorrect
                     // proceeding the back end validation.
-                    // On any input, reset the validity state so that validation elements & styles
-                    // are hidden until next the validation.
+                    // On any input, reset the validity state.
                     if (captcha.answerInputEl.value.length >= captcha.answerInputEl.minLength) {
                         captcha.answerInputEl.setCustomValidity("");
                     }
@@ -365,15 +364,15 @@ function scrollToElWithOffset(elId: string) {
     return;
 }
 
-function makeFormDataObject(formData: FormData, excludedElsNames: string[]) {
-    const formDataObj: { [name: string]: string } = {};
+function makeFormDataObject(formData: FormData, excludedKeys: string[]) {
+    const formDataObj: { [key: string]: string } = {};
 
-    for (const [name, value] of formData.entries()) {
-        if (excludedElsNames.includes(name)) continue;
+    for (const [key, value] of formData.entries()) {
+        if (excludedKeys.includes(key)) continue;
 
         if (typeof value !== "string" || value.trim() === "") continue;
 
-        formDataObj[name] = value;
+        formDataObj[key] = value;
     }
 
     return formDataObj;
@@ -531,7 +530,6 @@ export default function initContactForm(formEl: HTMLFormElement) {
     const formControlElsWithoutButtonsOrHidden = formEl.querySelectorAll<
         HTMLInputElement | HTMLTextAreaElement
     >("input:not([type=button], [type=hidden], [type=reset], [type=submit]), textarea");
-
     formControlElsWithoutButtonsOrHidden.forEach((el) => {
         // TODO: Debounce
         el.addEventListener("input", () => {
