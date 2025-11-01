@@ -7,7 +7,7 @@
 
     function does_file_exist($relative_file_path)
     {
-        if (is_null($relative_file_path)) {
+        if (is_null($relative_file_path) || trim($relative_file_path) === "") {
             return false;
         }
 
