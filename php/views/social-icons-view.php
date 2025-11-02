@@ -13,11 +13,11 @@ $icon_grid_el = [
 $group_index = 0;
 $list_icon_el_groups = [];
 
-foreach ($SOCIAL_ICONS_ITEMS as $ICON_SET) {
+foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
     $i = 0;
     $list_icon_el_group = [];
 
-    foreach ($ICON_SET as $ICON) {
+    foreach ($ITEM_SET as $ITEM) {
         $el_class = "icon item";
 
         if ($group_index > 0 && $i === 0) {
@@ -33,7 +33,7 @@ foreach ($SOCIAL_ICONS_ITEMS as $ICON_SET) {
                 "link" => [
                     "el" => "a",
                     "attrs" => [
-                        "href" => $ICON["url"],
+                        "href" => $ITEM["url"],
                         "target" => "_blank",
                         "rel" => $ITEM["link_rel"],
                     ],
@@ -41,8 +41,8 @@ foreach ($SOCIAL_ICONS_ITEMS as $ICON_SET) {
                         "image" => [
                             "el" => "img",
                             "attrs" => [
-                                "src" => $ICON["icon_uri"],
-                                "alt" => $ICON["name"],
+                                "src" => $ITEM["icon_uri"],
+                                "alt" => $ITEM["name"],
                             ],
                         ],
                     ],
