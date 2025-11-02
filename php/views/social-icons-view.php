@@ -35,7 +35,7 @@ foreach ($SOCIAL_ICONS_ITEMS as $ICON_SET) {
                     "attrs" => [
                         "href" => $ICON["url"],
                         "target" => "_blank",
-                        "rel" => "noopener",
+                        "rel" => $ITEM["link_rel"],
                     ],
                     "children" => [
                         "image" => [
