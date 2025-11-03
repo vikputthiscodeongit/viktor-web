@@ -189,83 +189,82 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
             return convertUnixTimeFormatToMs(respTransmitTime);
         },
     });
+    const dataEndpoint = {
+        url: "/api/simple-maths-captcha/generate-problem.php",
+        fetchOptions: {
+            method: "POST",
+            body: JSON.stringify({ id }),
+        },
+    };
+    const dataHandlerFn = async (response: Response): Promise<[number, number, number] | null> => {
+        const fetchedData = (await response.json()) as unknown;
+
+        const isValidData = (
+            data: unknown,
+        ): data is { digit_1: number; digit_2: number; invalid_after: number } =>
+            typeof data === "object" &&
+            data !== null &&
+            "digit_1" in data &&
+            "digit_2" in data &&
+            "invalid_after" in data &&
+            Object.values(data).every((value) => typeof value === "number");
+
+        return isValidData(fetchedData)
+            ? [fetchedData.digit_1, fetchedData.digit_2, fetchedData.invalid_after]
+            : null;
+    };
+    const answerInputElEventHandlers = [
+        {
+            // TODO: Debounce
+            type: "input",
+            listener: () => {
+                captcha.answerInputEl.setAttribute("data-had-interaction", "true");
+
+                // The <input> is marked invalid after the answer is confirmed to be incorrect
+                // proceeding the back end validation.
+                // On any input, reset the validity state.
+                if (captcha.answerInputEl.value.length >= captcha.answerInputEl.minLength) {
+                    captcha.answerInputEl.setCustomValidity("");
+                }
+
+                if (
+                    captcha.answerInputEl.getAttribute("data-update-validation-on-input") === "true"
+                ) {
+                    updateValidation(captcha.answerInputEl, "neutral");
+                }
+
+                return;
+            },
+        },
+        {
+            type: "blur",
+            listener: () => {
+                if (captcha.answerInputEl.getAttribute("data-had-interaction") === "true") {
+                    captcha.answerInputEl.setAttribute("data-update-validation-on-input", "true");
+                }
+
+                if (
+                    captcha.answerInputEl.getAttribute("data-update-validation-on-input") === "true"
+                ) {
+                    updateValidation(captcha.answerInputEl, "neutral");
+                }
+
+                return;
+            },
+        },
+    ];
+    const loaderEl = createEl("div", {
+        class: "spinner spinner--lg",
+        role: "presentation",
+    });
     const captcha = new SimpleMathsCaptcha({
         activatorButtonEl,
         id,
         ntp,
-        dataEndpoint: {
-            url: "/api/simple-maths-captcha/generate-problem.php",
-            fetchOptions: {
-                method: "POST",
-                body: JSON.stringify({ id }),
-            },
-        },
-        dataHandlerFn: async function (response: Response) {
-            const fetchedData = (await response.json()) as unknown;
-
-            const isValidData = (
-                data: unknown,
-            ): data is { digit_1: number; digit_2: number; invalid_after: number } =>
-                typeof data === "object" &&
-                data !== null &&
-                "digit_1" in data &&
-                "digit_2" in data &&
-                "invalid_after" in data &&
-                Object.values(data).every((value) => typeof value === "number");
-
-            return isValidData(fetchedData)
-                ? [fetchedData.digit_1, fetchedData.digit_2, fetchedData.invalid_after]
-                : null;
-        },
-        answerInputElEventHandlers: [
-            {
-                // TODO: Debounce
-                type: "input",
-                listener: () => {
-                    captcha.answerInputEl.setAttribute("data-had-interaction", "true");
-
-                    // The <input> is marked invalid after the answer is confirmed to be incorrect
-                    // proceeding the back end validation.
-                    // On any input, reset the validity state.
-                    if (captcha.answerInputEl.value.length >= captcha.answerInputEl.minLength) {
-                        captcha.answerInputEl.setCustomValidity("");
-                    }
-
-                    if (
-                        captcha.answerInputEl.getAttribute("data-update-validation-on-input") ===
-                        "true"
-                    ) {
-                        updateValidation(captcha.answerInputEl, "neutral");
-                    }
-
-                    return;
-                },
-            },
-            {
-                type: "blur",
-                listener: () => {
-                    if (captcha.answerInputEl.getAttribute("data-had-interaction") === "true") {
-                        captcha.answerInputEl.setAttribute(
-                            "data-update-validation-on-input",
-                            "true",
-                        );
-                    }
-
-                    if (
-                        captcha.answerInputEl.getAttribute("data-update-validation-on-input") ===
-                        "true"
-                    ) {
-                        updateValidation(captcha.answerInputEl, "neutral");
-                    }
-
-                    return;
-                },
-            },
-        ],
-        loaderEl: createEl("div", {
-            class: "spinner spinner--lg",
-            role: "presentation",
-        }),
+        dataEndpoint,
+        dataHandlerFn,
+        answerInputElEventHandlers,
+        loaderEl,
     });
 
     return captcha;
