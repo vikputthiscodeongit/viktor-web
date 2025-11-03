@@ -126,11 +126,11 @@ img {
 
     &.js-required::after {
         .js-disabled & {
-            content: "This feature requires JavaScript, which is disabled in your browser.";
+            content: "This requires JavaScript, which is disabled in your browser.";
         }
 
-        .js-enabled & {
-            content: "Feature failed to initialize.";
+        .js-loading & {
+            content: "Loading ...";
         }
     }
 }

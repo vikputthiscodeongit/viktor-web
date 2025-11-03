@@ -40,6 +40,10 @@
     <meta name="keywords" content="<?php echo $META_KEYWORDS; ?>">
     <meta name="description" content="<?php echo $META_DESCRIPTION; ?>">
 
+    <script>
+        document.documentElement.classList.replace("js-disabled", "js-loading");
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

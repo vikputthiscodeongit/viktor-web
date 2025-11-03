@@ -4,7 +4,7 @@ import initContactForm from "./ts/controllers/contact-form-controller";
 import "./style.scss";
 
 (function () {
-    document.documentElement.classList.replace("js-disabled", "js-enabled");
+    document.documentElement.classList.replace("js-loading", "js-enabled");
 
     document.body.addEventListener("mousedown", () => document.body.classList.add("using-mouse"));
     document.body.addEventListener("keydown", () => document.body.classList.remove("using-mouse"));
