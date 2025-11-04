@@ -1,6 +1,6 @@
 {
   "name": "viktor-web",
-  "version": "2025r9",
+  "version": "2025r10",
   "license": "MIT",
   "author": "Viktor Chin",
   "main": "index.ts",
