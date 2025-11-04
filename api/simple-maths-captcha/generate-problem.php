@@ -23,11 +23,16 @@ function requestHandler()
         }
 
         $captcha_generator = new CaptchaGenerator($captcha_id);
-        $problem_data = $captcha_generator->generateProblem(15000);
+        [$digit_1, $digit_2, $generation_time, $valid_for_time] = $captcha_generator->generateProblem(15000);
 
         returnHttpResponse(
             HttpStatus::OK,
-            $problem_data
+            [
+                "digit_1" => $digit_1,
+                "digit_2" => $digit_2,
+                "generation_time" => $generation_time,
+                "valid_for_time" => $valid_for_time
+            ]
         );
     } catch (\Throwable $th) {
         // var_dump($th);

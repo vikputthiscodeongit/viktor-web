@@ -173,11 +173,11 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
                 : null;
         },
         t2CalcFn: function (responseHeaders: Headers) {
-            // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
             const header = responseHeaders.get("Response-Timing");
 
             if (!header) return null;
 
+            // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
             const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
             const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
 
@@ -196,22 +196,35 @@ function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
             body: JSON.stringify({ id }),
         },
     };
-    const dataHandlerFn = async (response: Response): Promise<[number, number, number] | null> => {
+    const dataHandlerFn = async (response: Response) => {
         const fetchedData = (await response.json()) as unknown;
 
         const isValidData = (
             data: unknown,
-        ): data is { digit_1: number; digit_2: number; invalid_after: number } =>
+        ): data is {
+            digit_1: number;
+            digit_2: number;
+            generation_time: number;
+            valid_for_time: number;
+        } =>
             typeof data === "object" &&
             data !== null &&
             "digit_1" in data &&
             "digit_2" in data &&
-            "invalid_after" in data &&
+            "generation_time" in data &&
+            "valid_for_time" in data &&
             Object.values(data).every((value) => typeof value === "number");
 
-        return isValidData(fetchedData)
-            ? [fetchedData.digit_1, fetchedData.digit_2, fetchedData.invalid_after]
-            : null;
+        if (!isValidData(fetchedData)) return null;
+
+        const { digit_1, digit_2, generation_time, valid_for_time } = fetchedData;
+
+        return {
+            digit1: digit_1,
+            digit2: digit_2,
+            generationTime: generation_time,
+            validForTime: valid_for_time,
+        };
     };
     const answerInputElEventHandlers = [
         {

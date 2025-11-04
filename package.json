@@ -12,7 +12,7 @@
   "dependencies": {
     "@codebundlesbyvik/html-dev-label": "3.2.1",
     "@codebundlesbyvik/js-helpers": "2.1.5",
-    "@codebundlesbyvik/simple-maths-captcha": "2.0.1",
+    "@codebundlesbyvik/simple-maths-captcha": "2.1.0",
     "@codebundlesbyvik/simple-notifier": "3.0.0",
     "bootstrap": "5.3.8",
     "typeit": "8.8.7"
