@@ -11,20 +11,20 @@
   },
   "dependencies": {
     "@codebundlesbyvik/html-dev-label": "3.2.1",
-    "@codebundlesbyvik/js-helpers": "2.1.5",
+    "@codebundlesbyvik/js-helpers": "2.2.0",
     "@codebundlesbyvik/simple-maths-captcha": "2.1.0",
     "@codebundlesbyvik/simple-notifier": "3.0.0",
     "bootstrap": "5.3.8",
     "typeit": "8.8.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.0",
+    "@eslint/js": "^9.39.1",
     "@tsconfig/recommended": "^1.0.11",
     "autoprefixer": "^10.4.21",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-webpack-plugin": "^5.0.2",
@@ -40,7 +40,7 @@
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2",
+    "typescript-eslint": "^8.46.3",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"
