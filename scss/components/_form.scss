@@ -123,6 +123,40 @@ input {
 
 button,
 input[type="button"],
+input[type="submit"],
+input[type="email"],
+input[type="text"],
+textarea {
+    border: rem(2px) solid;
+    outline: rem(2px) solid transparent;
+    transition: $transition-base;
+    transition-property: background-color, border-color, outline-color;
+
+    &:not(:focus-visible) {
+        &[data-show-validation-border="invalid"] {
+            outline-color: $warning;
+        }
+
+        &[data-show-validation-border="valid"] {
+            outline-color: $success;
+        }
+
+        &[data-show-validation-border="neutral"] {
+            outline-color: $blue;
+        }
+    }
+
+    &:focus-visible {
+        outline-color: $blue;
+
+        @media (prefers-contrast: more) {
+            outline-color: $black;
+        }
+    }
+}
+
+button,
+input[type="button"],
 input[type="submit"] {
     display: inline-flex;
     align-items: center;
@@ -133,15 +167,9 @@ input[type="submit"] {
     font: 500 $font-size-base $headings-font-family;
     color: $white;
     background-color: $blue;
-    border: rem(2px) solid $blue;
+    border-color: $blue;
     border-radius: rem(20px);
-    outline: rem(2px) solid transparent;
     outline-offset: rem(4px);
-    // TODO: Use $transition-base for all animations?
-    transition:
-        background-color 0.2s ease-in-out,
-        border-color 0.2s ease-in-out,
-        outline-color $transition-base;
 
     &:hover {
         &:not(:disabled) {
@@ -151,14 +179,6 @@ input[type="submit"] {
 
         &:disabled {
             cursor: default;
-        }
-    }
-
-    &:focus-visible {
-        outline-color: $blue;
-
-        @media (prefers-contrast: more) {
-            outline-color: $black;
         }
     }
 
@@ -185,32 +205,8 @@ textarea {
     line-height: $line-height-base;
     font-size: $font-size-base;
     background-color: $off-white-dark;
-    border: rem(2px) solid transparent;
+    border-color: transparent;
     border-radius: rem(4px);
-    outline: rem(2px) solid transparent;
-    transition: outline-color $transition-base;
-
-    &:not(:focus-visible) {
-        &[data-show-validation-border="invalid"] {
-            outline-color: $warning;
-        }
-
-        &[data-show-validation-border="valid"] {
-            outline-color: $success;
-        }
-
-        &[data-show-validation-border="neutral"] {
-            outline-color: $blue;
-        }
-    }
-
-    &:focus-visible {
-        outline-color: $blue;
-
-        @media (prefers-contrast: more) {
-            outline-color: $black;
-        }
-    }
 
     .field--ifl & {
         padding-top: rem(31px);

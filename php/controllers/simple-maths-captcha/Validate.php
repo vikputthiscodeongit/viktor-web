@@ -7,29 +7,24 @@ require_once ROOT_DIR . "/session.php";
 
 class Validate
 {
-    protected $id = "simple-maths-captcha";
+    protected $control_id = "simple-maths-captcha";
 
-    public function __construct(?string $id)
+    public function __construct(?string $control_id)
     {
-        if (!$id) return;
+        if (!$control_id) return;
 
-        $this->id = $id;
+        $this->control_id = $control_id;
     }
 
-    public function isCaptchaFormControlId(string $form_control_id)
+    public function shouldValidate(string $control_id)
     {
-        return strpos($form_control_id, $this->id) !== false;
+        return strpos($control_id, $this->control_id) !== false;
     }
 
-    public function getInvalidFormControlId(string $validation_state)
-    {
-        return $validation_state === "invalid" ? $this->id . "-answer" : $this->id . "-activator";
-    }
-
-    public function isAnswerValid(int $digit_1, int $digit_2, int $answer)
+    private function isAnswerValid(int $digit_1, int $digit_2, int $answer)
     {
         // Contains the problem digits and a unix timestamp.
-        $stored_problem_data = $_SESSION[$this->id];
+        $stored_problem_data = $_SESSION[$this->control_id];
 
         if (
             !is_int($digit_1) || !is_int($digit_2) || !is_int($answer) ||
@@ -51,22 +46,29 @@ class Validate
         return $answer_valid;
     }
 
-    public function getValidationState(array $form_data)
+    public function getValidationResult(array $form_data)
     {
-
         $has_all_captcha_data =
-            array_key_exists($this->id . "-digit-1", $form_data) &&
-            array_key_exists($this->id . "-digit-2", $form_data) &&
-            array_key_exists($this->id . "-answer", $form_data);
+            array_key_exists($this->control_id . "-digit-1", $form_data) &&
+            array_key_exists($this->control_id . "-digit-2", $form_data) &&
+            array_key_exists($this->control_id . "-answer", $form_data);
 
         if (!$has_all_captcha_data) {
-            return "inactive";
+            return [
+                "id" => $this->control_id . "-activator",
+                "errors" => ["captcha_inactive"]
+            ];
         }
 
-        return $this->isAnswerValid(
-            (int) $form_data[$this->id . "-digit-1"],
-            (int) $form_data[$this->id . "-digit-2"],
-            (int) $form_data[$this->id . "-answer"],
-        ) ? "valid" : "invalid";
+        $answer_valid = $this->isAnswerValid(
+            (int) $form_data[$this->control_id . "-digit-1"],
+            (int) $form_data[$this->control_id . "-digit-2"],
+            (int) $form_data[$this->control_id . "-answer"],
+        );
+
+        return [
+            "id" => $this->control_id . "-answer",
+            "errors" => !$answer_valid ? ["value_invalid"] : []
+        ];
     }
 }
