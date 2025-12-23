@@ -1,6 +1,6 @@
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import initTypeItAboutMe from "./ts/controllers/typeit-controller";
-import initContactForm from "./ts/controllers/contact-form-controller";
+import initContactForm from "./ts/controllers/contact-form/index";
 import "./style.scss";
 
 (function () {
