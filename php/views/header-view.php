@@ -5,13 +5,15 @@
     <?php
     require ROOT_DIR . "/content/header-content.php";
 
-    function get_versioned_asset_href($relative_file_path)
+    function get_versioned_asset_href(string $relative_file_path)
     {
-        if (is_null($relative_file_path) || trim($relative_file_path) === "") {
+        $absolute_file_path = ROOT_DIR . $relative_file_path;
+
+        if (!file_exists($absolute_file_path)) {
             return $relative_file_path;
         }
 
-        $file_mtime = date("Ymd_His", filemtime(ROOT_DIR . $relative_file_path));
+        $file_mtime = date("Ymd_His", filemtime($absolute_file_path));
 
         return $relative_file_path . "?v=" . $file_mtime;
     }
