@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/php/helpers/return-http-response.php";
+require __DIR__ . "/../../global.php";
+require ROOT_DIR . "/php/helpers/return-http-response.php";
 
 function requestHandler()
 {

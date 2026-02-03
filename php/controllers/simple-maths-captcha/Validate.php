@@ -2,8 +2,7 @@
 
 namespace SimpleMathsCaptcha;
 
-require_once __DIR__ . "/../../../global.php";
-require_once ROOT_DIR . "/session.php";
+require ROOT_DIR . "/session.php";
 
 class Validate
 {

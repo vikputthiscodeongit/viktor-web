@@ -1,8 +1,7 @@
 <?php
-require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/php/helpers/return-http-response.php";
+require __DIR__ . "/../../global.php";
+require ROOT_DIR . "/php/helpers/return-http-response.php";
 require ROOT_DIR . "/php/controllers/simple-maths-captcha/Generate.php";
-require_once ROOT_DIR . "/content/contact-form-content.php";
 
 use SimpleMathsCaptcha\Generate as CaptchaGenerator;
 

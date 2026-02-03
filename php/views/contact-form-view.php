@@ -1,5 +1,4 @@
 <?php
-require_once ROOT_DIR . "/php/helpers/render-html-el.php";
 require ROOT_DIR . "/content/contact-form-content.php";
 
 $form_el = [
