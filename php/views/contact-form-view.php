@@ -31,7 +31,6 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
                 ],
                 "text" => $ITEM,
             ];
-
             array_push($fieldset_el["children"], $legend_el);
 
             continue;
@@ -59,8 +58,6 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
             "children" => [],
         ];
 
-        $field_el_children = [];
-
         $label_el = null;
 
         if (isset($ITEM["label"]["text"])) {
@@ -71,8 +68,7 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
                 ],
                 "text" => $ITEM["label"]["text"],
             ];
-
-            array_push($field_el_children, $label_el);
+            array_push($field_el["children"], $label_el);
         }
 
         $input_el = [
@@ -100,7 +96,7 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
             $input_el["text"] = $ITEM["control"]["text"];
         }
 
-        array_push($field_el_children, $input_el);
+        array_push($field_el["children"], $input_el);
 
         if (!isset($ITEM["control"]["type"]) || $ITEM["control"]["type"] !== "submit") {
             $message_el = [
@@ -109,11 +105,8 @@ foreach ($CONTACT_FORM_ITEMS as $FIELDSET) {
                     "class" => "field__message",
                 ],
             ];
-
-            array_push($field_el_children, $message_el);
+            array_push($field_el["children"], $message_el);
         }
-
-        $field_el["children"] = $field_el_children;
 
         array_push($fieldset_el["children"], $field_el);
     }

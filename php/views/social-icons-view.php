@@ -11,11 +11,9 @@ $icon_grid_el = [
 ];
 
 $group_index = 0;
-$list_icon_el_groups = [];
 
 foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
     $i = 0;
-    $list_icon_el_group = [];
 
     foreach ($ITEM_SET as $ITEM) {
         $el_class = "icon";
@@ -49,17 +47,12 @@ foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
                 ],
             ],
         ];
-
-        array_push($list_icon_el_group, $el);
+        array_push($icon_grid_el["children"], $el);
 
         $i++;
     }
 
-    array_push($list_icon_el_groups, $list_icon_el_group);
-
     $group_index++;
 }
-
-$icon_grid_el["children"] = array_merge([], ...$list_icon_el_groups);
 
 echo renderHtmlFromArray($icon_grid_el);
