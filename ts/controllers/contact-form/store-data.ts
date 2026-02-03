@@ -1,8 +1,6 @@
-import type SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 import { createEl } from "@codebundlesbyvik/js-helpers";
 
 const MESSAGE_STORED_TEXT = "A previously unsent message was stored.";
-const MESSAGE_REMOVED_TEXT = "Message removed from storage.";
 
 export function makeFormDataObject(formData: FormData, excludedKeys: string[]) {
     const formDataObj: { [key: string]: string } = {};
@@ -44,18 +42,12 @@ function loadStoredStringifiedFormData(formDataFromAsString: string, formEl: HTM
     }
 }
 
-export function initStoredFormDataLoader(
-    formDataAsString: string,
-    formEl: HTMLFormElement,
-    notifier: SimpleNotifier,
-) {
+export function initStoredFormDataLoader(formDataAsString: string, formEl: HTMLFormElement) {
     console.info("initStoredFormDataLoader: Running...");
 
     const fieldsetEl = createEl("fieldset");
     const legendEl = createEl("legend", { textContent: MESSAGE_STORED_TEXT });
-    const buttonContainerEl = createEl("div", { class: "item-grid" });
 
-    const loadButtonContainerEl = createEl("div", { class: "item" });
     const loadButtonEl = createEl("button", {
         type: "button",
         class: "btn btn--sm",
@@ -71,30 +63,8 @@ export function initStoredFormDataLoader(
         },
         { once: true },
     );
-    loadButtonContainerEl.append(loadButtonEl);
 
-    const clearButtonContainerEl = createEl("div", { class: "item" });
-    const clearButtonEl = createEl("button", {
-        type: "button",
-        class: "btn btn--sm",
-        textContent: "Remove",
-    });
-    clearButtonEl.addEventListener(
-        "click",
-        () => {
-            localStorage.removeItem(`${formEl.name}-data`);
-            fieldsetEl.remove();
-
-            notifier.show(MESSAGE_REMOVED_TEXT);
-
-            return;
-        },
-        { once: true },
-    );
-    clearButtonContainerEl.append(clearButtonEl);
-
-    buttonContainerEl.append(loadButtonContainerEl, clearButtonContainerEl);
-    fieldsetEl.append(legendEl, buttonContainerEl);
+    fieldsetEl.append(legendEl, loadButtonEl);
     formEl.insertBefore(fieldsetEl, formEl.firstElementChild);
 
     return;
