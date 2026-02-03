@@ -197,7 +197,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
     const storedFormData = localStorage.getItem(`${formEl.name}-data`);
 
     if (storedFormData) {
-        initStoredFormDataLoader(storedFormData, formEl, notifier);
+        initStoredFormDataLoader(storedFormData, formEl);
     }
 
     const formControlElsWithoutButtonsOrHidden = formEl.querySelectorAll<
