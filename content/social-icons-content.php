@@ -3,7 +3,7 @@ $SOCIAL_ICONS_ITEMS = [
     [
         [
             "name" => "Instagram",
-            "url" => "https://www.instagram.com/picsmadebyvik/",
+            "url" => "https://www.instagram.com/" . $INSTAGRAM_USERNAME . "/",
             "link_rel" => "noopener",
             "icon_uri" => "/public/images/logos/instagram-logo.svg",
         ],
