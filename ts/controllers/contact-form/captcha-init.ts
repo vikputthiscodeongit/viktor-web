@@ -27,11 +27,11 @@ export function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
         t1CalcFn: async function (response: Response) {
             const fetchedData = (await response.json()) as unknown;
 
-            const isValidData = (data: unknown): data is { received_time: number } =>
-                typeof data === "object" && data !== null && "received_time" in data;
+            const isValidData = (data: unknown): data is { received_time_micro: number } =>
+                typeof data === "object" && data !== null && "received_time_micro" in data;
 
             return isValidData(fetchedData)
-                ? convertUnixTimeFormatToMs(fetchedData.received_time)
+                ? convertUnixTimeFormatToMs(fetchedData.received_time_micro)
                 : null;
         },
         t2CalcFn: function (responseHeaders: Headers) {
@@ -40,13 +40,14 @@ export function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
             if (!header) return null;
 
             // https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header
-            const reqReceivedTime = /\bt=([0-9]+)\b/.exec(header);
-            const reqProcessingTime = /\bD=([0-9]+)\b/.exec(header);
+            const reqReceivedTimeMicro = /\bt=([0-9]+)\b/.exec(header);
+            const reqProcessingTimeMicro = /\bD=([0-9]+)\b/.exec(header);
 
-            if (!reqReceivedTime || !reqProcessingTime) return null;
+            if (!reqReceivedTimeMicro || !reqProcessingTimeMicro) return null;
 
             const respTransmitTime =
-                Number.parseInt(reqReceivedTime[1]) + Number.parseInt(reqProcessingTime[1]);
+                Number.parseInt(reqReceivedTimeMicro[1]) +
+                Number.parseInt(reqProcessingTimeMicro[1]);
 
             return convertUnixTimeFormatToMs(respTransmitTime);
         },
