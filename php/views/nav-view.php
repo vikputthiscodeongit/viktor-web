@@ -8,7 +8,7 @@ $navigation_el = [
         "class" => "nav",
     ],
     "children" => [
-        "items" => [
+        [
             "el" => "ul",
             "attrs" => [
                 "class" => "nav__items",
@@ -17,8 +17,13 @@ $navigation_el = [
         ],
     ],
 ];
-
-$list_item_els = [];
+$navigation_item_list = [
+    "el" => "ul",
+    "attrs" => [
+        "class" => "nav__items",
+    ],
+    "children" => [],
+];
 
 foreach ($NAVIGATION_ITEMS as $ITEM) {
     $el = [
@@ -27,7 +32,7 @@ foreach ($NAVIGATION_ITEMS as $ITEM) {
             "class" => "nav__item",
         ],
         "children" => [
-            "link" => [
+            [
                 "el" => "a",
                 "attrs" => [
                     "class" => "nav__link",
@@ -38,10 +43,9 @@ foreach ($NAVIGATION_ITEMS as $ITEM) {
             ],
         ],
     ];
-
-    array_push($list_item_els, $el);
+    array_push($navigation_item_list["children"], $el);
 }
 
-$navigation_el["children"]["items"]["children"] = $list_item_els;
+array_push($navigation_el["children"], $navigation_item_list);
 
 echo renderHtmlFromArray($navigation_el);
