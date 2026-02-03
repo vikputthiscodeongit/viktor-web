@@ -1,4 +1,4 @@
-<?php require_once ROOT_DIR . "/content/contact-content.php"; ?>
+<?php require ROOT_DIR . "/content/sections/contact-content.php"; ?>
 
 <section class="site-section" id="contact">
     <div class="container">
