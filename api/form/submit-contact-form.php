@@ -42,21 +42,18 @@ function sendMail($form_values)
         return false;
     }
 
-    $date_formatter_nl = datefmt_create(
-        "nl_NL",
-        IntlDateFormatter::FULL,
-        IntlDateFormatter::FULL,
-        "Europe/Amsterdam",
-        IntlDateFormatter::GREGORIAN,
-        "EEEE d MMMM YYYY"
-    );
-
     $mail_subject = "Formulierinzending van " . $submitter_email_address;
     $mail_message = sprintf(
-        'Het onderstaande bericht is door %1$s op %2$s om %3$s verstuurd.' . "\r\n\r\n" . '%4$s' . "\r\n\r\n" . '%5$s',
+        'Het onderstaande bericht is door %1$s op %2$s ingezonden.' . "\r\n\r\n" . '%3$s' . "\r\n\r\n" . '%4$s',
         $submitter_name,
-        datefmt_format($date_formatter_nl, time()),
-        date("H:i:s"),
+        new IntlDateFormatter(
+            "nl_NL",
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::FULL,
+            null,
+            IntlDateFormatter::GREGORIAN,
+            "EEEE d MMMM yyyy 'om' hh:mmZ"
+        )->format(time()),
         $message_subject,
         $message_content
     );
