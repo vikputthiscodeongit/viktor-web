@@ -91,7 +91,8 @@ function requestHandler($form_name, $form_items)
         if (count($invalid_form_controls) > 0) {
             returnHttpResponse(HttpStatus::UNPROCESSABLE_CONTENT, [
                 "message" => "One or more fields failed validation.",
-                // Use array_values() because of https://www.php.net/manual/en/function.json-encode.php#129803
+                // Reset the array keys with `array_values()` so that the array is always JSON encoded
+                // as an actual array instead of as an object.
                 "invalid_controls" => array_values($invalid_form_controls)
             ]);
         }
