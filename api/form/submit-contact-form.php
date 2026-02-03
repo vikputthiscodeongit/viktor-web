@@ -3,12 +3,12 @@
 // * Set $_SESSION variable with form data hash on successful submit. Reject
 // next submission if hash hasn't changed.
 
-require_once __DIR__ . "/../../global.php";
-require_once ROOT_DIR . "/_folder/values.php";
-require_once ROOT_DIR . "/php/helpers/return-http-response.php";
-require_once ROOT_DIR . "/content/contact-form-content.php";
+require __DIR__ . "/../../global.php";
+require ROOT_DIR . "/_folder/values.php";
+require ROOT_DIR . "/php/helpers/return-http-response.php";
 require ROOT_DIR . "/php/controllers/FormController.php";
 require ROOT_DIR . "/php/controllers/simple-maths-captcha/Validate.php";
+require ROOT_DIR . "/content/contact-form-content.php";
 
 use SimpleMathsCaptcha\Validate as CaptchaValidator;
 

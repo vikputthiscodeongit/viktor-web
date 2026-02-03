@@ -1,7 +1,4 @@
-<?php
-require_once ROOT_DIR . "/php/helpers/render-html-el.php";
-require ROOT_DIR . "/content/about-me-content.php";
-?>
+<?php require ROOT_DIR . "/content/about-me-content.php"; ?>
 
 <div class="my-details">
     <div class="viktor-name">
