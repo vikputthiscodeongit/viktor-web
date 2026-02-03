@@ -5,7 +5,7 @@ require ROOT_DIR . "/content/social-icons-content.php";
 $icon_grid_el = [
     "el" => "ul",
     "attrs" => [
-        "class" => "item-grid",
+        "class" => "icon-grid",
     ],
     "children" => [],
 ];
@@ -18,10 +18,10 @@ foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
     $list_icon_el_group = [];
 
     foreach ($ITEM_SET as $ITEM) {
-        $el_class = "icon item";
+        $el_class = "icon";
 
         if ($group_index > 0 && $i === 0) {
-            $el_class .= " item--shift-right";
+            $el_class .= " icon--shift-right";
         }
 
         $el = [
@@ -30,7 +30,7 @@ foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
                 "class" => $el_class,
             ],
             "children" => [
-                "link" => [
+                [
                     "el" => "a",
                     "attrs" => [
                         "href" => $ITEM["url"],
@@ -38,7 +38,7 @@ foreach ($SOCIAL_ICONS_ITEMS as $ITEM_SET) {
                         "rel" => $ITEM["link_rel"],
                     ],
                     "children" => [
-                        "image" => [
+                        [
                             "el" => "img",
                             "attrs" => [
                                 "src" => $ITEM["icon_uri"],

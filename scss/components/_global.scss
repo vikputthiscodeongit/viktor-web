@@ -170,26 +170,6 @@ img {
     }
 }
 
-.item {
-    &-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: rem(12px);
-
-        @include respond-above(lg) {
-            gap: rem(16px);
-        }
-    }
-
-    &--shift-right {
-        margin-left: rem(44px);
-
-        @include respond-above(lg) {
-            margin-left: rem(82px);
-        }
-    }
-}
-
 .site-section-title {
     margin-bottom: rem(40px);
 

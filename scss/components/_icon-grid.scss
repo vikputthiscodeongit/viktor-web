@@ -1,0 +1,30 @@
+.icon {
+    &-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: rem(12px);
+
+        @include respond-above(lg) {
+            gap: rem(16px);
+        }
+    }
+
+    display: inline-block;
+    width: rem(32px);
+
+    @include respond-above(lg) {
+        width: rem(40px);
+    }
+
+    &--shift-right {
+        margin-left: rem(44px);
+
+        @include respond-above(lg) {
+            margin-left: rem(82px);
+        }
+    }
+
+    a {
+        display: block;
+    }
+}
