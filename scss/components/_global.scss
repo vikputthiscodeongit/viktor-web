@@ -38,10 +38,10 @@ body {
 
 main {
     overflow-x: hidden;
-}
 
-section {
-    min-height: 100vh;
+    > section {
+        min-height: 100vh;
+    }
 }
 
 ol,

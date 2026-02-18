@@ -1,0 +1,48 @@
+.photo {
+    &-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: center;
+        gap: rem(16px);
+
+        @include respond-above(sm) {
+            gap: rem(24px);
+        }
+
+        @include respond-above(md) {
+            grid-template-columns: repeat(3, minmax(rem(160px), rem(240px)));
+        }
+
+        @include respond-above(lg) {
+            gap: rem(40px);
+        }
+
+        @include respond-above(xxl) {
+            gap: rem(64px);
+        }
+    }
+
+    &:nth-child(2n + 1) {
+        text-align: end;
+
+        @include respond-above(md) {
+            text-align: unset;
+        }
+    }
+
+    &:nth-child(3n + 1) {
+        @include respond-above(md) {
+            text-align: end;
+        }
+    }
+
+    &:nth-child(3n + 2) {
+        @include respond-above(md) {
+            text-align: center;
+        }
+    }
+
+    a {
+        display: block;
+    }
+}

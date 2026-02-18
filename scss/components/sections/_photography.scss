@@ -1,0 +1,17 @@
+#photography {
+    color: $white;
+    background-color: $black;
+
+    // TODO: Clean up .container styles.
+    .container {
+        padding-block: rem(64px);
+
+        @include respond-above(md, md) {
+            padding-block: 10vh;
+        }
+
+        @include respond-above(lg, md) {
+            padding-block: 15vh;
+        }
+    }
+}
