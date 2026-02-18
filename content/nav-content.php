@@ -1,7 +1,11 @@
 <?php
 $NAVIGATION_ITEMS = [
     [
-        "name" => "Contact",
+        "name" => $PHOTOGRAPHY_SECTION_TITLE,
+        "id" => "#photography",
+    ],
+    [
+        "name" => $CONTACT_SECTION_TITLE,
         "id" => "#contact",
     ],
 ];
