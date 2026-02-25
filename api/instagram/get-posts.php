@@ -6,6 +6,7 @@ require __DIR__ . "/../../global.php";
 require ROOT_DIR . "/_folder/values.php";
 require ROOT_DIR . "/php/helpers/curl-multi-transfer.php";
 require ROOT_DIR . "/php/helpers/empty-dir.php";
+require ROOT_DIR . "/php/helpers/file-force-contents.php";
 require ROOT_DIR . "/php/helpers/recursive-rmdir.php";
 require ROOT_DIR . "/php/helpers/return-http-response.php";
 require ROOT_DIR . "/content/global-content.php";
@@ -176,7 +177,7 @@ function requestHandler(string $instagram_username, string $data_dir_uri)
             ];
         }
 
-        $result = file_put_contents($data_dir_uri . "/posts.json", json_encode([
+        $result = file_force_contents($data_dir_uri . "/posts.json", json_encode([
             "prev_fetch_status_code" => $prev_fetch_status_code,
             "prev_fetch_time" => $prev_fetch_time,
             "revalidation_time" => $data_revalidation_time,
