@@ -26,9 +26,9 @@ function getMediaSizeFromUrl(string $url)
     return count($matches) > 0 ? $matches[1] : "0x0";
 }
 
-function checkFetchStoreMedia($urls, $media_data, string $post_directory, bool $thumbnails = false)
+function checkFetchStoreMedia($urls, $media_data, string $post_dir_uri, bool $thumbnails = false)
 {
-    $target_dir = $thumbnails ? $post_directory . "/thumbnails" : $post_directory;
+    $target_dir = $thumbnails ? $post_dir_uri . "/thumbnails" : $post_dir_uri;
 
     foreach ($media_data as $item) {
         if (file_exists($target_dir . "/" . $item["file_name"])) continue;
