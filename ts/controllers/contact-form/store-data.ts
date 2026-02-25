@@ -16,14 +16,14 @@ export function makeFormDataObject(formData: FormData, excludedKeys: string[]) {
     return formDataObj;
 }
 
-function loadStoredStringifiedFormData(formDataFromAsString: string, formEl: HTMLFormElement) {
+function loadStoredStringifiedFormData(formDataAsString: string, formEl: HTMLFormElement) {
     console.info("loadStoredStringifiedFormData: Running...");
 
     try {
         const formControlEls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
             "input, textarea",
         );
-        const formData = JSON.parse(formDataFromAsString) as { [name: string]: string };
+        const formData = JSON.parse(formDataAsString) as { [name: string]: string };
         const formControlElsWithFormData = Object.keys(formData);
 
         formControlEls.forEach((el) => {

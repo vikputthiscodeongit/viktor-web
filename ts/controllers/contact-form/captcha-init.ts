@@ -26,7 +26,6 @@ export function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
         t1EndpointUrl: "/api/ntp/get-server-time.php",
         t1CalcFn: async function (response: Response) {
             const fetchedData = (await response.json()) as unknown;
-
             const isValidData = (data: unknown): data is { received_time_micro: number } =>
                 typeof data === "object" && data !== null && "received_time_micro" in data;
 
@@ -61,7 +60,6 @@ export function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
     };
     const dataHandlerFn = async (response: Response) => {
         const fetchedData = (await response.json()) as unknown;
-
         const isValidData = (data: unknown): data is ProblemEndpointData =>
             typeof data === "object" &&
             data !== null &&
