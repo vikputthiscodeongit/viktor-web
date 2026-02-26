@@ -1,18 +1,18 @@
 <?php
-function getImageEl($post_data, $media_dir_uri)
+function createImageEl($post_data, $media_dir_uri)
 {
     $media_data = array_find($post_data->media_thumbnails, function ($item) {
         return $item->width === 240;
     });
     return [
         "src" => $media_dir_uri . "/thumbnails/" . $media_data->file_name,
-        "alt" => "Photo gallery posted on " . new IntlDateFormatter(
+        "alt" => "Gallery posted on " . new IntlDateFormatter(
             "en_US",
             IntlDateFormatter::FULL,
             IntlDateFormatter::FULL,
-            null,
+            "UTC",
             IntlDateFormatter::GREGORIAN,
-            "EEEE, d MMMM yyyy"
+            "EEEE, MMMM d, yyyy"
         )->format($post_data->date),
         "width" => $media_data->width,
         "height" => $media_data->height,
@@ -28,30 +28,30 @@ $posts_data = file_exists($posts_data_cache_uri)
 $grid_el = [
     "el" => "ul",
     "attrs" => [
-        "class" => "photo-grid",
+        "class" => "media-grid",
     ],
     "children" => [],
 ];
 
-foreach ($posts_data as $id => $post_data) {
+foreach ($posts_data as $post_data) {
     $grid_item_el = [
         "el" => "li",
         "attrs" => [
-            "class" => "photo",
+            "class" => "media-grid__item",
         ],
         "children" => [
             [
                 "el" => "a",
                 "attrs" => [
-                    "href" => "https://www.instagram.com/p/" . $id . "/",
+                    "href" => "https://www.instagram.com/p/" . $post_data->shortcode . "/",
                     "target" => "_blank",
                     "rel" => "noopener",
-                    "data-photo-dialog-trigger" => "true",
+                    "data-post-shortcode" => $post_data->shortcode,
                 ],
                 "children" => [
                     [
                         "el" => "img",
-                        "attrs" => getImageEl($post_data, $data_dir_uri . "/media/" . $id),
+                        "attrs" => createImageEl($post_data, $data_dir_uri . "/media/" . $post_data->shortcode),
                     ]
                 ],
             ]

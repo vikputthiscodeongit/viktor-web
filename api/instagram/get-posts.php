@@ -169,12 +169,13 @@ function requestHandler(string $instagram_username, string $data_dir_uri)
 
             checkFetchStoreMedia($media_thumbnail_urls, $processed_media_thumbnails, $post_media_dir_uri, true);
 
-            $processed_posts[$post->shortcode] = [
+            array_push($processed_posts, [
+                "shortcode" => $post->shortcode,
                 "date" => $post->taken_at_timestamp,
                 "caption" => $processed_caption,
                 "media" => $processed_media,
                 "media_thumbnails" => $processed_media_thumbnails,
-            ];
+            ]);
         }
 
         $result = file_force_contents($data_dir_uri . "/posts.json", json_encode([
