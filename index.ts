@@ -1,6 +1,6 @@
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import initTypeItAboutMe from "./ts/controllers/typeit-controller";
-import initPhotoDialog from "./ts/controllers/photo-dialog-controller";
+import MediaDialog from "./ts/controllers/media-gallery-dialog-controller";
 import initContactForm from "./ts/controllers/contact-form/index";
 import "./style.scss";
 
@@ -25,11 +25,11 @@ import "./style.scss";
     }
 
     try {
-        const dialog = document.querySelector<HTMLDialogElement>("#photo-dialog");
-        const dialogTrigger = document.querySelectorAll("[data-photo-dialog-trigger=true]");
+        const dialog = document.querySelector<HTMLDialogElement>("#media-gallery-dialog");
+        const dialogTrigger = document.querySelectorAll("[data-post-shortcode]");
 
         if (dialog && dialogTrigger) {
-            initPhotoDialog(dialog, dialogTrigger);
+            new MediaDialog(dialog, dialogTrigger);
         }
     } catch (error) {
         console.error(error);
