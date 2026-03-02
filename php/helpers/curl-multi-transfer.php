@@ -36,7 +36,7 @@ function curl_multi_transfer($urls, $callback, $max_connections = 5, $curl_optio
     $employed_workers_count = 0;
 
     $do_work = function () use (&$employed_workers_count, &$unemployed_workers, &$multi_handle, $callback): void {
-        if ($employed_workers_count <= 0) return;
+        if ($employed_workers_count < 1) return;
 
         for (;;) {
             $still_running = 0;
