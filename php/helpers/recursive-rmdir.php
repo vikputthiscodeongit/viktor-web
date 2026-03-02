@@ -1,16 +1,16 @@
 <?php
-function rrmdir($src)
+function rrmdir(string $dir_path)
 {
-    if (!file_exists($src)) return;
+    if (!file_exists($dir_path)) return;
 
-    $dir = opendir($src);
-    while (($file = readdir($dir)) !== false) {
-        if ($file === "." || $file === "..") continue;
+    $dir_handle = opendir($dir_path);
+    while (($file_name = readdir($dir_handle)) !== false) {
+        if ($file_name === "." || $file_name === "..") continue;
 
-        $full = $src . "/" . $file;
-        is_dir($full) ? rrmdir($full) : unlink($full);
+        $file_path = $dir_path . "/" . $file_name;
+        is_dir($file_path) ? rrmdir($file_path) : unlink($file_path);
     }
-    closedir($dir);
+    closedir($dir_handle);
 
-    rmdir($src);
+    rmdir($dir_path);
 }

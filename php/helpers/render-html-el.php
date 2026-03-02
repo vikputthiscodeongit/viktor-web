@@ -1,12 +1,12 @@
 <?php
 require ROOT_DIR . '/vendor/autoload.php';
 
-function renderHtmlEl(string $tag, array|string|null $attributes, array|string|null $content): string
+function renderHtmlEl(string $tag, array|string|null $attributes, array|string|null $content)
 {
     return \Spatie\HtmlElement\HtmlElement::render($tag, $attributes, $content);
 }
 
-function renderHtmlFromArray(array $data): string
+function renderHtmlFromArray(array $data)
 {
     $html = '';
 

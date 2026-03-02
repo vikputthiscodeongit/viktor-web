@@ -12,7 +12,7 @@ require ROOT_DIR . "/content/contact-form-content.php";
 
 use SimpleMathsCaptcha\Validate as CaptchaValidator;
 
-function sendMail($form_values)
+function sendMail(array $form_values)
 {
     $submitter_email_address = null;
     $submitter_name = "een bezoeker";
@@ -68,7 +68,7 @@ function sendMail($form_values)
     return $mail_sent;
 }
 
-function requestHandler($form_name, $form_items)
+function requestHandler(string $form_name, array $form_items)
 {
     try {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
