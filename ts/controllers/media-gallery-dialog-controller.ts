@@ -6,21 +6,12 @@ interface PostData {
     shortcode: string;
     date: number;
     caption: string | null;
-    media: {
-        file_name: string;
-        width: number;
-        height: number;
-    }[];
-    media_thumbnails: {
-        file_name: string;
-        width: number;
-        height: number;
-    }[];
+    media: string[];
+    media_thumbnails: string[];
 }
 
 interface PostsEndpointData {
-    prev_fetch_status_code: number;
-    prev_fetch_time: number;
+    fetch_time: number;
     revalidation_time: number;
     posts: PostData[];
 }
@@ -144,22 +135,15 @@ export default class MediaDialog {
         const oldBigMediaIndex = this.currentPostAttrs.bigMediaIndex;
         this.currentPostAttrs.bigMediaIndex = i;
 
+        const src =
+            MediaDialog.IG_DATA_DIR + "/media/" + postData.shortcode + "/" + postData.media[i];
         const postDateFormatted = new Intl.DateTimeFormat("en-US", {
             dateStyle: "full",
             timeZone: "UTC",
         }).format(new Date(postData.date * 1000));
         const attrs = [
-            [
-                "src",
-                MediaDialog.IG_DATA_DIR +
-                    "/media/" +
-                    postData.shortcode +
-                    "/" +
-                    postData.media[i].file_name,
-            ],
+            ["src", src],
             ["alt", `Item ${i + 1} of gallery posted on ${postDateFormatted}`],
-            ["width", postData.media[i].width.toString()],
-            ["height", postData.media[i].height.toString()],
         ];
         attrs.forEach((pair) => this.bigMediaEl.setAttribute(pair[0], pair[1]));
 

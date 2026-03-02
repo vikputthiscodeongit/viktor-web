@@ -1,11 +1,14 @@
 <?php
-function createImageEl($post_data, $media_dir_uri)
+function createImageEl(object $post_data, string $media_dir_uri)
 {
-    $media_data = array_find($post_data->media_thumbnails, function ($item) {
-        return $item->width === 240;
+    $target_width = "240";
+    $file_name = array_find($post_data->media_thumbnails, function ($item) use ($target_width) {
+        preg_match("/([0-9]+)x([0-9]+)/", $item, $matches);
+        return $matches && $matches[1] === $target_width;
     });
+
     return [
-        "src" => $media_dir_uri . "/thumbnails/" . $media_data->file_name,
+        "src" => $file_name ? $media_dir_uri . "/" . $file_name : "#",
         "alt" => "Gallery posted on " . new IntlDateFormatter(
             "en_US",
             IntlDateFormatter::FULL,
@@ -14,8 +17,7 @@ function createImageEl($post_data, $media_dir_uri)
             IntlDateFormatter::GREGORIAN,
             "EEEE, MMMM d, yyyy"
         )->format($post_data->date),
-        "width" => $media_data->width,
-        "height" => $media_data->height,
+        "width" => $target_width,
     ];
 }
 
