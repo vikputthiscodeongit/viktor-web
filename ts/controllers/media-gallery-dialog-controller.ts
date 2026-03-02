@@ -1,4 +1,6 @@
-// TODO: Implement item navigation swipe actions.
+// TODO:
+// * Schedule data fetch.
+// * Add item navigation swipe actions.
 
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
 
@@ -18,7 +20,10 @@ interface PostsEndpointData {
 
 export default class MediaDialog {
     postsData: PostsEndpointData["posts"];
-    currentPostAttrs: { shortcode: string; bigMediaIndex: number };
+    currentPostAttrs: {
+        shortcode: string;
+        bigMediaIndex: number;
+    };
     dialogEl: HTMLDialogElement;
     dialogInnerEl: HTMLDivElement;
     sectionEl: HTMLDivElement;
@@ -152,6 +157,107 @@ export default class MediaDialog {
         indicatorEls.item(i)?.classList.add("dot--highlighted");
     }
 
+    addPageIndicatorEls(postMedia: string[]) {
+        const pageIndicatorEls = postMedia.map((item, i) =>
+            createEl("span", { class: "dot", textContent: i }),
+        );
+        this.pageIndicatorsContainerEl.append(...pageIndicatorEls);
+        this.sectionEl.append(this.pageIndicatorsContainerEl);
+    }
+
+    addNavEls(postData: PostData) {
+        document.body.addEventListener(
+            "keydown",
+            (e) => {
+                if (!this.dialogEl.open) return;
+
+                switch (e.key) {
+                    case "ArrowLeft":
+                        this.setBigMedia(
+                            postData,
+                            this.currentPostAttrs.bigMediaIndex > 0
+                                ? this.currentPostAttrs.bigMediaIndex - 1
+                                : postData.media.length - 1,
+                        );
+                        break;
+
+                    case "ArrowRight":
+                        this.setBigMedia(
+                            postData,
+                            this.currentPostAttrs.bigMediaIndex < postData.media.length - 1
+                                ? this.currentPostAttrs.bigMediaIndex + 1
+                                : 0,
+                        );
+                        break;
+                }
+            },
+            { signal: this.navAbortController.signal },
+        );
+
+        this.prevPageButtonEl.addEventListener(
+            "click",
+            () =>
+                this.setBigMedia(
+                    postData,
+                    this.currentPostAttrs.bigMediaIndex > 0
+                        ? this.currentPostAttrs.bigMediaIndex - 1
+                        : postData.media.length - 1,
+                ),
+            { signal: this.navAbortController.signal },
+        );
+        this.nextPageButtonEl.addEventListener(
+            "click",
+            () =>
+                this.setBigMedia(
+                    postData,
+                    this.currentPostAttrs.bigMediaIndex < postData.media.length - 1
+                        ? this.currentPostAttrs.bigMediaIndex + 1
+                        : 0,
+                ),
+            { signal: this.navAbortController.signal },
+        );
+        this.pageButtonsContainerEl.append(this.prevPageButtonEl, this.nextPageButtonEl);
+        this.sectionEl.append(this.pageButtonsContainerEl);
+    }
+
+    addCaptionEls(postCaption: string) {
+        const splitCaptionText = postCaption.split(/\n\n|\r\n\r\n/);
+
+        this.captionContainerEl.append(createEl("p", { textContent: splitCaptionText[0] }));
+
+        this.asideEl.append(this.captionContainerEl);
+
+        const captionGearLineRegEx = /\u{1F4F8}\u{0020}*/u;
+        const captionGearLine = splitCaptionText.find((line) => captionGearLineRegEx.exec(line));
+
+        if (captionGearLine) {
+            this.gearContainerEl.append(
+                createEl("p", {
+                    textContent: captionGearLine.replace(captionGearLineRegEx, ""),
+                }),
+            );
+            this.asideEl.append(this.gearContainerEl);
+        }
+
+        const captionHashtagsLine = splitCaptionText.find((line) => line.startsWith("#"));
+
+        if (captionHashtagsLine) {
+            const hashtags = captionHashtagsLine.split(" ");
+            const hashtagEls: (Node | string)[] = [];
+            hashtags.forEach((hashtag, i) => {
+                hashtagEls.push(createEl("span", { textContent: hashtag }));
+
+                if (i === hashtags.length - 1) return;
+
+                hashtagEls.push(" ");
+            });
+            this.hashtagsContainerEl.append(...hashtagEls);
+            this.asideEl.append(this.hashtagsContainerEl);
+        }
+
+        this.dialogInnerEl.append(this.asideEl);
+    }
+
     loadPost(postData: PostData) {
         this.currentPostAttrs = {
             shortcode: postData.shortcode,
@@ -159,110 +265,17 @@ export default class MediaDialog {
         };
 
         if (postData.media.length > 1) {
-            const pageIndicatorEls = postData.media.map((item, i) =>
-                createEl("span", { class: "dot", textContent: i }),
-            );
-            this.pageIndicatorsContainerEl.append(...pageIndicatorEls);
-            this.sectionEl.append(this.pageIndicatorsContainerEl);
+            this.addPageIndicatorEls(postData.media);
         }
 
         this.setBigMedia(postData, 0);
 
         if (postData.media.length > 1) {
-            document.body.addEventListener(
-                "keydown",
-                (e) => {
-                    if (!this.dialogEl.open) return;
-
-                    switch (e.key) {
-                        case "ArrowLeft":
-                            this.setBigMedia(
-                                postData,
-                                this.currentPostAttrs.bigMediaIndex > 0
-                                    ? this.currentPostAttrs.bigMediaIndex - 1
-                                    : postData.media.length - 1,
-                            );
-                            break;
-
-                        case "ArrowRight":
-                            this.setBigMedia(
-                                postData,
-                                this.currentPostAttrs.bigMediaIndex < postData.media.length - 1
-                                    ? this.currentPostAttrs.bigMediaIndex + 1
-                                    : 0,
-                            );
-                            break;
-                    }
-                },
-                { signal: this.navAbortController.signal },
-            );
-
-            this.prevPageButtonEl.addEventListener(
-                "click",
-                () =>
-                    this.setBigMedia(
-                        postData,
-                        this.currentPostAttrs.bigMediaIndex > 0
-                            ? this.currentPostAttrs.bigMediaIndex - 1
-                            : postData.media.length - 1,
-                    ),
-                { signal: this.navAbortController.signal },
-            );
-            this.nextPageButtonEl.addEventListener(
-                "click",
-                () =>
-                    this.setBigMedia(
-                        postData,
-                        this.currentPostAttrs.bigMediaIndex < postData.media.length - 1
-                            ? this.currentPostAttrs.bigMediaIndex + 1
-                            : 0,
-                    ),
-                { signal: this.navAbortController.signal },
-            );
-            this.pageButtonsContainerEl.append(this.prevPageButtonEl, this.nextPageButtonEl);
-            this.sectionEl.append(this.pageButtonsContainerEl);
+            this.addNavEls(postData);
         }
 
         if (postData.caption && postData.caption.length > 0) {
-            const splitCaptionText = postData.caption.split(/\n\n|\r\n\r\n/);
-
-            const mainCaptionEl = createEl("p", {
-                textContent: splitCaptionText[0],
-            });
-            this.captionContainerEl.append(mainCaptionEl);
-
-            this.asideEl.append(this.captionContainerEl);
-
-            const captionGearLineRegEx = /\u{1F4F8}\u{0020}*/u;
-            const captionGearLine = splitCaptionText.find((line) =>
-                captionGearLineRegEx.exec(line),
-            );
-
-            if (captionGearLine) {
-                const gearEl = createEl("p", {
-                    textContent: captionGearLine.replace(captionGearLineRegEx, ""),
-                });
-                this.gearContainerEl.append(gearEl);
-                this.asideEl.append(this.gearContainerEl);
-            }
-
-            const captionHashtagsLine = splitCaptionText.find((line) => line.startsWith("#"));
-
-            if (captionHashtagsLine) {
-                const hashtags = captionHashtagsLine.split(" ");
-                const hashtagEls: (Node | string)[] = [];
-                hashtags.forEach((hashtag, i) => {
-                    hashtagEls.push(createEl("span", { textContent: hashtag }));
-
-                    if (i === hashtags.length - 1) return;
-
-                    hashtagEls.push(" ");
-                });
-                this.hashtagsContainerEl.append(...hashtagEls);
-                this.asideEl.append(this.hashtagsContainerEl);
-            }
-
-            this.dialogInnerEl.append(this.asideEl);
+            this.addCaptionEls(postData.caption);
         }
     }
 
