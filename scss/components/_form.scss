@@ -121,9 +121,7 @@ input {
     }
 }
 
-button,
-input[type="button"],
-input[type="submit"],
+.btn,
 input[type="email"],
 input[type="text"],
 textarea {
@@ -132,7 +130,7 @@ textarea {
     transition: $transition-base;
     transition-property: background-color, border-color, outline-color;
 
-    &:not(:focus-visible) {
+    &:not(:focus) {
         &[data-show-validation-border="invalid"] {
             outline-color: $warning;
         }
@@ -146,7 +144,7 @@ textarea {
         }
     }
 
-    &:focus-visible {
+    &:focus {
         outline-color: $blue;
 
         @media (prefers-contrast: more) {
@@ -155,9 +153,7 @@ textarea {
     }
 }
 
-button,
-input[type="button"],
-input[type="submit"] {
+.btn {
     display: inline-flex;
     align-items: center;
     width: auto;
@@ -186,16 +182,19 @@ input[type="submit"] {
         background-color: $gray;
         border-color: $gray;
     }
-}
 
-// TODO: Refactor this; all other form controls are styled by their element type.
-.btn {
     &--sm {
         padding: rem(6px) rem(12px);
         font-size: rem(12px);
     }
+
+    &--sm-below-sm {
+        @include respond-below(sm) {
+            padding: rem(6px) rem(12px);
+            font-size: rem(12px);
+        }
+    }
 }
-//
 
 input[type="email"],
 input[type="text"],

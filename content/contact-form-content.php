@@ -76,6 +76,7 @@ $CONTACT_FORM_ITEMS = [
                 "el" => "button",
                 "type" => "submit",
                 "id" => $CONTACT_FORM_NAME . "-submit",
+                "class" => "btn",
                 "text" => "Send",
             ],
         ],

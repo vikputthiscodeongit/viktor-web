@@ -1,6 +1,6 @@
 import htmlDevLabel from "@codebundlesbyvik/html-dev-label";
 import initTypeItAboutMe from "./ts/controllers/typeit-controller";
-import MediaDialog from "./ts/controllers/media-gallery-dialog-controller";
+import MediaDialog from "./ts/controllers/media-dialog-controller";
 import initContactForm from "./ts/controllers/contact-form/index";
 import "./style.scss";
 
@@ -25,7 +25,7 @@ import "./style.scss";
     }
 
     try {
-        const dialog = document.querySelector<HTMLDialogElement>("#media-gallery-dialog");
+        const dialog = document.querySelector<HTMLDialogElement>(".media-dialog");
         const dialogTrigger = document.querySelectorAll("[data-post-shortcode]");
 
         if (dialog && dialogTrigger) {

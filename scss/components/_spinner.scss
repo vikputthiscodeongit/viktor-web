@@ -3,6 +3,7 @@
 .spinner::after {
     width: 1em;
     height: 1em;
+    font-size: rem(24px);
     border-radius: 50%;
 }
 
@@ -22,7 +23,12 @@
     }
 
     &--lg {
-        font-size: 1.5rem;
+        font-size: rem(30px);
+    }
+
+    &--light {
+        border-color: $gray;
+        border-left-color: $off-white-light;
     }
 }
 

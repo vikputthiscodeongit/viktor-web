@@ -34,6 +34,10 @@ body {
             }
         }
     }
+
+    &.has-dialog {
+        overflow: hidden;
+    }
 }
 
 main {
@@ -96,31 +100,28 @@ img {
     pointer-events: none;
 }
 
-.has-overlay {
+.overlay {
     position: relative;
     user-select: none;
 
     &::after {
         content: "";
         position: absolute;
-        top: rem(-8px);
-        bottom: rem(-8px);
-        left: rem(-8px);
-        right: rem(-8px);
+        inset: 0;
         z-index: 1;
         display: flex;
         justify-content: center;
         align-items: center;
+        opacity: 0.8;
         padding: rem(20px);
         text-align: center;
         color: $off-white-light;
-        background: rgba(0, 0, 0, 0.9);
+        background-color: $black;
+    }
 
-        @include respond-above(lg) {
-            top: rem(-12px);
-            bottom: rem(-12px);
-            left: rem(-12px);
-            right: rem(-12px);
+    &--light {
+        &::after {
+            opacity: 0.4;
         }
     }
 
