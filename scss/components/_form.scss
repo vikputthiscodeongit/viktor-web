@@ -93,7 +93,7 @@ label {
         font-size: rem(13px);
         font-weight: $font-weight-base;
         color: $blue;
-        background-color: $off-white-dark;
+        background-color: $light;
         border-top-left-radius: rem(4px);
         border-top-right-radius: rem(4px);
         user-select: none;
@@ -203,7 +203,7 @@ textarea {
     padding: rem(12px);
     line-height: $line-height-base;
     font-size: $font-size-base;
-    background-color: $off-white-dark;
+    background-color: $light;
     border-color: transparent;
     border-radius: rem(4px);
 
@@ -223,7 +223,7 @@ input[type="text"] {
     &:-webkit-autofill,
     &:-internal-autofill-selected {
         // TODO: Check if I still want this behavior.
-        box-shadow: 0 0 0 1000px $off-white-dark inset;
+        box-shadow: 0 0 0 1000px $light inset;
 
         @media (prefers-contrast: more) {
             box-shadow: 0 0 0 1000px $white inset;
