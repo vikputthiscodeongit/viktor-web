@@ -7,9 +7,6 @@ import "./style.scss";
 (function () {
     document.documentElement.classList.replace("js-loading", "js-enabled");
 
-    document.body.addEventListener("mousedown", () => document.body.classList.add("using-mouse"));
-    document.body.addEventListener("keydown", () => document.body.classList.remove("using-mouse"));
-
     htmlDevLabel({ hideOnHover: true });
 
     try {
