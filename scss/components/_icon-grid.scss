@@ -9,7 +9,6 @@
         }
     }
 
-    display: inline-block;
     width: rem(32px);
 
     @include respond-above(lg) {
