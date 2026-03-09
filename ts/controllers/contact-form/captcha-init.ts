@@ -117,7 +117,7 @@ export function initSimpleMathsCaptcha(formEl: HTMLFormElement) {
         },
     ];
     const loaderEl = createEl("div", {
-        class: "spinner spinner--lg",
+        class: "spinner",
         role: "presentation",
     });
     const captcha = new SimpleMathsCaptcha({

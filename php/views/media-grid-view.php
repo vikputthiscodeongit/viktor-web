@@ -1,23 +1,24 @@
 <?php
 function createImageEl(object $post_data, string $media_dir_uri)
 {
-    $target_width = "240";
-    $file_name = array_find($post_data->media_thumbnails, function ($item) use ($target_width) {
-        preg_match("/([0-9]+)x([0-9]+)/", $item, $matches);
-        return $matches && $matches[1] === $target_width;
+    $target_width = 240;
+    $media_data = array_find($post_data->media_thumbnails, function ($item) use ($target_width) {
+        return $item->width === $target_width;
     });
 
     return [
-        "src" => $file_name ? $media_dir_uri . "/" . $file_name : "#",
+        "src" => $media_dir_uri . "/" . $media_data->file_name,
         "alt" => "Gallery posted on " . new IntlDateFormatter(
             "en_US",
             IntlDateFormatter::FULL,
             IntlDateFormatter::FULL,
+            // Using UTC instead of the client's timezone may produce an inaccurate date.
             "UTC",
             IntlDateFormatter::GREGORIAN,
             "EEEE, MMMM d, yyyy"
         )->format($post_data->date),
-        "width" => $target_width,
+        "width" => $media_data->width,
+        "height" => $media_data->height,
     ];
 }
 

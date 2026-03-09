@@ -1,17 +1,9 @@
 #photography {
-    color: $white;
-    background-color: $black;
+    background-color: $white;
+    background: linear-gradient(0deg, $white 0%, $black 20%, $black 80%, $white 100%);
+    scroll-margin-block: -35vh;
 
-    // TODO: Clean up .container styles.
     .container {
-        padding-block: rem(64px);
-
-        @include respond-above(md, md) {
-            padding-block: 10vh;
-        }
-
-        @include respond-above(lg, md) {
-            padding-block: 15vh;
-        }
+        padding-block: 40vh;
     }
 }

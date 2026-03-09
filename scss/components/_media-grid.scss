@@ -1,0 +1,24 @@
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    justify-content: center;
+    gap: rem(32px);
+
+    @include respond-above(sm) {
+        gap: rem(40px);
+    }
+
+    @include respond-above(md) {
+        grid-template-columns: repeat(3, minmax(rem(160px), rem(240px)));
+    }
+
+    @include respond-above(lg) {
+        gap: rem(64px);
+    }
+
+    &__item {
+        a {
+            display: block;
+        }
+    }
+}

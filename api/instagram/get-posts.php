@@ -103,7 +103,11 @@ function processPostsData(array $fetched_posts_data, string $posts_media_dir_uri
                 if (!$file_name) continue;
 
                 array_push($curl_urls, $url);
-                array_push($media_files, $file_name);
+                array_push($media_files, [
+                    "file_name" => $file_name,
+                    "width" => $item->node->dimensions->width,
+                    "height" => $item->node->dimensions->height,
+                ]);
             }
         } else {
             $url = $post->display_url;
@@ -112,7 +116,11 @@ function processPostsData(array $fetched_posts_data, string $posts_media_dir_uri
             if (!$file_name) continue;
 
             array_push($curl_urls, $url);
-            array_push($media_files, $file_name);
+            array_push($media_files, [
+                "file_name" => $file_name,
+                "width" => $item->dimensions->width,
+                "height" => $item->dimensions->height,
+            ]);
         };
 
         $media_thumbnail_files = [];
@@ -126,7 +134,11 @@ function processPostsData(array $fetched_posts_data, string $posts_media_dir_uri
             if (!$file_name) continue;
 
             array_push($curl_urls, $url);
-            array_push($media_thumbnail_files, $file_name);
+            array_push($media_thumbnail_files, [
+                "file_name" => $file_name,
+                "width" => $item->config_width,
+                "height" => $item->config_height,
+            ]);
         };
 
         $post_media_dir_uri = $posts_media_dir_uri . "/" . $post->shortcode;

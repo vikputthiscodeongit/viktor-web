@@ -4,8 +4,8 @@
     <div class="container">
         <h1 class="visually-hidden"><?php echo $PHOTOGRAPHY_SECTION_TITLE; ?></h1>
 
-        <?php require ROOT_DIR . "/php/views/media-gallery-grid-view.php"; ?>
+        <?php require ROOT_DIR . "/php/views/media-grid-view.php"; ?>
     </div>
 
-    <dialog id="media-gallery-dialog" class="dialog" closedby="none"></dialog>
+    <dialog class="media-dialog" closedby="none"></dialog>
 </section>

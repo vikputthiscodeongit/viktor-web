@@ -236,7 +236,7 @@ export default function initContactForm(formEl: HTMLFormElement) {
     });
 
     formEl.querySelectorAll("fieldset:disabled").forEach((el) => el.removeAttribute("disabled"));
-    formEl.classList.remove("has-overlay");
+    formEl.classList.remove("overlay");
 
     return;
 }
