@@ -84,13 +84,13 @@ a {
     transition: $transition-base;
     transition-property: text-decoration-color, color, outline;
 
-    &:focus {
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    &:focus-visible {
         outline: rem(2px) solid currentColor;
         outline-offset: rem(2px);
-
-        .using-mouse & {
-            outline: none;
-        }
     }
 }
 
