@@ -11,11 +11,8 @@
     position: relative;
     display: inline-block;
     font-size: $font-size-base;
-    border-top: 0.166667em solid rgba(0, 0, 0, 0.35);
-    border-right: 0.166667em solid rgba(0, 0, 0, 0.35);
-    border-bottom: 0.166667em solid rgba(0, 0, 0, 0.35);
-    border-left: 0.166667em solid rgba(0, 0, 0, 0.175);
-    transform: translateZ(0);
+    border: 0.166667em solid rgba(0, 0, 0, 0.35);
+    border-left-color: rgba(0, 0, 0, 0.175);
     animation: spin 1s infinite linear;
 
     &::after {
