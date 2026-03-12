@@ -1,3 +1,7 @@
+//TODO:
+// * Unload post when section out of viewport.
+// * Scroll to top of media when unloading post.
+
 import { createEl, fetchWithTimeout } from "@codebundlesbyvik/js-helpers";
 
 interface PostData {
@@ -353,8 +357,6 @@ export default class MediaDialog {
     }
 
     unloadPost() {
-        // Scroll to top of media.
-
         this.bigMediaLoadingEl.remove();
 
         for (const attr of Object.values(this.bigMediaEl.attributes)) {
