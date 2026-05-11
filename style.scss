@@ -1,5 +1,5 @@
 // SASS rem
-@import "sass-rem/rem";
+@import "@pierreburel/sass-rem/rem";
 
 // Bootstrap
 // Configuration
@@ -46,12 +46,18 @@
 
 // Helpers
 // @import "bootstrap/scss/helpers/clearfix";
+// @import "bootstrap/scss/helpers/color-bg";
 // @import "bootstrap/scss/helpers/colored-links";
-// @import "bootstrap/scss/helpers/ratio";
+// @import "bootstrap/scss/helpers/focus-ring";
+// @import "bootstrap/scss/helpers/icon-link";
 // @import "bootstrap/scss/helpers/position";
-@import "bootstrap/scss/helpers/visually-hidden";
+// @import "bootstrap/scss/helpers/ratio";
+// @import "bootstrap/scss/helpers/stacks";
+// @import "bootstrap/scss/helpers/position";
 // @import "bootstrap/scss/helpers/stretched-link";
 // @import "bootstrap/scss/helpers/text-truncation";
+@import "bootstrap/scss/helpers/visually-hidden";
+// @import "bootstrap/scss/helpers/vr";
 
 // Utilities
 // @import "bootstrap/scss/utilities/api";
