@@ -5,6 +5,7 @@
         "strict": true,
         "module": "ES2022",
         "moduleResolution": "bundler",
+        "noUncheckedSideEffectImports": false,
         "outDir": "dist",
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "target": "ES2022"
