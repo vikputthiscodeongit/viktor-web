@@ -169,7 +169,7 @@ async function submitForm({
                 )
                     continue;
 
-                if (!captcha || el.id === captcha.activatorButtonEl.id) {
+                if (!captcha || (captcha && el.id !== captcha.activatorButtonEl.id)) {
                     el.setAttribute("data-validation-on-input", "true");
                 }
 
