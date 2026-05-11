@@ -1,5 +1,6 @@
 <?php
 require "global.php";
+
 require ROOT_DIR . "/php/helpers/render-html-el.php";
 
 require ROOT_DIR . "/content/global-content.php";
